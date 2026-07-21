@@ -1,0 +1,1621 @@
+{
+  "name": "projects/amplify-etfs-data-feed/databases/(default)/documents/funds/CNBS/holdings/2026-07-21",
+  "fields": {
+    "holdings": {
+      "arrayValue": {
+        "values": [
+          {
+            "mapValue": {
+              "fields": {
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "SecurityName": {
+                  "stringValue": "ASCEND WELLNESS HOLDINGS SWAP NBC-L"
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "MarketValue": {
+                  "doubleValue": 902333.26
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "StockTicker": {
+                  "stringValue": "04351N106 TRS 121727"
+                },
+                "CUSIP": {
+                  "stringValue": "04351N106 TRS 121727"
+                },
+                "Shares": {
+                  "doubleValue": 2153540
+                },
+                "Weightings": {
+                  "stringValue": "1.22%"
+                },
+                "Price": {
+                  "doubleValue": 0.419
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "StockTicker": {
+                  "stringValue": "05475P109 TRS 121727"
+                },
+                "MarketValue": {
+                  "doubleValue": 24774.24
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "SecurityName": {
+                  "stringValue": "AYR WELLNESS INC SWAP NBC-L"
+                },
+                "Price": {
+                  "doubleValue": 0.0145
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "0.03%"
+                },
+                "Shares": {
+                  "doubleValue": 1708568
+                },
+                "CUSIP": {
+                  "stringValue": "05475P109 TRS 121727"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 0.717
+                },
+                "Weightings": {
+                  "stringValue": "0.61%"
+                },
+                "Shares": {
+                  "doubleValue": 628021
+                },
+                "CUSIP": {
+                  "stringValue": "22587M106 TRS 072826"
+                },
+                "StockTicker": {
+                  "stringValue": "22587M106 TRS 072826"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 450291.06
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "SecurityName": {
+                  "stringValue": "CRESCO LABS SWAP_R"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "StockTicker": {
+                  "stringValue": "22587M106 TRS 121727"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 4676663.33
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "SecurityName": {
+                  "stringValue": "CRESCO LABS INC SWAP NBC-L"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 0.717
+                },
+                "Weightings": {
+                  "stringValue": "6.33%"
+                },
+                "Shares": {
+                  "doubleValue": 6522543
+                },
+                "CUSIP": {
+                  "stringValue": "22587M106 TRS 121727"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "StockTicker": {
+                  "stringValue": "23126M300 TRS 121727"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 3443757.24
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "SecurityName": {
+                  "stringValue": "CURALEAF HLDGS SWAP NBC-L"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 9.24
+                },
+                "Weightings": {
+                  "stringValue": "4.66%"
+                },
+                "Shares": {
+                  "doubleValue": 372701
+                },
+                "CUSIP": {
+                  "stringValue": "23126M300 TRS 121727"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 10.71
+                },
+                "Weightings": {
+                  "stringValue": "9.20%"
+                },
+                "Shares": {
+                  "doubleValue": 634809
+                },
+                "CUSIP": {
+                  "stringValue": "377130406 TRS 121727"
+                },
+                "StockTicker": {
+                  "stringValue": "377130406 TRS 121727"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 6798804.39
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "SecurityName": {
+                  "stringValue": "GLASS HOUSE BRANDS INC SWAP NBC-L"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "Weightings": {
+                  "stringValue": "0.99%"
+                },
+                "Price": {
+                  "doubleValue": 7.118
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "CUSIP": {
+                  "stringValue": "39342L108 TRS 072826"
+                },
+                "Shares": {
+                  "doubleValue": 103138
+                },
+                "MarketValue": {
+                  "doubleValue": 734136.28
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "StockTicker": {
+                  "stringValue": "39342L108 TRS 072826"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SecurityName": {
+                  "stringValue": "GREEN THUMB INDUSTRIES SWAP_R"
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "Shares": {
+                  "doubleValue": 1492859
+                },
+                "CUSIP": {
+                  "stringValue": "39342L108 TRS 121727"
+                },
+                "Price": {
+                  "doubleValue": 7.118
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "14.38%"
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SecurityName": {
+                  "stringValue": "GREEN THUMB INDS INC SWAP NBC-L"
+                },
+                "StockTicker": {
+                  "stringValue": "39342L108 TRS 121727"
+                },
+                "MarketValue": {
+                  "doubleValue": 10626170.36
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "StockTicker": {
+                  "stringValue": "48213Y107 TRS 121727"
+                },
+                "MarketValue": {
+                  "doubleValue": 1188032.87
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SecurityName": {
+                  "stringValue": "JUSHI HLDGS INC SWAP NBC-L"
+                },
+                "Price": {
+                  "doubleValue": 0.4403
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "1.61%"
+                },
+                "Shares": {
+                  "doubleValue": 2698235
+                },
+                "CUSIP": {
+                  "stringValue": "48213Y107 TRS 121727"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "StockTicker": {
+                  "stringValue": "56782V107 TRS 121727"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 458645.31
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "SecurityName": {
+                  "stringValue": "MARIMED INC SWAP NBC-L"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 0.0665
+                },
+                "Weightings": {
+                  "stringValue": "0.62%"
+                },
+                "Shares": {
+                  "doubleValue": 6896922
+                },
+                "CUSIP": {
+                  "stringValue": "56782V107 TRS 121727"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "Shares": {
+                  "doubleValue": 4269194
+                },
+                "CUSIP": {
+                  "stringValue": "72707C108 TRS 121727"
+                },
+                "Price": {
+                  "doubleValue": 0.1314
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "0.76%"
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "SecurityName": {
+                  "stringValue": "PLANET 13 HLDGS INC SWAP NBC-L"
+                },
+                "StockTicker": {
+                  "stringValue": "72707C108 TRS 121727"
+                },
+                "MarketValue": {
+                  "doubleValue": 560972.09
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "Price": {
+                  "doubleValue": 0.5466
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "4.13%"
+                },
+                "Shares": {
+                  "doubleValue": 5587993
+                },
+                "CUSIP": {
+                  "stringValue": "88105E108 TRS 121727"
+                },
+                "StockTicker": {
+                  "stringValue": "88105E108 TRS 121727"
+                },
+                "MarketValue": {
+                  "doubleValue": 3054396.97
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SecurityName": {
+                  "stringValue": "TERRASCEND CORP SWAP NBC-L"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "Weightings": {
+                  "stringValue": "1.90%"
+                },
+                "Price": {
+                  "doubleValue": 8.76
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "CUSIP": {
+                  "stringValue": "89788C104 TRS 072826"
+                },
+                "Shares": {
+                  "doubleValue": 160673
+                },
+                "MarketValue": {
+                  "doubleValue": 1407495.48
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "StockTicker": {
+                  "stringValue": "89788C104 TRS 072826"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "SecurityName": {
+                  "stringValue": "TRULIEVE CANNABIS SWAP_R"
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "SecurityName": {
+                  "stringValue": "TRULIEVE CANNABIS CORP SWAP NBC-L"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "StockTicker": {
+                  "stringValue": "89788C104 TRS 121727"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 15572345.4
+                },
+                "Shares": {
+                  "doubleValue": 1777665
+                },
+                "CUSIP": {
+                  "stringValue": "89788C104 TRS 121727"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 8.76
+                },
+                "Weightings": {
+                  "stringValue": "21.07%"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 32688620.29
+                },
+                "StockTicker": {
+                  "stringValue": "912797RG4"
+                },
+                "SecurityName": {
+                  "stringValue": "United States Treasury Bill 08/06/2026"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "holding_type": {
+                  "stringValue": "treasury"
+                },
+                "Weightings": {
+                  "stringValue": "44.23%"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 99.840018
+                },
+                "CUSIP": {
+                  "stringValue": "912797RG4"
+                },
+                "Shares": {
+                  "doubleValue": 32741000
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "CUSIP": {
+                  "stringValue": "912797UF2"
+                },
+                "Shares": {
+                  "doubleValue": 31660000
+                },
+                "Weightings": {
+                  "stringValue": "42.61%"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 99.485042
+                },
+                "SecurityName": {
+                  "stringValue": "United States Treasury Bill 09/10/2026"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "holding_type": {
+                  "stringValue": "treasury"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 31496964.3
+                },
+                "StockTicker": {
+                  "stringValue": "912797UF2"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 99.788979
+                },
+                "Weightings": {
+                  "stringValue": "1.59%"
+                },
+                "Shares": {
+                  "doubleValue": 1180000
+                },
+                "CUSIP": {
+                  "stringValue": "912797UT2"
+                },
+                "StockTicker": {
+                  "stringValue": "912797UT2"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 1177509.95
+                },
+                "holding_type": {
+                  "stringValue": "treasury"
+                },
+                "SecurityName": {
+                  "stringValue": "United States Treasury Bill 08/11/2026"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "MarketValue": {
+                  "doubleValue": 114628.8
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "StockTicker": {
+                  "stringValue": "92339H200 TRS 072826"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SecurityName": {
+                  "stringValue": "VERANO HLDGS CORP SWAP NOMURA"
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "Weightings": {
+                  "stringValue": "0.16%"
+                },
+                "Price": {
+                  "doubleValue": 5.72
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "CUSIP": {
+                  "stringValue": "92339H200 TRS 072826"
+                },
+                "Shares": {
+                  "doubleValue": 20040
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 5691096.84
+                },
+                "StockTicker": {
+                  "stringValue": "92339H200 TRS 121727"
+                },
+                "SecurityName": {
+                  "stringValue": "VERANO HLDGS CORP SWAP NBC-L"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "Weightings": {
+                  "stringValue": "7.70%"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 5.72
+                },
+                "CUSIP": {
+                  "stringValue": "92339H200 TRS 121727"
+                },
+                "Shares": {
+                  "doubleValue": 994947
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "CUSIP": {
+                  "stringValue": "92767B204 TRS 072826"
+                },
+                "Shares": {
+                  "doubleValue": 4724.133333
+                },
+                "Weightings": {
+                  "stringValue": "0.06%"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 9.8
+                },
+                "SecurityName": {
+                  "stringValue": "VIREO GROWTH INC SWAP NOMURA"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 46296.51
+                },
+                "StockTicker": {
+                  "stringValue": "92767B204 TRS 072826"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "holding_type": {
+                  "stringValue": "swap"
+                },
+                "SecurityName": {
+                  "stringValue": "VIREO GROWTH INC SWAP NBC-L"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "StockTicker": {
+                  "stringValue": "92767B204 TRS 121727"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 1130753.4
+                },
+                "Shares": {
+                  "doubleValue": 115383
+                },
+                "CUSIP": {
+                  "stringValue": "92767B204 TRS 121727"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 9.8
+                },
+                "Weightings": {
+                  "stringValue": "1.53%"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "Weightings": {
+                  "stringValue": "0.00%"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 0
+                },
+                "CUSIP": {
+                  "stringValue": "989CVR022"
+                },
+                "Shares": {
+                  "doubleValue": 220858
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 0
+                },
+                "StockTicker": {
+                  "stringValue": "989CVR022"
+                },
+                "SecurityName": {
+                  "stringValue": "CONTRA ZYNEBRA PHARMAC"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "StockTicker": {
+                  "stringValue": "AGPXX"
+                },
+                "MarketValue": {
+                  "doubleValue": 31572.47
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "holding_type": {
+                  "stringValue": "money_market"
+                },
+                "money_market_flag": {
+                  "booleanValue": true
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "SecurityName": {
+                  "stringValue": "Invesco Government & Agency Portfolio 12/31/2031"
+                },
+                "Price": {
+                  "doubleValue": 100
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "0.04%"
+                },
+                "Shares": {
+                  "doubleValue": 31572.47
+                },
+                "CUSIP": {
+                  "stringValue": "825252885"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "StockTicker": {
+                  "stringValue": "ALEAF"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 0
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "SecurityName": {
+                  "stringValue": "Aleafia Health Inc"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 0
+                },
+                "Weightings": {
+                  "stringValue": "0.00%"
+                },
+                "Shares": {
+                  "doubleValue": 78894
+                },
+                "CUSIP": {
+                  "stringValue": "01444Q104"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 0
+                },
+                "StockTicker": {
+                  "stringValue": "CLVR"
+                },
+                "SecurityName": {
+                  "stringValue": "Clever Leaves Holdings Inc"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "Weightings": {
+                  "stringValue": "0.00%"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 0
+                },
+                "CUSIP": {
+                  "stringValue": "186760203"
+                },
+                "Shares": {
+                  "doubleValue": 4425
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "Price": {
+                  "doubleValue": 2.8
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "0.49%"
+                },
+                "Shares": {
+                  "doubleValue": 128960
+                },
+                "CUSIP": {
+                  "stringValue": "22717L101"
+                },
+                "StockTicker": {
+                  "stringValue": "CRON"
+                },
+                "MarketValue": {
+                  "doubleValue": 361088
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "SecurityName": {
+                  "stringValue": "Cronos Group Inc"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "Shares": {
+                  "doubleValue": 1228127.999999
+                },
+                "CUSIP": {
+                  "stringValue": "BXM7BL7"
+                },
+                "Price": {
+                  "doubleValue": 13.05
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "15.42%"
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "SecurityName": {
+                  "stringValue": "Curaleaf Holdings Inc"
+                },
+                "StockTicker": {
+                  "stringValue": "CURA CN"
+                },
+                "MarketValue": {
+                  "doubleValue": 11395407.16
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 0.295
+                },
+                "Weightings": {
+                  "stringValue": "0.03%"
+                },
+                "Shares": {
+                  "doubleValue": 112025
+                },
+                "CUSIP": {
+                  "stringValue": "BGHY2B1"
+                },
+                "StockTicker": {
+                  "stringValue": "CWEB CN"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 23497.01
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "SecurityName": {
+                  "stringValue": "Charlottes Web Holdings Inc"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "Shares": {
+                  "doubleValue": 557435
+                },
+                "CUSIP": {
+                  "stringValue": "39986L109"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 1.41
+                },
+                "Weightings": {
+                  "stringValue": "1.06%"
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "SecurityName": {
+                  "stringValue": "GrowGeneration Corp"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "StockTicker": {
+                  "stringValue": "GRWG"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 785983.35
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "Price": {
+                  "doubleValue": 0.68
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "0.00%"
+                },
+                "Shares": {
+                  "doubleValue": 2781
+                },
+                "CUSIP": {
+                  "stringValue": "44888K407"
+                },
+                "StockTicker": {
+                  "stringValue": "HYFM"
+                },
+                "MarketValue": {
+                  "doubleValue": 1891.08
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "SecurityName": {
+                  "stringValue": "Hydrofarm Holdings Group Inc"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "CUSIP": {
+                  "stringValue": "45781V101"
+                },
+                "Shares": {
+                  "doubleValue": 39489
+                },
+                "Weightings": {
+                  "stringValue": "3.44%"
+                },
+                "Price": {
+                  "doubleValue": 64.35
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SecurityName": {
+                  "stringValue": "Innovative Industrial Properties Inc"
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "MarketValue": {
+                  "doubleValue": 2541117.15
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "StockTicker": {
+                  "stringValue": "IIPR"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "MarketValue": {
+                  "doubleValue": 287610.76
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "StockTicker": {
+                  "stringValue": "LIEN"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SecurityName": {
+                  "stringValue": "Chicago Atlantic BDC Inc"
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "Weightings": {
+                  "stringValue": "0.39%"
+                },
+                "Price": {
+                  "doubleValue": 9.58
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "CUSIP": {
+                  "stringValue": "828174102"
+                },
+                "Shares": {
+                  "doubleValue": 30022
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "MarketValue": {
+                  "doubleValue": 548714.32
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "StockTicker": {
+                  "stringValue": "MAPS"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SecurityName": {
+                  "stringValue": "WM Technology Inc"
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "Weightings": {
+                  "stringValue": "0.74%"
+                },
+                "Price": {
+                  "doubleValue": 0.3748
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "CUSIP": {
+                  "stringValue": "92971A109"
+                },
+                "Shares": {
+                  "doubleValue": 1464019
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 0.9293
+                },
+                "Weightings": {
+                  "stringValue": "0.15%"
+                },
+                "Shares": {
+                  "doubleValue": 120936
+                },
+                "CUSIP": {
+                  "stringValue": "68617J100"
+                },
+                "StockTicker": {
+                  "stringValue": "OGI"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 112385.82
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "SecurityName": {
+                  "stringValue": "Organigram Global Inc"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "StockTicker": {
+                  "stringValue": "REFI"
+                },
+                "MarketValue": {
+                  "doubleValue": 347454.9
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SecurityName": {
+                  "stringValue": "Chicago Atlantic Real Estate Finance Inc"
+                },
+                "Price": {
+                  "doubleValue": 10.42
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "0.47%"
+                },
+                "Shares": {
+                  "doubleValue": 33345
+                },
+                "CUSIP": {
+                  "stringValue": "167239102"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "SecurityName": {
+                  "stringValue": "RYTHM INC"
+                },
+                "StockTicker": {
+                  "stringValue": "RYM"
+                },
+                "MarketValue": {
+                  "doubleValue": 268866.56
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "Shares": {
+                  "doubleValue": 12356
+                },
+                "CUSIP": {
+                  "stringValue": "00853E404"
+                },
+                "Price": {
+                  "doubleValue": 21.76
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Weightings": {
+                  "stringValue": "0.36%"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "SecurityName": {
+                  "stringValue": "SNDL Inc"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": 200494.08
+                },
+                "StockTicker": {
+                  "stringValue": "SNDL"
+                },
+                "CUSIP": {
+                  "stringValue": "83307B101"
+                },
+                "Shares": {
+                  "doubleValue": 156636
+                },
+                "Weightings": {
+                  "stringValue": "0.27%"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 1.28
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "holding_type": {
+                  "stringValue": "cash"
+                },
+                "SecurityName": {
+                  "stringValue": "Cash & Other"
+                },
+                "SharesOutstanding": {
+                  "integerValue": "2837467"
+                },
+                "money_market_flag": {
+                  "booleanValue": true
+                },
+                "StockTicker": {
+                  "stringValue": "Cash&Other"
+                },
+                "NetAssets": {
+                  "doubleValue": 73913461.63
+                },
+                "MarketValue": {
+                  "doubleValue": -65248488.64
+                },
+                "Shares": {
+                  "doubleValue": -65248488.64
+                },
+                "CUSIP": {
+                  "stringValue": "Cash&Other"
+                },
+                "CreationUnits": {
+                  "doubleValue": 56.75
+                },
+                "Price": {
+                  "doubleValue": 1
+                },
+                "Weightings": {
+                  "stringValue": "-88.28%"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "source": {
+      "stringValue": "XL_Holdings.csv"
+    },
+    "updatedAt": {
+      "stringValue": "2026-07-21T01:00:17.354245"
+    },
+    "type": {
+      "stringValue": "regular"
+    },
+    "asOfDate": {
+      "stringValue": "2026-07-21"
+    }
+  },
+  "createTime": "2026-07-21T01:00:17.486226Z",
+  "updateTime": "2026-07-21T01:00:17.486226Z"
+}

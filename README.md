@@ -1,6 +1,6 @@
 # 年运历史回测
 
-这是一个把固定命理规则与真实复权年 K、节气月 K 对照的研究网页。股票池覆盖当前 S&P 500、Nasdaq-100，以及以 iShares IWM 当前可交易股票持仓作为代理的 Russell 2000 股票。
+这是一个把固定命理规则与真实复权年 K、节气月 K 对照的研究网页。股票池覆盖当前 S&P 500、Nasdaq-100、以 iShares IWM 当前可交易股票持仓作为代理的 Russell 2000 股票，以及独立大麻板块联合池。
 
 线上版本：
 
@@ -15,6 +15,9 @@
 - IWM 只保留股票型、有效代码、NASDAQ/NYSE/NYSE American、价格大于零，并经 Nasdaq Trader 当前上市目录确认的唯一持仓；没有正常交易行情的 CVR、退市残余及已知会制造虚假 K 线方向的价格异常不计算。
 - IWM 是当前持仓代理，不是 FTSE Russell 授权的正式成分文件。使用当前股票回看历史会产生幸存者偏差与前视选择偏差。
 - 新增 Russell 代理股票的上市日期来自 Yahoo `firstTradeDate`，上市时刻采用当日常规开盘，统一标记为低置信度“行情起点代理”。
+- 大麻板块使用独立 `theme_membership` 标签；个股原有 S&P 500、Nasdaq-100 或 Russell 2000 标签保留，不用主题标签覆盖指数归属。
+- 大麻联合池冻结于 2026-07-21，使用 MSOS、YOLO、MJ、CNBS 的当前非零底层敞口，再补充美国交易所仍挂牌、以大麻/CBD/专门大麻金融为核心业务的证券，以及当前大麻 ETF；标准化清单见 [`public/data/sources/cannabis_universe_2026-07-21.json`](public/data/sources/cannabis_universe_2026-07-21.json)。
+- OTC 证券保留并单独标记；`CWEB→CWBHF`、`LOVE→LOVFF`、`GLASF→GLAS`、`TCNNF→TRLV` 已规范化，避免撞码或重复。现金、国债、重复掉期腿、零值遗留和无 Yahoo 日 K 的证券不进入回测，并在清单中保留排除原因。
 
 ## 本地运行
 

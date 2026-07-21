@@ -1,0 +1,111 @@
+{
+  "metadata": {
+    "title": "美国交易大麻板块联合池",
+    "as_of": "2026-07-21",
+    "definition": "MSOS、YOLO、MJ、CNBS当前非零股票或掉期底层敞口，加美国全国性交易所仍挂牌且以大麻、CBD或专门大麻金融为核心业务的证券，以及仍挂牌的大麻主题ETF。",
+    "theme": "大麻板块",
+    "included_count": 51,
+    "normalization": "GLASF/TCNNF按当前美国挂牌代码GLAS/TRLV合并；YOLO加拿大代码CWEB/LOVE分别映射为美国OTC代码CWBHF/LOVFF，避免与美国同代码证券碰撞。",
+    "exclusion_rule": "排除现金、国债、重复swap腿、权证、零值遗留头寸、已退市或无可用Yahoo日K的证券，以及仅有宽泛烟酒药企敞口的公司。"
+  },
+  "sources": [
+    {
+      "id": "MSOS",
+      "name": "AdvisorShares Pure US Cannabis ETF holdings",
+      "as_of": "2026-07-20",
+      "url": "https://advisorshares.com/etfs/msos/",
+      "snapshot_url": "https://advisorshares.com/wp-content/uploads/csv/holdings/AS_MSOS_Holdings_File.XLS"
+    },
+    {
+      "id": "YOLO",
+      "name": "AdvisorShares Pure Cannabis ETF holdings",
+      "as_of": "2026-07-20",
+      "url": "https://advisorshares.com/etfs/yolo/",
+      "snapshot_url": "https://advisorshares.com/wp-content/uploads/csv/holdings/AdvisorShares_YOLO_Holdings_File.csv"
+    },
+    {
+      "id": "MJ",
+      "name": "Amplify Alternative Harvest ETF holdings",
+      "as_of": "2026-07-21",
+      "url": "https://amplifyetfs.com/mj-holdings/"
+    },
+    {
+      "id": "CNBS",
+      "name": "Amplify Seymour Cannabis ETF holdings",
+      "as_of": "2026-07-21",
+      "url": "https://amplifyetfs.com/cnbs-holdings/"
+    },
+    {
+      "id": "LISTING",
+      "name": "Nasdaq Trader current US exchange listings",
+      "as_of": "2026-07-21",
+      "urls": [
+        "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqlisted.txt",
+        "https://www.nasdaqtrader.com/dynamic/SymDir/otherlisted.txt"
+      ]
+    }
+  ],
+  "securities": [
+    {"ticker":"AAWH","name":"Ascend Wellness Holdings, Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2021-05-26","sources":["MSOS","CNBS"]},
+    {"ticker":"ACB","name":"Aurora Cannabis Inc.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"NASDAQ","listing_date":"2014-07-15","sources":["MJ","YOLO","LISTING"]},
+    {"ticker":"AFCG","name":"Advanced Flower Capital Inc.","security_type":"stock","sector":"金融","theme_role":"大麻金融","market":"NASDAQ","listing_date":"2021-03-19","sources":["LISTING"]},
+    {"ticker":"AKAN","name":"Akanda Corp.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"NASDAQ","listing_date":"2022-03-15","sources":["LISTING"]},
+    {"ticker":"AYRWF","name":"Ayr Wellness Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTC Pink","listing_date":"2020-12-04","sources":["CNBS"]},
+    {"ticker":"CGC","name":"Canopy Growth Corporation","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"NASDAQ","listing_date":"2014-04-07","sources":["MJ","YOLO","LISTING"]},
+    {"ticker":"CNBS","name":"Amplify Seymour Cannabis ETF","security_type":"etf","sector":"大麻ETF","theme_role":"ETF","market":"NYSE Arca","listing_date":"2019-07-23","sources":["LISTING"]},
+    {"ticker":"CNTMF","name":"FLUENT Corp.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQB","listing_date":"2021-01-08","sources":["MSOS","YOLO"]},
+    {"ticker":"CRLBF","name":"Cresco Labs Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2018-12-03","sources":["MSOS","CNBS"]},
+    {"ticker":"CRON","name":"Cronos Group Inc.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"NASDAQ","listing_date":"2018-02-27","sources":["MJ","YOLO","CNBS","LISTING"]},
+    {"ticker":"CURLF","name":"Curaleaf Holdings, Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2018-10-29","sources":["MSOS","YOLO","CNBS"]},
+    {"ticker":"CWBHF","name":"Charlotte's Web Holdings, Inc.","security_type":"stock","sector":"大麻产业","theme_role":"CBD","market":"OTCQX","listing_date":"2018-09-12","sources":["YOLO"]},
+    {"ticker":"CXXIF","name":"C21 Investments Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2018-06-22","sources":["MSOS"]},
+    {"ticker":"GLAS","name":"Glass House Brands Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"NYSE","listing_date":"2019-07-18","sources":["MSOS","YOLO","CNBS","LISTING"]},
+    {"ticker":"GNLN","name":"Greenlane Holdings, Inc.","security_type":"stock","sector":"大麻产业","theme_role":"产业链","market":"NASDAQ","listing_date":"2019-04-18","sources":["LISTING"]},
+    {"ticker":"GRUSF","name":"Grown Rogue International Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQB","listing_date":"2010-10-15","sources":["MSOS"]},
+    {"ticker":"GRWG","name":"GrowGeneration Corp.","security_type":"stock","sector":"工业","theme_role":"种植产业链","market":"NASDAQ","listing_date":"2018-02-07","sources":["CNBS","LISTING"]},
+    {"ticker":"GTBIF","name":"Green Thumb Industries Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2018-06-14","sources":["MSOS","CNBS"]},
+    {"ticker":"HITI","name":"High Tide Inc.","security_type":"stock","sector":"大麻产业","theme_role":"零售商","market":"NASDAQ","listing_date":"2021-01-08","sources":["MJ","YOLO","LISTING"]},
+    {"ticker":"HYFM","name":"Hydrofarm Holdings Group, Inc.","security_type":"stock","sector":"工业","theme_role":"种植产业链","market":"NASDAQ","listing_date":"2020-12-10","sources":["CNBS","LISTING"]},
+    {"ticker":"IIPR","name":"Innovative Industrial Properties, Inc.","security_type":"stock","sector":"房地产","theme_role":"大麻REIT","market":"NYSE","listing_date":"2016-12-01","sources":["CNBS","LISTING"]},
+    {"ticker":"IMCC","name":"IM Cannabis Corp.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"NASDAQ","listing_date":"2020-05-20","sources":["LISTING"]},
+    {"ticker":"INCR","name":"InterCure Ltd.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"NASDAQ","listing_date":"2019-01-28","sources":["LISTING"]},
+    {"ticker":"INM","name":"InMed Pharmaceuticals Inc.","security_type":"stock","sector":"医疗保健","theme_role":"大麻生物科技","market":"NASDAQ","listing_date":"2014-05-05","sources":["LISTING"]},
+    {"ticker":"ISPR","name":"Ispire Technology Inc.","security_type":"stock","sector":"工业","theme_role":"雾化产业链","market":"NASDAQ","listing_date":"2023-04-04","sources":["LISTING"]},
+    {"ticker":"JUSHF","name":"Jushi Holdings Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2019-06-18","sources":["MSOS","CNBS"]},
+    {"ticker":"LIEN","name":"Chicago Atlantic BDC, Inc.","security_type":"stock","sector":"金融","theme_role":"大麻金融","market":"NASDAQ","listing_date":"2022-02-04","sources":["CNBS","LISTING"]},
+    {"ticker":"LOVFF","name":"Cannara Biotech Inc.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"OTCQX","listing_date":"2019-01-18","sources":["YOLO"]},
+    {"ticker":"MAPS","name":"WM Technology, Inc.","security_type":"stock","sector":"通讯服务","theme_role":"大麻科技媒体","market":"OTCQX","listing_date":"2019-10-01","sources":["CNBS"]},
+    {"ticker":"MJ","name":"Amplify Alternative Harvest ETF","security_type":"etf","sector":"大麻ETF","theme_role":"ETF","market":"NYSE Arca","listing_date":"2015-12-03","sources":["LISTING"]},
+    {"ticker":"MRMD","name":"MariMed Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQB","listing_date":"2012-08-03","sources":["MSOS","CNBS"]},
+    {"ticker":"MSOS","name":"AdvisorShares Pure US Cannabis ETF","security_type":"etf","sector":"大麻ETF","theme_role":"ETF","market":"NYSE Arca","listing_date":"2020-09-02","sources":["LISTING"]},
+    {"ticker":"MSOX","name":"AdvisorShares MSOS Daily Leveraged ETF","security_type":"etf","sector":"大麻ETF","theme_role":"杠杆ETF","market":"NYSE Arca","listing_date":"2022-08-24","sources":["LISTING"]},
+    {"ticker":"OGI","name":"Organigram Global Inc.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"NASDAQ","listing_date":"2019-05-21","sources":["MJ","YOLO","CNBS","LISTING"]},
+    {"ticker":"PCLOF","name":"PharmaCielo Ltd.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"OTC Pink","listing_date":"2019-01-25","sources":["YOLO"]},
+    {"ticker":"PLNH","name":"Planet 13 Holdings Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2018-07-12","sources":["MSOS","CNBS"]},
+    {"ticker":"REFI","name":"Chicago Atlantic Real Estate Finance, Inc.","security_type":"stock","sector":"金融","theme_role":"大麻金融","market":"NASDAQ","listing_date":"2021-12-08","sources":["CNBS","LISTING"]},
+    {"ticker":"ROMJF","name":"Rubicon Organics Inc.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"OTCQX","listing_date":"2018-10-24","sources":["YOLO"]},
+    {"ticker":"RYM","name":"RYTHM, Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"NASDAQ","listing_date":"2021-01-28","sources":["CNBS","LISTING"]},
+    {"ticker":"SHFS","name":"SHF Holdings, Inc.","security_type":"stock","sector":"金融","theme_role":"大麻金融","market":"NASDAQ","listing_date":"2021-08-20","sources":["LISTING"]},
+    {"ticker":"SNDL","name":"SNDL Inc.","security_type":"stock","sector":"大麻产业","theme_role":"生产商与零售","market":"NASDAQ","listing_date":"2019-08-01","sources":["MJ","YOLO","CNBS","LISTING"]},
+    {"ticker":"TLRY","name":"Tilray Brands, Inc.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"NASDAQ","listing_date":"2018-07-19","sources":["MJ","YOLO","LISTING"]},
+    {"ticker":"TRLV","name":"Trulieve Cannabis Corp.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"NYSE","listing_date":"2018-09-27","sources":["MSOS","YOLO","CNBS","LISTING"]},
+    {"ticker":"TSNDF","name":"TerrAscend Corp.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2017-11-17","sources":["MSOS","YOLO","CNBS"]},
+    {"ticker":"VEXTF","name":"Vext Science, Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2019-05-28","sources":["MSOS"]},
+    {"ticker":"VFF","name":"Village Farms International, Inc.","security_type":"stock","sector":"大麻产业","theme_role":"生产商","market":"NASDAQ","listing_date":"2019-02-21","sources":["MSOS","MJ","YOLO","LISTING"]},
+    {"ticker":"VREOF","name":"Vireo Growth Inc.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2019-03-22","sources":["MSOS","CNBS"]},
+    {"ticker":"VRNO","name":"Verano Holdings Corp.","security_type":"stock","sector":"大麻产业","theme_role":"运营商","market":"OTCQX","listing_date":"2021-02-18","sources":["MSOS","CNBS"]},
+    {"ticker":"WEED","name":"Roundhill Cannabis ETF","security_type":"etf","sector":"大麻ETF","theme_role":"ETF","market":"Cboe BZX","listing_date":"2022-04-20","sources":["LISTING"]},
+    {"ticker":"YCBD","name":"cbdMD, Inc.","security_type":"stock","sector":"大麻产业","theme_role":"CBD","market":"NYSE American","listing_date":"2017-11-17","sources":["LISTING"]},
+    {"ticker":"YOLO","name":"AdvisorShares Pure Cannabis ETF","security_type":"etf","sector":"大麻ETF","theme_role":"ETF","market":"NYSE Arca","listing_date":"2019-04-18","sources":["LISTING"]}
+  ],
+  "excluded": [
+    {"ticker":"CBSTF","name":"The Cannabist Company Holdings Inc.","reason":"Yahoo 404，无可用日K"},
+    {"ticker":"CBDHF","name":"HempFusion Wellness Inc.","reason":"MSOS零值遗留头寸，不是当前有效敞口"},
+    {"ticker":"ALEAF","name":"Aleafia Health Inc.","reason":"CNBS零值遗留头寸"},
+    {"ticker":"CLVR","name":"Clever Leaves Holdings Inc.","reason":"CNBS零值遗留头寸"},
+    {"ticker":"TCNNF","name":"Trulieve Cannabis Corp.旧OTC代码","reason":"已规范化合并到当前NYSE代码TRLV，防止重复"},
+    {"ticker":"GLASF","name":"Glass House Brands旧OTC代码","reason":"已规范化合并到当前NYSE代码GLAS，防止重复"},
+    {"ticker":"CWEB","name":"YOLO中的Charlotte's Web加拿大代码","reason":"映射为CWBHF，避免误撞Direxion中国互联网ETF"},
+    {"ticker":"LOVE","name":"YOLO中的Cannara Biotech加拿大代码","reason":"映射为LOVFF，避免误撞Lovesac家具股"}
+  ]
+}

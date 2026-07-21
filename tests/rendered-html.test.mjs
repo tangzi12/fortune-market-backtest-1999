@@ -62,10 +62,67 @@ test("ships the verified dataset, explicit period counts, and light theme", asyn
   assert.match(styles, /--bg:\s*#f8f9fb/);
   assert.match(styles, /--panel:\s*#ffffff/);
   assert.match(layout, /images:\s*\[\{ url: "\/og\.png", width: 1200, height: 630/);
+  assert.match(layout, /大麻板块联合池/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
   await assert.rejects(access(new URL("../app/_sites-preview", import.meta.url)));
   await access(projectRoot);
+});
+
+test("publishes the audited cannabis theme pool without overwriting index identity", async () => {
+  const [summaryText, indexText, manifestText] = await Promise.all([
+    readFile(new URL("../public/data/summary.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/index.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/sources/cannabis_universe_2026-07-21.json", import.meta.url), "utf8"),
+  ]);
+  const summary = JSON.parse(summaryText);
+  const stockIndex = JSON.parse(indexText);
+  const manifest = JSON.parse(manifestText);
+  const cannabis = stockIndex.stocks.filter((stock) => stock.theme_membership.includes("大麻板块"));
+  const byTicker = new Map(stockIndex.stocks.map((stock) => [stock.ticker, stock]));
+
+  assert.equal(cannabis.length, 51);
+  assert.equal(cannabis.filter((stock) => stock.security_type === "stock").length, 45);
+  assert.equal(cannabis.filter((stock) => stock.security_type === "etf").length, 6);
+  assert.equal(cannabis.filter((stock) => String(stock.listing_market).startsWith("OTC")).length, 20);
+  assert.equal(stockIndex.universe.theme_counts["大麻板块"], 51);
+  assert.equal(summary.coverage.theme_counts["大麻板块"], 51);
+  assert.equal(summary.universe.cannabis_count, 51);
+  assert.equal(summary.universe.cannabis_added_count, 49);
+  assert.equal(summary.universe.cannabis_overlap_count, 2);
+  assert.equal(summary.universe.cannabis_etf_count, 6);
+  assert.equal(summary.universe.cannabis_otc_count, 20);
+  assert.equal(manifest.metadata.included_count, 51);
+
+  for (const ticker of ["SNDL", "MSOS", "MJ", "YOLO", "CNBS", "WEED", "MSOX"]) {
+    assert.ok(byTicker.get(ticker)?.theme_membership.includes("大麻板块"), `${ticker} theme membership`);
+    await access(new URL(`../public/data/stocks/${ticker}.json`, import.meta.url));
+  }
+  assert.equal(byTicker.get("MSOS").security_type, "etf");
+  assert.equal(byTicker.get("SNDL").security_type, "stock");
+  for (const ticker of ["IIPR", "REFI"]) {
+    assert.match(byTicker.get(ticker).index_membership, /Russell 2000/);
+    assert.deepEqual(byTicker.get(ticker).theme_membership, ["大麻板块"]);
+  }
+
+  assert.equal(byTicker.get("LOVE").name, "LOVESAC COMPANY");
+  assert.deepEqual(byTicker.get("LOVE").theme_membership, []);
+  assert.equal(byTicker.get("LOVFF").name, "Cannara Biotech Inc.");
+  assert.deepEqual(byTicker.get("LOVFF").theme_membership, ["大麻板块"]);
+  for (const ticker of ["CWBHF", "LOVFF", "GLAS", "TRLV"]) {
+    assert.ok(byTicker.get(ticker)?.theme_membership.includes("大麻板块"), `${ticker} normalized ticker`);
+  }
+  for (const oldTicker of ["CWEB", "TCNNF", "GLASF"]) {
+    assert.ok(!byTicker.get(oldTicker)?.theme_membership.includes("大麻板块"), `${oldTicker} must not be tagged`);
+  }
+
+  assert.equal(summary.universe.cannabis_source_snapshots.length, 5);
+  for (const source of summary.universe.cannabis_source_snapshots) {
+    assert.match(source.path, /^data\/sources\//);
+    assert.match(source.sha256, /^[a-f0-9]{64}$/);
+    await access(new URL(`../public/${source.path}`, import.meta.url));
+  }
+  assert.ok(summary.universe.cannabis_excluded.some((row) => row.ticker === "CBSTF"));
 });
 
 test("publishes every first-luck start time and keeps the UI terminology aligned", async () => {
@@ -261,6 +318,12 @@ test("only replaces the algorithm main god when every annual improvement gate pa
   assert.match(pageSource, /完整年样本 N≥8，且实际上涨、下跌各≥3/);
   assert.match(pageSource, /<option value="reverse_fit">改进结果年运普通命中率↓<\/option>/);
   assert.match(pageSource, /<option value="Russell 2000">Russell 2000（IWM代理）<\/option>/);
+  assert.match(pageSource, /<option value="大麻板块">大麻板块<\/option>/);
+  assert.match(pageSource, /全部指数 \/ 主题/);
+  assert.match(pageSource, /<th>指数 \/ 主题<\/th>/);
+  assert.match(pageSource, /theme_membership/);
+  assert.match(pageSource, /security_type/);
+  assert.match(pageSource, /大麻板块联合池/);
   assert.match(pageSource, /IWM 可交易股票持仓代理/);
   assert.match(pageSource, /未找到同时通过三项门槛的改进候选/);
   assert.match(styles, /\.sample-table-panel table, \.full-table table \{ min-width: 1740px; \}/);

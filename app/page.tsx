@@ -18,6 +18,8 @@ type StockIndexItem = {
   name: string;
   sector: string;
   index_membership: string;
+  theme_membership: string[];
+  security_type: string;
   listing_date?: string;
   time_et?: string;
   first_luck_start_et?: string;
@@ -117,6 +119,7 @@ const DEMO_STOCKS: StockIndexItem[] = [
   ["NEM", "纽蒙特", "原材料", "S&P 500", "1940-06-30", "09:30:00", "庚辰 壬午 甲辰 己巳", "水", 48.1, 49.7],
 ].map((row) => ({
   ticker: String(row[0]), name: String(row[1]), sector: String(row[2]), index_membership: String(row[3]),
+  theme_membership: [], security_type: "stock",
   listing_date: String(row[4]), time_et: String(row[5]), bazi: String(row[6]), main_god: String(row[7]),
   annual_hit_rate: Number(row[8]), monthly_hit_rate: Number(row[9]), annual_samples: 26, monthly_samples: 312,
   listing_time_basis: row[0] === "META" || row[0] === "GOOGL" ? { basis: "precise_first_trade", confidence: "高" } : { basis: "market_data_proxy", confidence: "低" },
@@ -332,6 +335,8 @@ function normalizeIndex(payload: unknown): AppData {
       name: String(row.name ?? row.company ?? row.ticker ?? "—"),
       sector: String(row.sector ?? row.gics_sector ?? "未分类"),
       index_membership: Array.isArray(row.index_membership) ? row.index_membership.join(" · ") : String(row.index_membership ?? row.index ?? "—"),
+      theme_membership: normalizeThemeMembership(row.theme_membership ?? row.themes),
+      security_type: String(row.security_type ?? row.asset_type ?? "stock"),
       first_luck_start_et: String(row.first_luck_start_et ?? ""),
       reverse_main_god: String(row.reverse_main_god ?? ""), reverse_second_main_god: String(row.reverse_second_main_god ?? ""),
       reverse_main_god_label: String(row.reverse_main_god_label ?? "历史K线改进筛选（样本内）"),
@@ -443,11 +448,36 @@ function normalizeDetail(payload: unknown, fallback: StockIndexItem, summaryPayl
       boundary_intraday: row.boundary_intraday ?? periodEntry.boundary_intraday,
     } as PeriodRow;
   };
+  const stock = { ...fallback, ...asObject(root.stock) };
   return {
-    stock: { ...fallback, ...asObject(root.stock) } as StockIndexItem & JsonMap,
+    stock: {
+      ...stock,
+      theme_membership: normalizeThemeMembership(stock.theme_membership),
+      security_type: String(stock.security_type ?? asObject(stock).asset_type ?? "stock"),
+    } as StockIndexItem & JsonMap,
     annual: Array.isArray(root.annual) ? root.annual.map((row) => hydrate(row, false)) : [],
     monthly: Array.isArray(root.monthly) ? root.monthly.map((row) => hydrate(row, true)) : [],
   };
+}
+
+function normalizeThemeMembership(value: unknown): string[] {
+  const themes = Array.isArray(value)
+    ? value
+    : typeof value === "string"
+      ? value.split(/\s*(?:\+|·|,|，|\|)\s*/)
+      : [];
+  return [...new Set(themes.map((theme) => String(theme).trim()).filter(Boolean))];
+}
+
+function themeAndSector(stock: StockIndexItem): string {
+  return [...stock.theme_membership, stock.sector].filter(Boolean).join(" · ");
+}
+
+function universeLabel(stock: StockIndexItem): string {
+  const indexLabel = stock.index_membership && stock.index_membership !== "—"
+    ? stock.index_membership
+    : "";
+  return [indexLabel, ...stock.theme_membership].filter(Boolean).join(" · ") || "—";
 }
 
 function normalizeBasis(input: unknown, stocks: StockIndexItem[]) {
@@ -606,7 +636,7 @@ export default function Home() {
   const [notice, setNotice] = useState("");
   const [section, setSection] = useState<"overview" | "universe" | "methodology">("overview");
   const [query, setQuery] = useState("");
-  const [indexFilter, setIndexFilter] = useState("全部指数");
+  const [indexFilter, setIndexFilter] = useState("全部指数 / 主题");
   const [sectorFilter, setSectorFilter] = useState("全部板块");
   const [sortBy, setSortBy] = useState("annual");
   const [page, setPage] = useState(1);
@@ -651,8 +681,11 @@ export default function Home() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return stocks.filter((stock) => {
-      const matchesQuery = !q || `${stock.ticker} ${stock.name} ${stock.sector}`.toLowerCase().includes(q);
-      const matchesIndex = indexFilter === "全部指数" || stock.index_membership.toLowerCase().includes(indexFilter.toLowerCase());
+      const matchesQuery = !q || `${stock.ticker} ${stock.name} ${stock.sector} ${stock.theme_membership.join(" ")}`.toLowerCase().includes(q);
+      const normalizedFilter = indexFilter.toLowerCase();
+      const matchesIndex = indexFilter === "全部指数 / 主题" ||
+        stock.index_membership.toLowerCase().includes(normalizedFilter) ||
+        stock.theme_membership.some((theme) => theme.toLowerCase().includes(normalizedFilter));
       const matchesSector = sectorFilter === "全部板块" || stock.sector === sectorFilter;
       return matchesQuery && matchesIndex && matchesSector;
     }).sort((a, b) => sortBy === "monthly"
@@ -745,12 +778,12 @@ export default function Home() {
             {section === "overview" && (
               <>
                 <section className="hero">
-                  <div className="hero-copy"><span className="eyebrow">1999—2025 · HISTORICAL REVIEW</span><h1>命理信号，放进真实<br /><em>年K与节气月K</em>检验。</h1><p>股票池已扩展到 S&P 500、Nasdaq-100 与当前 Russell 2000 代理。现行命理算法保持参数冻结；历史K线改进筛选只看年运，且必须同时提高普通命中率、不降低全样本准确率与方向覆盖率才会替换原主用神。</p><div className="hero-actions"><button className="primary" onClick={() => navigate("universe")}>查看全部股票 <span>→</span></button><button onClick={() => navigate("methodology")}>阅读计算口径</button></div></div>
+                  <div className="hero-copy"><span className="eyebrow">1999—2025 · HISTORICAL REVIEW</span><h1>命理信号，放进真实<br /><em>年K与节气月K</em>检验。</h1><p>股票池已扩展到 S&P 500、Nasdaq-100、当前 Russell 2000 代理与大麻板块联合池。现行命理算法保持参数冻结；历史K线改进筛选只看年运，且必须同时提高普通命中率、不降低全样本准确率与方向覆盖率才会替换原主用神。</p><div className="hero-actions"><button className="primary" onClick={() => navigate("universe")}>查看全部股票 <span>→</span></button><button onClick={() => navigate("methodology")}>阅读计算口径</button></div></div>
                   <div className="hero-terminal" aria-label="回测快照"><div className="terminal-head"><span><i /> BACKTEST / AGGREGATE</span><b>ET · 节气切分</b></div><MiniBars values={sparkValues} /><div className="terminal-stats"><div><span>年运同步率</span><strong>{percent(annualRate)}</strong></div><div><span>月运同步率</span><strong>{percent(monthlyRate)}</strong></div><div><span>股票覆盖</span><strong>{metric(coverage, ["stocks", "stock_count", "stock_count_with_prices"], stocks.length)}</strong></div></div></div>
                 </section>
 
                 <section className="kpi-strip" aria-label="市场回测关键指标">
-                  <div><span>覆盖股票</span><strong>{metric(coverage, ["stocks", "stock_count", "stock_count_with_prices"], stocks.length)}</strong><small>S&P 500 ∪ Nasdaq-100 ∪ Russell 2000 代理</small></div>
+                  <div><span>覆盖股票</span><strong>{metric(coverage, ["stocks", "stock_count", "stock_count_with_prices"], stocks.length)}</strong><small>S&P 500 ∪ Nasdaq-100 ∪ Russell 2000 代理 ∪ 大麻板块联合池</small></div>
                   <div><span>回测区间</span><strong>{metric(coverage, ["start_year"], 1999)}—{metric(coverage, ["end_year"], 2025)}</strong><small>上市后首个有效周期起</small></div>
                   <div><span>年运方向样本</span><strong>{metric(annualMetrics, ["directional_samples", "samples", "sample_count"])?.toLocaleString() ?? "—"}</strong><small>立春至下一立春</small></div>
                   <div><span>节气月方向样本</span><strong>{metric(monthlyMetrics, ["directional_samples", "samples", "sample_count"])?.toLocaleString() ?? "—"}</strong><small>十二节气月独立预测</small></div>
@@ -777,10 +810,10 @@ export default function Home() {
 
             {section === "universe" && (
               <section className="universe-section">
-                <div className="section-title"><span className="eyebrow">STOCK UNIVERSE</span><h1>全部股票回测</h1><p>搜索代码或公司，按指数、板块与命中率筛选。点击任一股票进入年运与节气月运明细。</p></div>
+                <div className="section-title"><span className="eyebrow">STOCK UNIVERSE</span><h1>全部股票回测</h1><p>搜索代码或公司，按指数、主题、板块与命中率筛选。点击任一股票进入年运与节气月运明细。</p></div>
                 <div className="toolbar panel">
                   <label className="search-box"><span>⌕</span><input value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} placeholder="搜索 AAPL、苹果、信息技术…" aria-label="搜索股票" />{query && <button onClick={() => { setQuery(""); setPage(1); }} aria-label="清除搜索">×</button>}</label>
-                  <select value={indexFilter} onChange={(e) => { setIndexFilter(e.target.value); setPage(1); }} aria-label="按指数筛选"><option>全部指数</option><option>S&P 500</option><option>Nasdaq-100</option><option value="Russell 2000">Russell 2000（IWM代理）</option></select>
+                  <select value={indexFilter} onChange={(e) => { setIndexFilter(e.target.value); setPage(1); }} aria-label="按指数或主题筛选"><option>全部指数 / 主题</option><option>S&P 500</option><option>Nasdaq-100</option><option value="Russell 2000">Russell 2000（IWM代理）</option><option value="大麻板块">大麻板块</option></select>
                   <select value={sectorFilter} onChange={(e) => { setSectorFilter(e.target.value); setPage(1); }} aria-label="按板块筛选"><option>全部板块</option>{sectors.map((sector) => <option key={sector}>{sector}</option>)}</select>
                   <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }} aria-label="排序"><option value="annual">原主用神年运普通命中率↓</option><option value="reverse_fit">改进结果年运普通命中率↓</option><option value="monthly">月运方向命中率 ↓</option><option value="samples">方向样本 ↓</option><option value="ticker">代码 A—Z</option></select>
                 </div>
@@ -796,7 +829,7 @@ export default function Home() {
                 <div className="detail-top"><button className="back-button" onClick={() => { setSelected(null); setDetail(null); }}>← 关闭个股详情</button><span>{detailDemo ? "演示详情 · 数据文件就绪后自动替换" : "本地历史数据"}</span></div>
                 {detailLoading || !detail ? <div className="loading-screen compact"><i /><strong>正在读取 {selected.ticker}</strong></div> : (
                   <>
-                    <header className="stock-hero panel"><div className="stock-identity"><span className="ticker-avatar">{selected.ticker.slice(0, 3)}</span><div><span className="eyebrow">{detail.stock.index_membership || selected.index_membership}</span><h1>{detail.stock.ticker} <em>{detail.stock.name}</em></h1><div className="stock-times"><span>{detail.stock.sector} · 上市 {detail.stock.listing_date || "—"} {detail.stock.time_et || "—"} ET</span><span>起运时间 {String(detail.stock.first_luck_start_et || "—")} ET</span></div></div></div><div className="stock-bazi"><div><span>上市时刻推算八字</span><strong>{String(detail.stock.bazi ?? "—")}</strong></div><div className="algorithm-god-card"><span>算法主用神 · 命理算法</span><strong>{String(detail.stock.main_god ?? "—")}</strong></div></div><div className={`basis-badge ${selectedBasis.proxy ? "proxy" : "verified"}`}><span>{selectedBasis.label}</span><strong>置信度 {selectedBasis.confidence}</strong></div></header>
+                    <header className="stock-hero panel"><div className="stock-identity"><span className="ticker-avatar">{selected.ticker.slice(0, 3)}</span><div><span className="eyebrow">{universeLabel(detail.stock)}</span><h1>{detail.stock.ticker} <em>{detail.stock.name}</em></h1><div className="stock-times"><span>{detail.stock.sector} · 上市 {detail.stock.listing_date || "—"} {detail.stock.time_et || "—"} ET</span><span>起运时间 {String(detail.stock.first_luck_start_et || "—")} ET</span></div></div></div><div className="stock-bazi"><div><span>上市时刻推算八字</span><strong>{String(detail.stock.bazi ?? "—")}</strong></div><div className="algorithm-god-card"><span>算法主用神 · 命理算法</span><strong>{String(detail.stock.main_god ?? "—")}</strong></div></div><div className={`basis-badge ${selectedBasis.proxy ? "proxy" : "verified"}`}><span>{selectedBasis.label}</span><strong>置信度 {selectedBasis.confidence}</strong></div></header>
                     <ReverseGodComparison stock={detail.stock} />
                     {detailError && <div className="detail-warning"><strong>数据暂缺</strong><span>{detailError} 页面不会用模拟行情代替生产结果。</span></div>}
                     {selectedBasis.proxy && <div className="detail-warning"><strong>时刻依据警示</strong><span>本股票使用“{selectedBasis.label}”，并非已核实的真实首笔成交时刻；八字与结果应视为代理口径敏感性测试。</span></div>}
@@ -898,14 +931,14 @@ function StockTable({ rows, onOpen }: { rows: StockIndexItem[]; onOpen: (stock: 
   return (
     <div className="table-scroll">
       <table>
-        <thead><tr><th>股票</th><th>指数 / 板块</th><th>上市时间 ET</th><th>起运时间 ET</th><th>上市时刻推算八字</th><th><span className="th-stack">原主用神<small>命理算法选定 · 年运普通命中</small></span></th><th><span className="th-stack">改进筛选结果<small>三门槛通过才替换 · full BA仅诊断/破平</small></span></th><th>原主用神年运普通命中<br />（排除中性）</th><th>节气月方向命中</th><th>周期构成</th><th><span className="sr-only">操作</span></th></tr></thead>
+        <thead><tr><th>股票</th><th>指数 / 主题</th><th>上市时间 ET</th><th>起运时间 ET</th><th>上市时刻推算八字</th><th><span className="th-stack">原主用神<small>命理算法选定 · 年运普通命中</small></span></th><th><span className="th-stack">改进筛选结果<small>三门槛通过才替换 · full BA仅诊断/破平</small></span></th><th>原主用神年运普通命中<br />（排除中性）</th><th>节气月方向命中</th><th>周期构成</th><th><span className="sr-only">操作</span></th></tr></thead>
         <tbody>{rows.map((stock) => {
           const info = basisInfo(stock.listing_time_basis);
           const luckStart = splitEtDateTime(stock.first_luck_start_et);
           return (
             <tr key={stock.ticker} onClick={() => onOpen(stock)}>
               <td><div className="stock-cell"><b>{stock.ticker}</b><span>{stock.name}</span></div></td>
-              <td><div className="stacked"><span>{stock.index_membership}</span><small>{stock.sector}</small></div></td>
+              <td><div className="stacked"><span>{stock.index_membership || "—"}</span><small>{themeAndSector(stock)}</small></div></td>
               <td><div className="stacked mono"><span>{stock.listing_date || "—"}</span><small>{stock.time_et || "—"} <em className={info.proxy ? "proxy-text" : "verified-text"}>{info.label}</em></small></div></td>
               <td className="luck-start-cell"><div className="stacked mono"><span>{luckStart.date}</span><small>{luckStart.time}</small></div></td>
               <td className="bazi-cell">{stock.bazi || "—"}</td>
@@ -974,6 +1007,12 @@ function Methodology({ summary, basis, proxyCount }: { summary: JsonMap; basis: 
   const russellSourceMeta = asObject(universe.russell2000_source);
   const russellSource = String(universe.russell2000_source_url || "https://www.ishares.com/us/products/239710/ishares-russell-2000-etf/latest-holdings.csv");
   const russellSnapshot = String(russellSourceMeta.snapshot_path || "");
+  const cannabisCount = metric(universe, ["cannabis_count"], 0);
+  const cannabisEtfCount = metric(universe, ["cannabis_etf_count"], 0);
+  const cannabisOtcCount = metric(universe, ["cannabis_otc_count"], 0);
+  const cannabisExcluded = Array.isArray(universe.cannabis_excluded) ? universe.cannabis_excluded.length : 0;
+  const cannabisSnapshots = Array.isArray(universe.cannabis_source_snapshots) ? universe.cannabis_source_snapshots.map(asObject) : [];
+  const cannabisManifest = String(cannabisSnapshots.find((source) => source.id === "CANNABIS_UNION")?.path || "");
   return (
     <section className="method-section">
       <div className="section-title"><span className="eyebrow">METHODOLOGY & DATA QUALITY</span><h1>先把验证口径说清楚</h1><p>计算规则、行情周期与限制全部公开。任何命中率都必须和数据质量、样本覆盖及简单基准一起看。</p></div>
@@ -987,7 +1026,7 @@ function Methodology({ summary, basis, proxyCount }: { summary: JsonMap; basis: 
         </article>
         <aside className="method-side">
           <article className="panel audit-card"><span className="eyebrow">LISTING TIME AUDIT</span><h3>上市时间依据分层</h3>{basis.map((item, index) => <div className="audit-row" key={item.label}><i className={`basis-color c${index}`} /><span>{item.label}</span><strong>{item.count}</strong></div>)}<p className="audit-warning">其中 {proxyCount || 280} 只为行情起点代理，相关命盘不是经核验的真实 IPO 八字。</p></article>
-          <article className="panel quality-card"><span className="eyebrow">KNOWN LIMITATIONS</span><h3>数据质量与偏差</h3><ul><li><i className="warn" /><span><strong>Russell 代理口径</strong>{russellDate} 的 IWM 可交易股票持仓代理纳入 {russellCount?.toLocaleString() ?? "—"} 只；它不是 FTSE Russell 授权成分文件，另有 {unavailableCount ?? 0} 个持仓因未通过当前上市状态、可用行情、上市时间或价格质量校验而未计算。{russellSnapshot && <a href={russellSnapshot}>冻结快照 ↓</a>}<a href={russellSource} target="_blank" rel="noreferrer">官方最新源 ↗</a></span></li><li><i className="warn" /><span><strong>幸存者与前视偏差</strong>以当前成分股回看历史，不能代表历史时点的完整指数。</span></li><li><i className="warn" /><span><strong>时间代理误差</strong>常规开盘和行情起点可能改变时柱，需做置信度分层。</span></li><li><i className="warn" /><span><strong>改进筛选数据泄漏</strong>主用神改进值属于样本内拟合，不能与冻结参数的历史回测或样本外预测混称。</span></li><li><i className="ok" /><span><strong>本地复权日线</strong>年K与节气月K从同一底层日线聚合。</span></li><li><i className="ok" /><span><strong>参数冻结</strong>原命理算法回测期间不按命中率反向调参。</span></li></ul><div className="quality-meta"><span>复权缺口记录</span><strong>{metric(quality, ["adjustment_fallback_rows", "adjustment_factor_gaps", "honda_adjustment_gap"], 0)?.toLocaleString() ?? "—"} 个交易日</strong></div></article>
+          <article className="panel quality-card"><span className="eyebrow">KNOWN LIMITATIONS</span><h3>数据质量与偏差</h3><ul><li><i className="warn" /><span><strong>Russell 代理口径</strong>{russellDate} 的 IWM 可交易股票持仓代理纳入 {russellCount?.toLocaleString() ?? "—"} 只；它不是 FTSE Russell 授权成分文件，另有 {unavailableCount ?? 0} 个持仓因未通过当前上市状态、可用行情、上市时间或价格质量校验而未计算。{russellSnapshot && <a href={russellSnapshot}>冻结快照 ↓</a>}<a href={russellSource} target="_blank" rel="noreferrer">官方最新源 ↗</a></span></li><li><i className="warn" /><span><strong>大麻板块联合池</strong>当前纳入 {cannabisCount ?? 0} 只，其中 ETF {cannabisEtfCount ?? 0} 只、OTC {cannabisOtcCount ?? 0} 只；来源为 MSOS、YOLO、MJ、CNBS 当前持仓与美国仍挂牌的核心业务证券。代码已处理 CWEB/LOVE 撞码和 GLAS/TRLV 换码，另有 {cannabisExcluded} 个零值、重复或无日K项目明确排除。{cannabisManifest && <a href={`/${cannabisManifest}`}>标准化清单 ↓</a>}</span></li><li><i className="warn" /><span><strong>幸存者与前视偏差</strong>以当前成分股与当前主题池回看历史，不能代表历史时点的完整股票池。</span></li><li><i className="warn" /><span><strong>时间代理误差</strong>常规开盘和行情起点可能改变时柱，需做置信度分层。</span></li><li><i className="warn" /><span><strong>改进筛选数据泄漏</strong>主用神改进值属于样本内拟合，不能与冻结参数的历史回测或样本外预测混称。</span></li><li><i className="ok" /><span><strong>本地复权日线</strong>年K与节气月K从同一底层日线聚合。</span></li><li><i className="ok" /><span><strong>参数冻结</strong>原命理算法回测期间不按命中率反向调参。</span></li></ul><div className="quality-meta"><span>复权缺口记录</span><strong>{metric(quality, ["adjustment_fallback_rows", "adjustment_factor_gaps", "honda_adjustment_gap"], 0)?.toLocaleString() ?? "—"} 个交易日</strong></div></article>
         </aside>
       </div>
       <div className="disclaimer"><strong>研究边界</strong><p>本页面用于检验一套规则与历史行情的统计同步程度，不构成投资建议、收益承诺或因果证明。历史拟合即使高于基准，也可能来自样本选择、市场结构或偶然性。</p></div>
