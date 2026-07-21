@@ -1,8 +1,16 @@
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
+import { gunzipSync } from "node:zlib";
 
 const projectRoot = new URL("../", import.meta.url);
+
+async function readMaybeGzipText(url) {
+  const payload = await readFile(url);
+  return url.pathname.endsWith(".gz")
+    ? gunzipSync(payload).toString("utf8")
+    : payload.toString("utf8");
+}
 
 async function render() {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -75,8 +83,8 @@ test("publishes the audited cannabis theme pool without overwriting index identi
     readFile(new URL("../public/data/index.json", import.meta.url), "utf8"),
     readFile(new URL("../public/data/sources/cannabis_universe_2026-07-21.json", import.meta.url), "utf8"),
     readFile(new URL("../public/data/sources/cannabis_price_quality_policy_2026-07-22.json", import.meta.url), "utf8"),
-    readFile(new URL("../public/data/stocks/GRUSF.json", import.meta.url), "utf8"),
-    readFile(new URL("../public/data/stocks/INCR.json", import.meta.url), "utf8"),
+    readMaybeGzipText(new URL("../public/data/stocks/GRUSF.json.gz", import.meta.url)),
+    readMaybeGzipText(new URL("../public/data/stocks/INCR.json.gz", import.meta.url)),
   ]);
   const summary = JSON.parse(summaryText);
   const stockIndex = JSON.parse(indexText);
@@ -103,7 +111,7 @@ test("publishes the audited cannabis theme pool without overwriting index identi
 
   for (const ticker of ["SNDL", "MSOS", "MJ", "YOLO", "CNBS", "WEED", "MSOX"]) {
     assert.ok(byTicker.get(ticker)?.theme_membership.includes("大麻板块"), `${ticker} theme membership`);
-    await access(new URL(`../public/data/stocks/${ticker}.json`, import.meta.url));
+    await access(new URL(`../public/data/stocks/${ticker}.json.gz`, import.meta.url));
   }
   assert.equal(byTicker.get("MSOS").security_type, "etf");
   assert.equal(byTicker.get("SNDL").security_type, "stock");
@@ -156,7 +164,7 @@ test("publishes every first-luck start time and keeps the UI terminology aligned
     readFile(new URL("../public/data/index.json", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../public/data/summary.json", import.meta.url), "utf8"),
-    readFile(new URL("../public/data/stocks/META.json", import.meta.url), "utf8"),
+    readMaybeGzipText(new URL("../public/data/stocks/META.json.gz", import.meta.url)),
   ]);
   const stockIndex = JSON.parse(indexText);
   const summary = JSON.parse(summaryText);
@@ -166,7 +174,7 @@ test("publishes every first-luck start time and keeps the UI terminology aligned
   assert.ok(stockIndex.stocks.length > 2400);
   for (const stock of stockIndex.stocks) {
     assert.match(String(stock.first_luck_start_et ?? ""), firstLuckPattern, `${stock.ticker} index first_luck_start_et`);
-    const detail = JSON.parse(await readFile(new URL(`../public/data/${stock.data_path}`, import.meta.url), "utf8"));
+    const detail = JSON.parse(await readMaybeGzipText(new URL(`../public/data/${stock.data_path}`, import.meta.url)));
     assert.match(String(detail.stock.first_luck_start_et ?? ""), firstLuckPattern, `${stock.ticker} detail first_luck_start_et`);
     assert.equal(stock.first_luck_start_et, detail.stock.first_luck_start_et, `${stock.ticker} first-luck time must match`);
   }
@@ -202,8 +210,8 @@ test("only replaces the algorithm main god when every annual improvement gate pa
     readFile(new URL("../public/data/index.json", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
-    readFile(new URL("../public/data/stocks/COST.json", import.meta.url), "utf8"),
-    readFile(new URL("../public/data/stocks/META.json", import.meta.url), "utf8"),
+    readMaybeGzipText(new URL("../public/data/stocks/COST.json.gz", import.meta.url)),
+    readMaybeGzipText(new URL("../public/data/stocks/META.json.gz", import.meta.url)),
     readFile(new URL("../public/data/summary.json", import.meta.url), "utf8"),
   ]);
   const stockIndex = JSON.parse(indexText);
@@ -349,6 +357,7 @@ test("only replaces the algorithm main god when every annual improvement gate pa
   assert.match(pageSource, /<th>指数 \/ 主题<\/th>/);
   assert.match(pageSource, /theme_membership/);
   assert.match(pageSource, /security_type/);
+  assert.match(pageSource, /DecompressionStream/);
   assert.match(pageSource, /大麻板块联合池/);
   assert.match(pageSource, /IWM 可交易股票持仓代理/);
   assert.match(pageSource, /未找到同时通过三项门槛的改进候选/);

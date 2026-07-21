@@ -81,6 +81,7 @@ type StockIndexItem = {
   monthly_hits?: number;
   listing_time_basis?: unknown;
   basis_confidence?: string;
+  data_path?: string;
 };
 
 type PeriodRow = JsonMap & {
@@ -564,7 +565,19 @@ async function fetchJson(path: string) {
     : new URL(relativePath, document.baseURI).toString();
   const response = await fetch(resolvedPath, { cache: "no-store" });
   if (!response.ok) throw new Error(`${response.status}`);
-  return response.json();
+  if (!relativePath.endsWith(".gz")) return response.json();
+  const bytes = await response.arrayBuffer();
+  const signature = new Uint8Array(bytes, 0, Math.min(2, bytes.byteLength));
+  if (signature[0] !== 0x1f || signature[1] !== 0x8b) {
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+  if (typeof DecompressionStream === "undefined") {
+    throw new Error("当前浏览器不支持 gzip 分片解压");
+  }
+  const stream = new Blob([bytes])
+    .stream()
+    .pipeThrough(new DecompressionStream("gzip"));
+  return JSON.parse(await new Response(stream).text());
 }
 
 function MiniBars({ values }: { values: number[] }) {
@@ -722,7 +735,9 @@ export default function Home() {
     setDetailError("");
     setDetailYear("全部");
     try {
-      const payload = await fetchJson(`/data/stocks/${encodeURIComponent(stock.ticker)}.json`);
+      const payload = await fetchJson(
+        `/data/${stock.data_path || `stocks/${encodeURIComponent(stock.ticker)}.json.gz`}`,
+      );
       const normalized = normalizeDetail(payload, stock, summary);
       if (!normalized.annual.length && !normalized.monthly.length) throw new Error("empty");
       setDetail(normalized);

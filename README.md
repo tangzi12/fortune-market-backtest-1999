@@ -31,7 +31,7 @@ npm test
 npm run build:pages
 ```
 
-网页读取 `public/data/index.json`、`public/data/summary.json` 和 `public/data/stocks/*.json`。GitHub Pages 静态构建输出到 `dist-pages/`；Sites 构建输出到 `dist/`。
+网页读取 `public/data/index.json`、`public/data/summary.json` 和按需解压的 `public/data/stocks/*.json.gz`。gzip 只降低静态传输与部署体积，不删减任何年运、月运或 K 线字段。GitHub Pages 静态构建输出到 `dist-pages/`；Sites 构建输出到 `dist/`。
 
 ## 研究边界
 
