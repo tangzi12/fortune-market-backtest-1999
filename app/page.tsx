@@ -499,7 +499,11 @@ function basisInfo(input: unknown) {
 }
 
 async function fetchJson(path: string) {
-  const response = await fetch(path, { cache: "no-store" });
+  const relativePath = path.replace(/^\/+/, "");
+  const resolvedPath = typeof document === "undefined"
+    ? `/${relativePath}`
+    : new URL(relativePath, document.baseURI).toString();
+  const response = await fetch(resolvedPath, { cache: "no-store" });
   if (!response.ok) throw new Error(`${response.status}`);
   return response.json();
 }
