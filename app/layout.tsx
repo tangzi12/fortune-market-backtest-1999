@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: {
     title: "年运历史回测 · 命理信号 × 真实K线",
-    description: "覆盖 S&P 500 与 Nasdaq-100 共 518 只股票，对照复权年K与节气月K验证历史同步程度。",
+    description: "覆盖 S&P 500、Nasdaq-100 与当前 Russell 2000 代理股票，对照复权年K与节气月K验证历史同步程度。",
     locale: "zh_CN",
     type: "website",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "年运历史回测" }],

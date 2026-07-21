@@ -633,7 +633,7 @@ export default function Home() {
         if (cancelled) return;
         setIndexData({ generated_at: "演示预览", period: { start: 1999, end: 2025 }, stocks: DEMO_STOCKS });
         setSummary({
-          coverage: { stocks: 518, start_year: 1999, end_year: 2025, trading_days: 3066177 },
+          coverage: { stocks: DEMO_STOCKS.length, start_year: 1999, end_year: 2025, trading_days: 3066177 },
           annual_metrics: { hit_rate: 0.584, samples: 6842, up_hit_rate: 0.617, down_hit_rate: 0.531 },
           monthly_metrics: { hit_rate: 0.537, samples: 76420 }, baselines: { always_up: 0.552 },
           basis_breakdown: { precise_first_trade: 3, class_open: 1, regular_open: 234, market_data_proxy: 280 },
@@ -710,6 +710,9 @@ export default function Home() {
   const monthlyRate = metric(monthlyMetrics, ["hit_rate", "accuracy", "sync_rate"], stocks.length ? stocks.reduce((s, x) => s + (x.monthly_hit_rate || 0), 0) / stocks.length : undefined);
   const annualBaseline = metric(asObject(baselines.annual_always_up), ["same_evaluable_hit_rate", "all_complete_hit_rate"], metric(baselines, ["always_up", "always_bullish"]));
   const monthlyBaseline = metric(asObject(baselines.monthly_always_up), ["same_evaluable_hit_rate", "all_complete_hit_rate"]);
+  const compareBaseline = (value?: number, baseline?: number) => value === undefined || baseline === undefined
+    ? "待比较"
+    : Math.abs(value - baseline) < 1e-12 ? "持平" : value > baseline ? "高于" : "低于";
   const basis = normalizeBasis(summary.basis_breakdown, stocks);
   const proxyCount = basis.find((item) => item.label === "行情起点代理")?.count ?? 0;
   const yearly = Array.isArray(summary.by_year) ? summary.by_year.map(asObject) : [];
@@ -732,7 +735,7 @@ export default function Home() {
           <button className={section === "universe" ? "active" : ""} onClick={() => navigate("universe")}>股票全表</button>
           <button className={section === "methodology" ? "active" : ""} onClick={() => navigate("methodology")}>方法与质量</button>
         </nav>
-        <div className="data-pill"><i className={demo ? "amber" : "green"} /><span>{demo ? "演示预览" : "本地40年行情"}</span></div>
+        <div className="data-pill"><i className={demo ? "amber" : "green"} /><span>{demo ? "演示预览" : "本地复权行情"}</span></div>
       </header>
 
       <div className="page-shell">
@@ -742,12 +745,12 @@ export default function Home() {
             {section === "overview" && (
               <>
                 <section className="hero">
-                  <div className="hero-copy"><span className="eyebrow">1999—2025 · HISTORICAL REVIEW</span><h1>命理信号，放进真实<br /><em>年K与节气月K</em>检验。</h1><p>先看过去能否同步，再谈未来。现行命理算法保持参数冻结；历史K线改进筛选只看年运，且必须同时提高普通命中率、不降低全样本准确率与方向覆盖率才会替换原主用神。</p><div className="hero-actions"><button className="primary" onClick={() => navigate("universe")}>查看全部股票 <span>→</span></button><button onClick={() => navigate("methodology")}>阅读计算口径</button></div></div>
-                  <div className="hero-terminal" aria-label="回测快照"><div className="terminal-head"><span><i /> BACKTEST / AGGREGATE</span><b>ET · 节气切分</b></div><MiniBars values={sparkValues} /><div className="terminal-stats"><div><span>年运同步率</span><strong>{percent(annualRate)}</strong></div><div><span>月运同步率</span><strong>{percent(monthlyRate)}</strong></div><div><span>股票覆盖</span><strong>{metric(coverage, ["stocks", "stock_count", "stock_count_with_prices"], stocks.length || 518)}</strong></div></div></div>
+                  <div className="hero-copy"><span className="eyebrow">1999—2025 · HISTORICAL REVIEW</span><h1>命理信号，放进真实<br /><em>年K与节气月K</em>检验。</h1><p>股票池已扩展到 S&P 500、Nasdaq-100 与当前 Russell 2000 代理。现行命理算法保持参数冻结；历史K线改进筛选只看年运，且必须同时提高普通命中率、不降低全样本准确率与方向覆盖率才会替换原主用神。</p><div className="hero-actions"><button className="primary" onClick={() => navigate("universe")}>查看全部股票 <span>→</span></button><button onClick={() => navigate("methodology")}>阅读计算口径</button></div></div>
+                  <div className="hero-terminal" aria-label="回测快照"><div className="terminal-head"><span><i /> BACKTEST / AGGREGATE</span><b>ET · 节气切分</b></div><MiniBars values={sparkValues} /><div className="terminal-stats"><div><span>年运同步率</span><strong>{percent(annualRate)}</strong></div><div><span>月运同步率</span><strong>{percent(monthlyRate)}</strong></div><div><span>股票覆盖</span><strong>{metric(coverage, ["stocks", "stock_count", "stock_count_with_prices"], stocks.length)}</strong></div></div></div>
                 </section>
 
                 <section className="kpi-strip" aria-label="市场回测关键指标">
-                  <div><span>覆盖股票</span><strong>{metric(coverage, ["stocks", "stock_count", "stock_count_with_prices"], stocks.length || 518)}</strong><small>S&P 500 ∪ Nasdaq-100</small></div>
+                  <div><span>覆盖股票</span><strong>{metric(coverage, ["stocks", "stock_count", "stock_count_with_prices"], stocks.length)}</strong><small>S&P 500 ∪ Nasdaq-100 ∪ Russell 2000 代理</small></div>
                   <div><span>回测区间</span><strong>{metric(coverage, ["start_year"], 1999)}—{metric(coverage, ["end_year"], 2025)}</strong><small>上市后首个有效周期起</small></div>
                   <div><span>年运方向样本</span><strong>{metric(annualMetrics, ["directional_samples", "samples", "sample_count"])?.toLocaleString() ?? "—"}</strong><small>立春至下一立春</small></div>
                   <div><span>节气月方向样本</span><strong>{metric(monthlyMetrics, ["directional_samples", "samples", "sample_count"])?.toLocaleString() ?? "—"}</strong><small>十二节气月独立预测</small></div>
@@ -758,7 +761,7 @@ export default function Home() {
                   <article className="panel signal-panel">
                     <div className="panel-head"><div><span className="eyebrow">MODEL VALIDATION</span><h2>方向同步率</h2></div><span className="panel-note">中性信号单列，不混入方向命中</span></div>
                     <div className="accuracy-stage"><div className="accuracy-ring" style={{ "--value": `${Math.max(0, Math.min(100, (annualRate ?? 0) <= 1 ? (annualRate ?? 0) * 100 : (annualRate ?? 0)))}%` } as React.CSSProperties}><div><strong>{percent(annualRate)}</strong><span>年运总体</span></div></div><div className="accuracy-breakdown"><div><span>预测上涨命中</span><b className="up">{percent(metric(annualMetrics, ["up_hit_rate", "bullish_hit_rate"]))}</b><i><em style={{ width: percent(metric(annualMetrics, ["up_hit_rate", "bullish_hit_rate"], 0)) }} /></i></div><div><span>预测下跌命中</span><b className="down">{percent(metric(annualMetrics, ["down_hit_rate", "bearish_hit_rate"]))}</b><i><em className="red" style={{ width: percent(metric(annualMetrics, ["down_hit_rate", "bearish_hit_rate"], 0)) }} /></i></div><div><span>节气月独立命中</span><b>{percent(monthlyRate)}</b><i><em className="violet" style={{ width: percent(monthlyRate ?? 0) }} /></i></div></div></div>
-                    <div className="model-verdict"><span>基准检验</span><div><strong>当前年运 {percent(annualRate)}</strong><i>低于</i><b>永久看涨 {percent(annualBaseline)}</b></div><div><strong>当前月运 {percent(monthlyRate)}</strong><i>低于</i><b>永久看涨 {percent(monthlyBaseline)}</b></div><p>首轮结果尚不支持该方法具备超越简单方向基准的历史预测优势。</p></div>
+                    <div className="model-verdict"><span>基准检验</span><div><strong>当前年运 {percent(annualRate)}</strong><i>{compareBaseline(annualRate, annualBaseline)}</i><b>永久看涨 {percent(annualBaseline)}</b></div><div><strong>当前月运 {percent(monthlyRate)}</strong><i>{compareBaseline(monthlyRate, monthlyBaseline)}</i><b>永久看涨 {percent(monthlyBaseline)}</b></div><p>这里仅比较同一批可判定方向样本；高于简单基准也不等于具备样本外预测能力。</p></div>
                     <div className="formula-ribbon"><span>月运总分</span><strong>36% 行运</strong><i>+</i><strong>24% 流年</strong><i>+</i><strong>40% 流月</strong></div>
                   </article>
                   <article className="panel basis-panel">
@@ -777,7 +780,7 @@ export default function Home() {
                 <div className="section-title"><span className="eyebrow">STOCK UNIVERSE</span><h1>全部股票回测</h1><p>搜索代码或公司，按指数、板块与命中率筛选。点击任一股票进入年运与节气月运明细。</p></div>
                 <div className="toolbar panel">
                   <label className="search-box"><span>⌕</span><input value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} placeholder="搜索 AAPL、苹果、信息技术…" aria-label="搜索股票" />{query && <button onClick={() => { setQuery(""); setPage(1); }} aria-label="清除搜索">×</button>}</label>
-                  <select value={indexFilter} onChange={(e) => { setIndexFilter(e.target.value); setPage(1); }} aria-label="按指数筛选"><option>全部指数</option><option>S&P 500</option><option>Nasdaq-100</option></select>
+                  <select value={indexFilter} onChange={(e) => { setIndexFilter(e.target.value); setPage(1); }} aria-label="按指数筛选"><option>全部指数</option><option>S&P 500</option><option>Nasdaq-100</option><option value="Russell 2000">Russell 2000（IWM代理）</option></select>
                   <select value={sectorFilter} onChange={(e) => { setSectorFilter(e.target.value); setPage(1); }} aria-label="按板块筛选"><option>全部板块</option>{sectors.map((sector) => <option key={sector}>{sector}</option>)}</select>
                   <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }} aria-label="排序"><option value="annual">原主用神年运普通命中率↓</option><option value="reverse_fit">改进结果年运普通命中率↓</option><option value="monthly">月运方向命中率 ↓</option><option value="samples">方向样本 ↓</option><option value="ticker">代码 A—Z</option></select>
                 </div>
@@ -964,6 +967,13 @@ function CalculationTable({ rows, period }: { rows: PeriodRow[]; period: "annual
 
 function Methodology({ summary, basis, proxyCount }: { summary: JsonMap; basis: { label: string; count: number }[]; proxyCount: number }) {
   const quality = asObject(summary.data_quality);
+  const universe = asObject(summary.universe);
+  const russellDate = String(universe.holdings_date || "未注明日期");
+  const russellCount = metric(universe, ["russell2000_proxy_count"], 0);
+  const unavailableCount = metric(universe, ["russell2000_unavailable_count"], 0);
+  const russellSourceMeta = asObject(universe.russell2000_source);
+  const russellSource = String(universe.russell2000_source_url || "https://www.ishares.com/us/products/239710/ishares-russell-2000-etf/latest-holdings.csv");
+  const russellSnapshot = String(russellSourceMeta.snapshot_path || "");
   return (
     <section className="method-section">
       <div className="section-title"><span className="eyebrow">METHODOLOGY & DATA QUALITY</span><h1>先把验证口径说清楚</h1><p>计算规则、行情周期与限制全部公开。任何命中率都必须和数据质量、样本覆盖及简单基准一起看。</p></div>
@@ -977,7 +987,7 @@ function Methodology({ summary, basis, proxyCount }: { summary: JsonMap; basis: 
         </article>
         <aside className="method-side">
           <article className="panel audit-card"><span className="eyebrow">LISTING TIME AUDIT</span><h3>上市时间依据分层</h3>{basis.map((item, index) => <div className="audit-row" key={item.label}><i className={`basis-color c${index}`} /><span>{item.label}</span><strong>{item.count}</strong></div>)}<p className="audit-warning">其中 {proxyCount || 280} 只为行情起点代理，相关命盘不是经核验的真实 IPO 八字。</p></article>
-          <article className="panel quality-card"><span className="eyebrow">KNOWN LIMITATIONS</span><h3>数据质量与偏差</h3><ul><li><i className="warn" /><span><strong>幸存者偏差</strong>以当前成分股回看历史，不能代表历史时点的完整指数。</span></li><li><i className="warn" /><span><strong>时间代理误差</strong>常规开盘和行情起点可能改变时柱，需做置信度分层。</span></li><li><i className="warn" /><span><strong>改进筛选数据泄漏</strong>主用神改进值属于样本内拟合，不能与冻结参数的历史回测或样本外预测混称。</span></li><li><i className="ok" /><span><strong>本地复权日线</strong>年K与节气月K从同一底层日线聚合。</span></li><li><i className="ok" /><span><strong>参数冻结</strong>原命理算法回测期间不按命中率反向调参。</span></li></ul><div className="quality-meta"><span>复权缺口记录</span><strong>{metric(quality, ["adjustment_factor_gaps", "honda_adjustment_gap"], 17)} 个交易日</strong></div></article>
+          <article className="panel quality-card"><span className="eyebrow">KNOWN LIMITATIONS</span><h3>数据质量与偏差</h3><ul><li><i className="warn" /><span><strong>Russell 代理口径</strong>{russellDate} 的 IWM 可交易股票持仓代理纳入 {russellCount?.toLocaleString() ?? "—"} 只；它不是 FTSE Russell 授权成分文件，另有 {unavailableCount ?? 0} 个持仓因未通过当前上市状态、可用行情、上市时间或价格质量校验而未计算。{russellSnapshot && <a href={russellSnapshot}>冻结快照 ↓</a>}<a href={russellSource} target="_blank" rel="noreferrer">官方最新源 ↗</a></span></li><li><i className="warn" /><span><strong>幸存者与前视偏差</strong>以当前成分股回看历史，不能代表历史时点的完整指数。</span></li><li><i className="warn" /><span><strong>时间代理误差</strong>常规开盘和行情起点可能改变时柱，需做置信度分层。</span></li><li><i className="warn" /><span><strong>改进筛选数据泄漏</strong>主用神改进值属于样本内拟合，不能与冻结参数的历史回测或样本外预测混称。</span></li><li><i className="ok" /><span><strong>本地复权日线</strong>年K与节气月K从同一底层日线聚合。</span></li><li><i className="ok" /><span><strong>参数冻结</strong>原命理算法回测期间不按命中率反向调参。</span></li></ul><div className="quality-meta"><span>复权缺口记录</span><strong>{metric(quality, ["adjustment_fallback_rows", "adjustment_factor_gaps", "honda_adjustment_gap"], 0)?.toLocaleString() ?? "—"} 个交易日</strong></div></article>
         </aside>
       </div>
       <div className="disclaimer"><strong>研究边界</strong><p>本页面用于检验一套规则与历史行情的统计同步程度，不构成投资建议、收益承诺或因果证明。历史拟合即使高于基准，也可能来自样本选择、市场结构或偶然性。</p></div>

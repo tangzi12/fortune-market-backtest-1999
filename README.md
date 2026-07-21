@@ -1,98 +1,34 @@
-# vinext-starter
+# 年运历史回测
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+这是一个把固定命理规则与真实复权年 K、节气月 K 对照的研究网页。股票池覆盖当前 S&P 500、Nasdaq-100，以及以 iShares IWM 当前可交易股票持仓作为代理的 Russell 2000 股票。
 
-## Prerequisites
+线上版本：
 
-- Node.js `>=22.13.0`
+- GitHub Pages: <https://tangzi12.github.io/fortune-market-backtest-1999/>
+- Sites: <https://fortune-market-backtest-1999.zixiangtang89.chatgpt.site>
 
-## Quick Start
+## 数据口径
+
+- 行情区间：1999-01-01 至 2026-07-10；未结束的 2026 年运不进入完整样本命中率。
+- 大盘股票池：2026-07-17 的 S&P 500 与 Nasdaq-100 当前成分。
+- Russell 2000 代理：[iShares IWM 官方最新持仓 CSV](https://www.ishares.com/us/products/239710/ishares-russell-2000-etf/latest-holdings.csv)，快照日期 2026-07-17；仓库同时保存[冻结快照](public/data/sources/iwm_holdings_2026-07-17.csv)。
+- IWM 只保留股票型、有效代码、NASDAQ/NYSE/NYSE American、价格大于零，并经 Nasdaq Trader 当前上市目录确认的唯一持仓；没有正常交易行情的 CVR、退市残余及已知会制造虚假 K 线方向的价格异常不计算。
+- IWM 是当前持仓代理，不是 FTSE Russell 授权的正式成分文件。使用当前股票回看历史会产生幸存者偏差与前视选择偏差。
+- 新增 Russell 代理股票的上市日期来自 Yahoo `firstTradeDate`，上市时刻采用当日常规开盘，统一标记为低置信度“行情起点代理”。
+
+## 本地运行
+
+要求 Node.js `>=22.13.0`。
 
 ```bash
 npm install
 npm run dev
-npm run build
+npm test
+npm run build:pages
 ```
 
-This starter does not use `wrangler.jsonc`.
+网页读取 `public/data/index.json`、`public/data/summary.json` 和 `public/data/stocks/*.json`。GitHub Pages 静态构建输出到 `dist-pages/`；Sites 构建输出到 `dist/`。
 
-## Included Shape
+## 研究边界
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
-```
-
-## Optional Dispatch-Owned ChatGPT Sign-In
-
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
-
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
-
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
-
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
-
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+页面中的“历史 K 线改进主用神”在同一批历史年 K 上选择并报告结果，属于样本内拟合，存在数据泄漏与多重比较偏差。它不是独立预测成绩，也不构成投资建议或收益承诺。

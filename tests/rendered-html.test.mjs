@@ -41,9 +41,14 @@ test("ships the verified dataset, explicit period counts, and light theme", asyn
   const summary = JSON.parse(summaryText);
   const stockIndex = JSON.parse(indexText);
 
-  assert.equal(summary.coverage.stock_count_with_prices, 518);
-  assert.equal(stockIndex.stock_count, 518);
-  assert.equal(stockIndex.stocks.length, 518);
+  assert.equal(summary.coverage.stock_count_with_prices, stockIndex.stock_count);
+  assert.equal(summary.coverage.stock_count_requested, summary.coverage.stock_count_with_prices);
+  assert.equal(stockIndex.stocks.length, stockIndex.stock_count);
+  assert.ok(stockIndex.stock_count > 2400, "expanded union should contain the Russell proxy universe");
+  assert.equal(summary.universe.russell2000_proxy_count, 1954);
+  assert.equal(summary.universe.russell2000_proxy_count, summary.coverage.index_counts["Russell 2000"]);
+  assert.equal(summary.universe.holdings_date, "2026-07-17");
+  assert.ok(stockIndex.stocks.some((stock) => stock.index_membership.includes("Russell 2000")));
   const dash = stockIndex.stocks.find((stock) => stock.ticker === "DASH");
   const ddog = stockIndex.stocks.find((stock) => stock.ticker === "DDOG");
   assert.deepEqual(
@@ -75,15 +80,12 @@ test("publishes every first-luck start time and keeps the UI terminology aligned
   const meta = JSON.parse(metaText);
   const firstLuckPattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
 
-  assert.equal(stockIndex.stocks.length, 518);
-  const detailStocks = await Promise.all(stockIndex.stocks.map(async (stock) => {
+  assert.ok(stockIndex.stocks.length > 2400);
+  for (const stock of stockIndex.stocks) {
     assert.match(String(stock.first_luck_start_et ?? ""), firstLuckPattern, `${stock.ticker} index first_luck_start_et`);
     const detail = JSON.parse(await readFile(new URL(`../public/data/${stock.data_path}`, import.meta.url), "utf8"));
-    return { indexStock: stock, detailStock: detail.stock };
-  }));
-  for (const { indexStock, detailStock } of detailStocks) {
-    assert.match(String(detailStock.first_luck_start_et ?? ""), firstLuckPattern, `${indexStock.ticker} detail first_luck_start_et`);
-    assert.equal(indexStock.first_luck_start_et, detailStock.first_luck_start_et, `${indexStock.ticker} first-luck time must match`);
+    assert.match(String(detail.stock.first_luck_start_et ?? ""), firstLuckPattern, `${stock.ticker} detail first_luck_start_et`);
+    assert.equal(stock.first_luck_start_et, detail.stock.first_luck_start_et, `${stock.ticker} first-luck time must match`);
   }
 
   const listingColumn = pageSource.indexOf("<th>上市时间 ET</th>");
@@ -194,16 +196,20 @@ test("only replaces the algorithm main god when every annual improvement gate pa
       }
     } else {
       unavailable += 1;
+      if (stock.reverse_sample_status === "no_data") {
+        assert.equal(stock.reverse_annual_directional_samples, 0, `${stock.ticker} no-data status requires zero directional samples`);
+      }
       assert.equal(stock.reverse_replacement_applied, false, `${stock.ticker} insufficient data cannot replace`);
       assert.equal(stock.reverse_main_god, stock.main_god, `${stock.ticker} insufficient data retains original god`);
       assert.equal(stock.reverse_selection_status, stock.reverse_sample_status === "no_data" ? "retained_no_data" : "retained_insufficient_samples", `${stock.ticker} insufficient/no-data status`);
     }
   }
-  assert.equal(sufficient, 461);
-  assert.equal(replacements, 329);
+  assert.ok(sufficient > 461, "expanded universe should add sufficient-sample stocks beyond the 518-stock baseline");
+  assert.ok(replacements > 0, "expanded universe should evaluate replacement candidates");
   assert.ok(unavailable > 0, "dataset should retain an explicit insufficient/no-data population");
-  assert.equal(summary.reverse_main_god_fit.replacement_count, 329);
-  assert.equal(summary.reverse_main_god_fit.retained_count, 189);
+  assert.equal(sufficient + unavailable, stockIndex.stocks.length);
+  assert.equal(summary.reverse_main_god_fit.replacement_count, replacements);
+  assert.equal(summary.reverse_main_god_fit.retained_count, stockIndex.stocks.length - replacements);
 
   assert.deepEqual(
     [cost.main_god, cost.reverse_main_god, cost.reverse_second_main_god],
@@ -254,6 +260,8 @@ test("only replaces the algorithm main god when every annual improvement gate pa
   assert.match(pageSource, /月运不参与/);
   assert.match(pageSource, /完整年样本 N≥8，且实际上涨、下跌各≥3/);
   assert.match(pageSource, /<option value="reverse_fit">改进结果年运普通命中率↓<\/option>/);
+  assert.match(pageSource, /<option value="Russell 2000">Russell 2000（IWM代理）<\/option>/);
+  assert.match(pageSource, /IWM 可交易股票持仓代理/);
   assert.match(pageSource, /未找到同时通过三项门槛的改进候选/);
   assert.match(styles, /\.sample-table-panel table, \.full-table table \{ min-width: 1740px; \}/);
   assert.match(styles, /\.reverse-god-chip/);
