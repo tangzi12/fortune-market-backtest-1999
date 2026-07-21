@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "title": "大麻板块行情质量策略",
+    "version": "2026-07-22.1",
+    "as_of": "2026-07-22",
+    "rule": "命理起盘与可验证行情起点分离。前身证券、空壳历史或供应商漏记公司行动不能进入方向回测；已核实且不在拆股日的极端市场涨跌保留。"
+  },
+  "ticker_policies": {
+    "GRUSF": {
+      "valid_from": "2019-05-14",
+      "status": "left_censored",
+      "reason": "Yahoo在GRUSF下回填了2010年以来Eagleford、Intelligent Content和Novicius等前身历史；Grown Rogue于2018-11-26在CSE成为当前经营证券，GRUSF美国OTC代码于2019-05-14启用，因此美国行情验证从2019-05-14开始。",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1463000/000121390020016651/ea123819ex99-6_grownrogue.htm"
+    },
+    "INCR": {
+      "valid_from": "2021-09-01",
+      "status": "left_censored",
+      "reason": "Yahoo的跨市场序列未记录2021-04-08的1-for-4.44926资本合并，产生伪跳变；美国方向回测从经核实的Nasdaq首日2021-09-01开始。命理起盘仍按2019-02-11当前大麻经营身份形成日计算。",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1857030/000149315222009360/ex99-3.htm"
+    }
+  },
+  "verified_extremes": [
+    {
+      "ticker": "RYM",
+      "date": "2023-04-10",
+      "status": "retained_observed_move",
+      "reason": "三次反向拆股均已在Yahoo事件与价格序列中复权；非拆股日的极端低价股涨跌保留，方向标签对流动性高度敏感。",
+      "source_url": null
+    },
+    {
+      "ticker": "AYRWF",
+      "date": "2025-08-01",
+      "status": "retained_observed_move",
+      "reason": "2025-07-31至08-01的连续暴跌发生在公开重组、旧权益清盘及债权人取得NewCo权益的进程中，并非漏记拆股；作为CNBS非零残余敞口保留并标记困境股警示。",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1847462/000110465925075745/tm2522968d1_6k.htm"
+    }
+  ]
+}

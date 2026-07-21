@@ -70,29 +70,36 @@ test("ships the verified dataset, explicit period counts, and light theme", asyn
 });
 
 test("publishes the audited cannabis theme pool without overwriting index identity", async () => {
-  const [summaryText, indexText, manifestText] = await Promise.all([
+  const [summaryText, indexText, manifestText, policyText, grusfText, incrText] = await Promise.all([
     readFile(new URL("../public/data/summary.json", import.meta.url), "utf8"),
     readFile(new URL("../public/data/index.json", import.meta.url), "utf8"),
     readFile(new URL("../public/data/sources/cannabis_universe_2026-07-21.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/sources/cannabis_price_quality_policy_2026-07-22.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/stocks/GRUSF.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/stocks/INCR.json", import.meta.url), "utf8"),
   ]);
   const summary = JSON.parse(summaryText);
   const stockIndex = JSON.parse(indexText);
   const manifest = JSON.parse(manifestText);
+  const policy = JSON.parse(policyText);
+  const grusf = JSON.parse(grusfText);
+  const incr = JSON.parse(incrText);
   const cannabis = stockIndex.stocks.filter((stock) => stock.theme_membership.includes("大麻板块"));
   const byTicker = new Map(stockIndex.stocks.map((stock) => [stock.ticker, stock]));
 
-  assert.equal(cannabis.length, 51);
-  assert.equal(cannabis.filter((stock) => stock.security_type === "stock").length, 45);
+  assert.equal(stockIndex.stock_count, 2519);
+  assert.equal(cannabis.length, 49);
+  assert.equal(cannabis.filter((stock) => stock.security_type === "stock").length, 43);
   assert.equal(cannabis.filter((stock) => stock.security_type === "etf").length, 6);
   assert.equal(cannabis.filter((stock) => String(stock.listing_market).startsWith("OTC")).length, 20);
-  assert.equal(stockIndex.universe.theme_counts["大麻板块"], 51);
-  assert.equal(summary.coverage.theme_counts["大麻板块"], 51);
-  assert.equal(summary.universe.cannabis_count, 51);
-  assert.equal(summary.universe.cannabis_added_count, 49);
+  assert.equal(stockIndex.universe.theme_counts["大麻板块"], 49);
+  assert.equal(summary.coverage.theme_counts["大麻板块"], 49);
+  assert.equal(summary.universe.cannabis_count, 49);
+  assert.equal(summary.universe.cannabis_added_count, 47);
   assert.equal(summary.universe.cannabis_overlap_count, 2);
   assert.equal(summary.universe.cannabis_etf_count, 6);
   assert.equal(summary.universe.cannabis_otc_count, 20);
-  assert.equal(manifest.metadata.included_count, 51);
+  assert.equal(manifest.metadata.included_count, 49);
 
   for (const ticker of ["SNDL", "MSOS", "MJ", "YOLO", "CNBS", "WEED", "MSOX"]) {
     assert.ok(byTicker.get(ticker)?.theme_membership.includes("大麻板块"), `${ticker} theme membership`);
@@ -112,17 +119,36 @@ test("publishes the audited cannabis theme pool without overwriting index identi
   for (const ticker of ["CWBHF", "LOVFF", "GLAS", "TRLV"]) {
     assert.ok(byTicker.get(ticker)?.theme_membership.includes("大麻板块"), `${ticker} normalized ticker`);
   }
-  for (const oldTicker of ["CWEB", "TCNNF", "GLASF"]) {
+  for (const oldTicker of ["CWEB", "TCNNF", "GLASF", "AKAN", "GNLN"]) {
     assert.ok(!byTicker.get(oldTicker)?.theme_membership.includes("大麻板块"), `${oldTicker} must not be tagged`);
   }
 
-  assert.equal(summary.universe.cannabis_source_snapshots.length, 5);
+  assert.equal(summary.universe.cannabis_source_snapshots.length, 6);
   for (const source of summary.universe.cannabis_source_snapshots) {
     assert.match(source.path, /^data\/sources\//);
     assert.match(source.sha256, /^[a-f0-9]{64}$/);
     await access(new URL(`../public/${source.path}`, import.meta.url));
   }
+  assert.ok(summary.universe.cannabis_source_snapshots.some((source) => source.id === "CANNABIS_PRICE_QUALITY"));
   assert.ok(summary.universe.cannabis_excluded.some((row) => row.ticker === "CBSTF"));
+  assert.ok(summary.universe.cannabis_excluded.some((row) => row.ticker === "AKAN"));
+  assert.ok(summary.universe.cannabis_excluded.some((row) => row.ticker === "GNLN"));
+  assert.equal(policy.ticker_policies.GRUSF.valid_from, "2019-05-14");
+  assert.equal(policy.ticker_policies.INCR.valid_from, "2021-09-01");
+  assert.equal(grusf.stock.listing_date, "2018-11-26");
+  assert.equal(grusf.stock.raw_first_price_date, "2010-10-15");
+  assert.equal(grusf.stock.effective_price_start_date, "2019-05-14");
+  assert.equal(incr.stock.listing_date, "2019-02-11");
+  assert.equal(incr.stock.effective_price_start_date, "2021-09-01");
+  for (const detail of [grusf, incr]) {
+    assert.ok(detail.annual.some((row) => row.exclusion_reason === "left_censored_by_price_quality_policy"));
+    assert.ok(detail.monthly.some((row) => row.exclusion_reason === "left_censored_by_price_quality_policy"));
+    assert.ok(detail.annual.filter((row) => row.complete).every((row) => row.period_kline[7] >= detail.stock.price_quality_valid_from));
+    assert.ok(detail.monthly.filter((row) => row.complete).every((row) => row.period_kline[7] >= detail.stock.price_quality_valid_from));
+  }
+  assert.equal(byTicker.get("RYM").price_quality_status, "retained_observed_move");
+  assert.equal(byTicker.get("AYRWF").price_quality_status, "retained_observed_move");
+  assert.equal(summary.data_quality.price_quality_censored_tickers.length, 2);
 });
 
 test("publishes every first-luck start time and keeps the UI terminology aligned", async () => {
@@ -145,11 +171,11 @@ test("publishes every first-luck start time and keeps the UI terminology aligned
     assert.equal(stock.first_luck_start_et, detail.stock.first_luck_start_et, `${stock.ticker} first-luck time must match`);
   }
 
-  const listingColumn = pageSource.indexOf("<th>上市时间 ET</th>");
+  const listingColumn = pageSource.indexOf("<th>命理起盘/上市代理 ET</th>");
   const firstLuckColumn = pageSource.indexOf("<th>起运时间 ET</th>");
-  const baziColumn = pageSource.indexOf("<th>上市时刻推算八字</th>");
+  const baziColumn = pageSource.indexOf("<th>命理起盘时刻推算八字</th>");
   assert.ok(listingColumn >= 0 && listingColumn < firstLuckColumn && firstLuckColumn < baziColumn, "first-luck column must immediately follow listing time");
-  assert.match(pageSource, /<th>上市时间 ET<\/th><th>起运时间 ET<\/th><th>上市时刻推算八字<\/th>/);
+  assert.match(pageSource, /<th>命理起盘\/上市代理 ET<\/th><th>起运时间 ET<\/th><th>命理起盘时刻推算八字<\/th>/);
   assert.match(pageSource, /行运（起运前小运、起运后大运）/);
   assert.match(pageSource, /<em>60% 行运<\/em>/);
   assert.match(pageSource, /<em>36% 行运<\/em>/);

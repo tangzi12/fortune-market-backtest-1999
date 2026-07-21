@@ -1,14 +1,14 @@
 {
   "name": "projects/amplify-etfs-data-feed/databases/(default)/documents/funds/MJ/holdings/2026-07-21",
   "fields": {
-    "type": {
-      "stringValue": "regular"
+    "asOfDate": {
+      "stringValue": "2026-07-21"
     },
     "updatedAt": {
       "stringValue": "2026-07-21T01:00:19.058013"
     },
-    "asOfDate": {
-      "stringValue": "2026-07-21"
+    "type": {
+      "stringValue": "regular"
     },
     "source": {
       "stringValue": "XL_Holdings.csv"
@@ -19,83 +19,41 @@
           {
             "mapValue": {
               "fields": {
-                "money_market_flag": {
-                  "booleanValue": false
+                "SharesOutstanding": {
+                  "integerValue": "4416614"
                 },
                 "StockTicker": {
                   "stringValue": "ACB"
                 },
-                "Price": {
-                  "doubleValue": 2.59
-                },
-                "SharesOutstanding": {
-                  "integerValue": "4416614"
-                },
-                "Weightings": {
-                  "stringValue": "3.20%"
-                },
-                "MarketValue": {
-                  "doubleValue": 3312540.07
-                },
-                "Shares": {
-                  "doubleValue": 1278973
-                },
-                "CreationUnits": {
-                  "doubleValue": 88.33
-                },
                 "CUSIP": {
                   "stringValue": "05156X850"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "NetAssets": {
+                  "doubleValue": 103427824.99
                 },
                 "SecurityName": {
                   "stringValue": "Aurora Cannabis Inc"
                 },
-                "holding_type": {
-                  "stringValue": "equity"
-                },
-                "NetAssets": {
-                  "doubleValue": 103427824.99
-                }
-              }
-            }
-          },
-          {
-            "mapValue": {
-              "fields": {
-                "MarketValue": {
-                  "doubleValue": 380526.71
-                },
                 "Weightings": {
-                  "stringValue": "0.37%"
-                },
-                "SharesOutstanding": {
-                  "integerValue": "4416614"
-                },
-                "Price": {
-                  "doubleValue": 100
-                },
-                "money_market_flag": {
-                  "booleanValue": true
-                },
-                "StockTicker": {
-                  "stringValue": "AGPXX"
+                  "stringValue": "3.20%"
                 },
                 "CreationUnits": {
                   "doubleValue": 88.33
                 },
                 "Shares": {
-                  "doubleValue": 380526.71
+                  "doubleValue": 1278973
+                },
+                "Price": {
+                  "doubleValue": 2.59
                 },
                 "holding_type": {
-                  "stringValue": "money_market"
+                  "stringValue": "equity"
                 },
-                "SecurityName": {
-                  "stringValue": "Invesco Government & Agency Portfolio 12/31/2031"
-                },
-                "CUSIP": {
-                  "stringValue": "825252885"
-                },
-                "NetAssets": {
-                  "doubleValue": 103427824.99
+                "MarketValue": {
+                  "doubleValue": 3312540.07
                 }
               }
             }
@@ -103,17 +61,65 @@
           {
             "mapValue": {
               "fields": {
-                "MarketValue": {
-                  "doubleValue": 8680467.89
+                "CreationUnits": {
+                  "doubleValue": 88.33
                 },
                 "Weightings": {
-                  "stringValue": "8.39%"
+                  "stringValue": "0.37%"
+                },
+                "SecurityName": {
+                  "stringValue": "Invesco Government & Agency Portfolio 12/31/2031"
+                },
+                "NetAssets": {
+                  "doubleValue": 103427824.99
+                },
+                "StockTicker": {
+                  "stringValue": "AGPXX"
+                },
+                "money_market_flag": {
+                  "booleanValue": true
+                },
+                "CUSIP": {
+                  "stringValue": "825252885"
                 },
                 "SharesOutstanding": {
                   "integerValue": "4416614"
                 },
+                "MarketValue": {
+                  "doubleValue": 380526.71
+                },
                 "Price": {
-                  "doubleValue": 0.9339
+                  "doubleValue": 100
+                },
+                "holding_type": {
+                  "stringValue": "money_market"
+                },
+                "Shares": {
+                  "doubleValue": 380526.71
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "CreationUnits": {
+                  "doubleValue": 88.33
+                },
+                "SecurityName": {
+                  "stringValue": "Canopy Growth Corp"
+                },
+                "Weightings": {
+                  "stringValue": "8.39%"
+                },
+                "NetAssets": {
+                  "doubleValue": 103427824.99
+                },
+                "SharesOutstanding": {
+                  "integerValue": "4416614"
+                },
+                "CUSIP": {
+                  "stringValue": "138035704"
                 },
                 "money_market_flag": {
                   "booleanValue": false
@@ -121,23 +127,17 @@
                 "StockTicker": {
                   "stringValue": "CGC"
                 },
-                "CreationUnits": {
-                  "doubleValue": 88.33
+                "MarketValue": {
+                  "doubleValue": 8680467.89
                 },
-                "Shares": {
-                  "doubleValue": 9294858
+                "Price": {
+                  "doubleValue": 0.9339
                 },
                 "holding_type": {
                   "stringValue": "equity"
                 },
-                "SecurityName": {
-                  "stringValue": "Canopy Growth Corp"
-                },
-                "CUSIP": {
-                  "stringValue": "138035704"
-                },
-                "NetAssets": {
-                  "doubleValue": 103427824.99
+                "Shares": {
+                  "doubleValue": 9294858
                 }
               }
             }
@@ -145,41 +145,41 @@
           {
             "mapValue": {
               "fields": {
-                "NetAssets": {
-                  "doubleValue": 103427824.99
-                },
-                "holding_type": {
-                  "stringValue": "internal_fund"
-                },
-                "CUSIP": {
-                  "stringValue": "032108482"
-                },
-                "SecurityName": {
-                  "stringValue": "Amplify Seymour Cannabis ETF"
-                },
-                "CreationUnits": {
-                  "doubleValue": 88.33
+                "MarketValue": {
+                  "doubleValue": 53552918.35
                 },
                 "Shares": {
                   "doubleValue": 2067345
                 },
-                "SharesOutstanding": {
-                  "integerValue": "4416614"
+                "Price": {
+                  "doubleValue": 25.9042
                 },
-                "MarketValue": {
-                  "doubleValue": 53552918.35
+                "holding_type": {
+                  "stringValue": "internal_fund"
+                },
+                "SecurityName": {
+                  "stringValue": "Amplify Seymour Cannabis ETF"
                 },
                 "Weightings": {
                   "stringValue": "51.78%"
                 },
-                "StockTicker": {
-                  "stringValue": "CNBS"
+                "CreationUnits": {
+                  "doubleValue": 88.33
+                },
+                "SharesOutstanding": {
+                  "integerValue": "4416614"
+                },
+                "CUSIP": {
+                  "stringValue": "032108482"
                 },
                 "money_market_flag": {
                   "booleanValue": false
                 },
-                "Price": {
-                  "doubleValue": 25.9042
+                "StockTicker": {
+                  "stringValue": "CNBS"
+                },
+                "NetAssets": {
+                  "doubleValue": 103427824.99
                 }
               }
             }
@@ -187,83 +187,41 @@
           {
             "mapValue": {
               "fields": {
-                "Shares": {
-                  "doubleValue": 3680557
-                },
                 "CreationUnits": {
                   "doubleValue": 88.33
                 },
                 "Weightings": {
                   "stringValue": "9.96%"
                 },
-                "MarketValue": {
-                  "doubleValue": 10305559.6
-                },
-                "SharesOutstanding": {
-                  "integerValue": "4416614"
-                },
-                "Price": {
-                  "doubleValue": 2.8
-                },
-                "money_market_flag": {
-                  "booleanValue": false
-                },
-                "StockTicker": {
-                  "stringValue": "CRON"
+                "SecurityName": {
+                  "stringValue": "Cronos Group Inc"
                 },
                 "NetAssets": {
                   "doubleValue": 103427824.99
-                },
-                "holding_type": {
-                  "stringValue": "equity"
                 },
                 "CUSIP": {
                   "stringValue": "22717L101"
                 },
-                "SecurityName": {
-                  "stringValue": "Cronos Group Inc"
-                }
-              }
-            }
-          },
-          {
-            "mapValue": {
-              "fields": {
-                "SharesOutstanding": {
-                  "integerValue": "4416614"
-                },
-                "MarketValue": {
-                  "doubleValue": 3632340.24
-                },
-                "Weightings": {
-                  "stringValue": "3.51%"
+                "StockTicker": {
+                  "stringValue": "CRON"
                 },
                 "money_market_flag": {
                   "booleanValue": false
                 },
-                "StockTicker": {
-                  "stringValue": "HITI"
+                "SharesOutstanding": {
+                  "integerValue": "4416614"
+                },
+                "MarketValue": {
+                  "doubleValue": 10305559.6
                 },
                 "Price": {
-                  "doubleValue": 2.16
-                },
-                "Shares": {
-                  "doubleValue": 1681639
-                },
-                "CreationUnits": {
-                  "doubleValue": 88.33
+                  "doubleValue": 2.8
                 },
                 "holding_type": {
                   "stringValue": "equity"
                 },
-                "SecurityName": {
-                  "stringValue": "High Tide Inc"
-                },
-                "CUSIP": {
-                  "stringValue": "42981E401"
-                },
-                "NetAssets": {
-                  "doubleValue": 103427824.99
+                "Shares": {
+                  "doubleValue": 3680557
                 }
               }
             }
@@ -271,41 +229,83 @@
           {
             "mapValue": {
               "fields": {
-                "SecurityName": {
-                  "stringValue": "Organigram Global Inc"
+                "NetAssets": {
+                  "doubleValue": 103427824.99
+                },
+                "SharesOutstanding": {
+                  "integerValue": "4416614"
+                },
+                "StockTicker": {
+                  "stringValue": "HITI"
                 },
                 "CUSIP": {
-                  "stringValue": "68617J100"
+                  "stringValue": "42981E401"
+                },
+                "money_market_flag": {
+                  "booleanValue": false
+                },
+                "CreationUnits": {
+                  "doubleValue": 88.33
+                },
+                "SecurityName": {
+                  "stringValue": "High Tide Inc"
+                },
+                "Weightings": {
+                  "stringValue": "3.51%"
+                },
+                "Price": {
+                  "doubleValue": 2.16
                 },
                 "holding_type": {
                   "stringValue": "equity"
                 },
-                "NetAssets": {
-                  "doubleValue": 103427824.99
+                "Shares": {
+                  "doubleValue": 1681639
                 },
+                "MarketValue": {
+                  "doubleValue": 3632340.24
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
                 "StockTicker": {
                   "stringValue": "OGI"
                 },
                 "money_market_flag": {
                   "booleanValue": false
                 },
-                "Price": {
-                  "doubleValue": 0.9293
+                "CUSIP": {
+                  "stringValue": "68617J100"
                 },
                 "SharesOutstanding": {
                   "integerValue": "4416614"
                 },
-                "MarketValue": {
-                  "doubleValue": 1921184.64
+                "NetAssets": {
+                  "doubleValue": 103427824.99
                 },
                 "Weightings": {
                   "stringValue": "1.86%"
+                },
+                "SecurityName": {
+                  "stringValue": "Organigram Global Inc"
                 },
                 "CreationUnits": {
                   "doubleValue": 88.33
                 },
                 "Shares": {
                   "doubleValue": 2067346
+                },
+                "Price": {
+                  "doubleValue": 0.9293
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "MarketValue": {
+                  "doubleValue": 1921184.64
                 }
               }
             }
@@ -313,26 +313,32 @@
           {
             "mapValue": {
               "fields": {
+                "MarketValue": {
+                  "doubleValue": 6703389.44
+                },
+                "Shares": {
+                  "doubleValue": 5237023
+                },
+                "Price": {
+                  "doubleValue": 1.28
+                },
                 "holding_type": {
                   "stringValue": "equity"
                 },
                 "SecurityName": {
                   "stringValue": "SNDL Inc"
                 },
-                "CUSIP": {
-                  "stringValue": "83307B101"
+                "Weightings": {
+                  "stringValue": "6.48%"
                 },
-                "NetAssets": {
-                  "doubleValue": 103427824.99
+                "CreationUnits": {
+                  "doubleValue": 88.33
                 },
                 "SharesOutstanding": {
                   "integerValue": "4416614"
                 },
-                "MarketValue": {
-                  "doubleValue": 6703389.44
-                },
-                "Weightings": {
-                  "stringValue": "6.48%"
+                "CUSIP": {
+                  "stringValue": "83307B101"
                 },
                 "money_market_flag": {
                   "booleanValue": false
@@ -340,14 +346,8 @@
                 "StockTicker": {
                   "stringValue": "SNDL"
                 },
-                "Price": {
-                  "doubleValue": 1.28
-                },
-                "Shares": {
-                  "doubleValue": 5237023
-                },
-                "CreationUnits": {
-                  "doubleValue": 88.33
+                "NetAssets": {
+                  "doubleValue": 103427824.99
                 }
               }
             }
@@ -355,11 +355,32 @@
           {
             "mapValue": {
               "fields": {
-                "CreationUnits": {
-                  "doubleValue": 88.33
+                "MarketValue": {
+                  "doubleValue": 10593176.31
                 },
                 "Shares": {
                   "doubleValue": 2504297
+                },
+                "Price": {
+                  "doubleValue": 4.23
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "SecurityName": {
+                  "stringValue": "Tilray Brands Inc"
+                },
+                "Weightings": {
+                  "stringValue": "10.24%"
+                },
+                "CreationUnits": {
+                  "doubleValue": 88.33
+                },
+                "SharesOutstanding": {
+                  "integerValue": "4416614"
+                },
+                "CUSIP": {
+                  "stringValue": "88688T209"
                 },
                 "money_market_flag": {
                   "booleanValue": false
@@ -367,29 +388,8 @@
                 "StockTicker": {
                   "stringValue": "TLRY"
                 },
-                "Price": {
-                  "doubleValue": 4.23
-                },
-                "SharesOutstanding": {
-                  "integerValue": "4416614"
-                },
-                "Weightings": {
-                  "stringValue": "10.24%"
-                },
-                "MarketValue": {
-                  "doubleValue": 10593176.31
-                },
                 "NetAssets": {
                   "doubleValue": 103427824.99
-                },
-                "SecurityName": {
-                  "stringValue": "Tilray Brands Inc"
-                },
-                "CUSIP": {
-                  "stringValue": "88688T209"
-                },
-                "holding_type": {
-                  "stringValue": "equity"
                 }
               }
             }
@@ -397,8 +397,32 @@
           {
             "mapValue": {
               "fields": {
+                "MarketValue": {
+                  "doubleValue": 4300292.1
+                },
+                "Shares": {
+                  "doubleValue": 2205278
+                },
                 "Price": {
                   "doubleValue": 1.95
+                },
+                "holding_type": {
+                  "stringValue": "equity"
+                },
+                "SecurityName": {
+                  "stringValue": "Village Farms International Inc"
+                },
+                "Weightings": {
+                  "stringValue": "4.16%"
+                },
+                "CreationUnits": {
+                  "doubleValue": 88.33
+                },
+                "SharesOutstanding": {
+                  "integerValue": "4416614"
+                },
+                "CUSIP": {
+                  "stringValue": "92707Y108"
                 },
                 "money_market_flag": {
                   "booleanValue": false
@@ -406,30 +430,6 @@
                 "StockTicker": {
                   "stringValue": "VFF"
                 },
-                "MarketValue": {
-                  "doubleValue": 4300292.1
-                },
-                "Weightings": {
-                  "stringValue": "4.16%"
-                },
-                "SharesOutstanding": {
-                  "integerValue": "4416614"
-                },
-                "Shares": {
-                  "doubleValue": 2205278
-                },
-                "CreationUnits": {
-                  "doubleValue": 88.33
-                },
-                "CUSIP": {
-                  "stringValue": "92707Y108"
-                },
-                "SecurityName": {
-                  "stringValue": "Village Farms International Inc"
-                },
-                "holding_type": {
-                  "stringValue": "equity"
-                },
                 "NetAssets": {
                   "doubleValue": 103427824.99
                 }
@@ -442,38 +442,38 @@
                 "MarketValue": {
                   "doubleValue": 52015.14
                 },
-                "Weightings": {
-                  "stringValue": "0.05%"
-                },
-                "SharesOutstanding": {
-                  "integerValue": "4416614"
-                },
                 "Price": {
                   "doubleValue": 1
-                },
-                "money_market_flag": {
-                  "booleanValue": true
-                },
-                "StockTicker": {
-                  "stringValue": "Cash&Other"
-                },
-                "CreationUnits": {
-                  "doubleValue": 88.33
-                },
-                "Shares": {
-                  "doubleValue": 52015.14
                 },
                 "holding_type": {
                   "stringValue": "cash"
                 },
+                "Shares": {
+                  "doubleValue": 52015.14
+                },
+                "CreationUnits": {
+                  "doubleValue": 88.33
+                },
                 "SecurityName": {
                   "stringValue": "Cash & Other"
                 },
-                "CUSIP": {
-                  "stringValue": "Cash&Other"
+                "Weightings": {
+                  "stringValue": "0.05%"
                 },
                 "NetAssets": {
                   "doubleValue": 103427824.99
+                },
+                "SharesOutstanding": {
+                  "integerValue": "4416614"
+                },
+                "StockTicker": {
+                  "stringValue": "Cash&Other"
+                },
+                "money_market_flag": {
+                  "booleanValue": true
+                },
+                "CUSIP": {
+                  "stringValue": "Cash&Other"
                 }
               }
             }
