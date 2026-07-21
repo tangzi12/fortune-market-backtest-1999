@@ -30,12 +30,13 @@ test("server-renders the finished backtest shell and metadata", async () => {
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
-test("ships the verified dataset and removes starter-only assets", async () => {
-  const [summaryText, indexText, layout, packageJson] = await Promise.all([
+test("ships the verified dataset, explicit period counts, and light theme", async () => {
+  const [summaryText, indexText, layout, packageJson, styles] = await Promise.all([
     readFile(new URL("../public/data/summary.json", import.meta.url), "utf8"),
     readFile(new URL("../public/data/index.json", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
   const summary = JSON.parse(summaryText);
   const stockIndex = JSON.parse(indexText);
@@ -43,6 +44,18 @@ test("ships the verified dataset and removes starter-only assets", async () => {
   assert.equal(summary.coverage.stock_count_with_prices, 518);
   assert.equal(stockIndex.stock_count, 518);
   assert.equal(stockIndex.stocks.length, 518);
+  const dash = stockIndex.stocks.find((stock) => stock.ticker === "DASH");
+  const ddog = stockIndex.stocks.find((stock) => stock.ticker === "DDOG");
+  assert.deepEqual(
+    [dash.annual_complete_periods, dash.annual_samples, dash.annual_neutral_periods, dash.annual_hits],
+    [5, 2, 3, 0],
+  );
+  assert.deepEqual(
+    [ddog.annual_complete_periods, ddog.annual_samples, ddog.annual_neutral_periods, ddog.annual_hits],
+    [6, 1, 5, 0],
+  );
+  assert.match(styles, /--bg:\s*#f8f9fb/);
+  assert.match(styles, /--panel:\s*#ffffff/);
   assert.match(layout, /images:\s*\[\{ url: "\/og\.png", width: 1200, height: 630/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));

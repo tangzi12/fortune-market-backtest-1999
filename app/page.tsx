@@ -26,6 +26,12 @@ type StockIndexItem = {
   monthly_hit_rate?: number;
   annual_samples?: number;
   monthly_samples?: number;
+  annual_complete_periods?: number;
+  annual_neutral_periods?: number;
+  annual_hits?: number;
+  monthly_complete_periods?: number;
+  monthly_neutral_periods?: number;
+  monthly_hits?: number;
   listing_time_basis?: unknown;
   basis_confidence?: string;
 };
@@ -49,6 +55,7 @@ type PeriodRow = JsonMap & {
   calendar_kline?: Kline;
   sync?: boolean;
   calculation_detail?: unknown;
+  complete?: boolean;
 };
 
 type StockDetail = {
@@ -219,6 +226,17 @@ function calendarKline(row: PeriodRow): Kline {
   return normalizeKline(row.calendar_kline ?? row.calendar_year_kline ?? row.calendar_month_kline, row, "calendar_");
 }
 
+function summarizePeriods(rows: PeriodRow[]) {
+  const completeRows = rows.filter((row) => row.complete === true && periodKline(row).open !== undefined);
+  const directionalRows = completeRows.filter((row) => direction(row.predicted_direction) !== "neutral");
+  return {
+    complete: completeRows.length,
+    directional: directionalRows.length,
+    neutral: completeRows.length - directionalRows.length,
+    hits: directionalRows.filter((row) => row.sync === true).length,
+  };
+}
+
 function directionLabel(value: unknown) {
   const d = direction(value);
   return d === "up" ? "看涨" : d === "down" ? "看跌" : "中性";
@@ -237,6 +255,8 @@ function normalizeIndex(payload: unknown): AppData {
       index_membership: Array.isArray(row.index_membership) ? row.index_membership.join(" · ") : String(row.index_membership ?? row.index ?? "—"),
       annual_hit_rate: asNumber(row.annual_hit_rate), monthly_hit_rate: asNumber(row.monthly_hit_rate),
       annual_samples: asNumber(row.annual_samples), monthly_samples: asNumber(row.monthly_samples),
+      annual_complete_periods: asNumber(row.annual_complete_periods), annual_neutral_periods: asNumber(row.annual_neutral_periods), annual_hits: asNumber(row.annual_hits),
+      monthly_complete_periods: asNumber(row.monthly_complete_periods), monthly_neutral_periods: asNumber(row.monthly_neutral_periods), monthly_hits: asNumber(row.monthly_hits),
     } as StockIndexItem;
   }).filter((item) => item.ticker);
   return { generated_at: String(root.generated_at ?? ""), period: root.period, methodology: root.methodology, stocks };
@@ -580,6 +600,8 @@ export default function Home() {
   const periodRows = period === "annual" ? detail?.annual ?? [] : detail?.monthly ?? [];
   const years = [...new Set((detail?.monthly ?? []).map((row) => String(row.solar_year ?? "")).filter(Boolean))];
   const shownRows = detailYear === "全部" ? periodRows : periodRows.filter((row) => String(row.solar_year ?? row.year) === detailYear);
+  const detailAnnualCounts = summarizePeriods(detail?.annual ?? []);
+  const detailMonthlyCounts = summarizePeriods(detail?.monthly ?? []);
   const selectedBasis = basisInfo({ basis: detail?.stock.listing_time_basis ?? detail?.stock.basis ?? selected?.listing_time_basis, confidence: detail?.stock.basis_confidence ?? selected?.basis_confidence });
 
   return (
@@ -636,7 +658,7 @@ export default function Home() {
             {section === "universe" && (
               <section className="universe-section">
                 <div className="section-title"><span className="eyebrow">STOCK UNIVERSE</span><h1>全部股票回测</h1><p>搜索代码或公司，按指数、板块与命中率筛选。点击任一股票进入年运与节气月运明细。</p></div>
-                <div className="toolbar panel"><label className="search-box"><span>⌕</span><input value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} placeholder="搜索 AAPL、苹果、信息技术…" aria-label="搜索股票" />{query && <button onClick={() => { setQuery(""); setPage(1); }} aria-label="清除搜索">×</button>}</label><select value={indexFilter} onChange={(e) => { setIndexFilter(e.target.value); setPage(1); }} aria-label="按指数筛选"><option>全部指数</option><option>S&P 500</option><option>Nasdaq-100</option></select><select value={sectorFilter} onChange={(e) => { setSectorFilter(e.target.value); setPage(1); }} aria-label="按板块筛选"><option>全部板块</option>{sectors.map((sector) => <option key={sector}>{sector}</option>)}</select><select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }} aria-label="排序"><option value="annual">年运命中率 ↓</option><option value="monthly">月运命中率 ↓</option><option value="samples">有效样本 ↓</option><option value="ticker">代码 A—Z</option></select></div>
+                <div className="toolbar panel"><label className="search-box"><span>⌕</span><input value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} placeholder="搜索 AAPL、苹果、信息技术…" aria-label="搜索股票" />{query && <button onClick={() => { setQuery(""); setPage(1); }} aria-label="清除搜索">×</button>}</label><select value={indexFilter} onChange={(e) => { setIndexFilter(e.target.value); setPage(1); }} aria-label="按指数筛选"><option>全部指数</option><option>S&P 500</option><option>Nasdaq-100</option></select><select value={sectorFilter} onChange={(e) => { setSectorFilter(e.target.value); setPage(1); }} aria-label="按板块筛选"><option>全部板块</option>{sectors.map((sector) => <option key={sector}>{sector}</option>)}</select><select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }} aria-label="排序"><option value="annual">年运方向命中率 ↓</option><option value="monthly">月运方向命中率 ↓</option><option value="samples">方向样本 ↓</option><option value="ticker">代码 A—Z</option></select></div>
                 <div className="result-meta"><span>找到 <strong>{filtered.length}</strong> 只股票</span><small>命中率仅反映历史样本，不代表未来收益</small></div>
                 <div className="panel full-table"><StockTable rows={visible} onOpen={openStock} /><div className="pagination"><button disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>← 上一页</button><span>第 {page} / {totalPages} 页</span><button disabled={page === totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>下一页 →</button></div></div>
               </section>
@@ -652,7 +674,7 @@ export default function Home() {
                     <header className="stock-hero panel"><div className="stock-identity"><span className="ticker-avatar">{selected.ticker.slice(0, 3)}</span><div><span className="eyebrow">{detail.stock.index_membership || selected.index_membership}</span><h1>{detail.stock.ticker} <em>{detail.stock.name}</em></h1><p>{detail.stock.sector} · 上市 {detail.stock.listing_date || "—"} {detail.stock.time_et || "—"} ET</p></div></div><div className="stock-bazi"><div><span>上市时刻推算八字</span><strong>{String(detail.stock.bazi ?? "—")}</strong></div><div><span>主用神</span><strong>{String(detail.stock.main_god ?? "—")}</strong></div></div><div className={`basis-badge ${selectedBasis.proxy ? "proxy" : "verified"}`}><span>{selectedBasis.label}</span><strong>置信度 {selectedBasis.confidence}</strong></div></header>
                     {detailError && <div className="detail-warning"><strong>数据暂缺</strong><span>{detailError} 页面不会用模拟行情代替生产结果。</span></div>}
                     {selectedBasis.proxy && <div className="detail-warning"><strong>时刻依据警示</strong><span>本股票使用“{selectedBasis.label}”，并非已核实的真实首笔成交时刻；八字与结果应视为代理口径敏感性测试。</span></div>}
-                    <div className="detail-kpis"><div><span>年运命中率</span><strong>{percent(detail.stock.annual_hit_rate)}</strong><small>{detail.stock.annual_samples ?? detail.annual.length} 个周期</small></div><div><span>节气月命中率</span><strong>{percent(detail.stock.monthly_hit_rate)}</strong><small>{detail.stock.monthly_samples ?? detail.monthly.length} 个周期</small></div><div><span>起始年份</span><strong>{detail.annual[0]?.year ?? "—"}</strong><small>上市后有效行情起</small></div><div><span>最新年运</span><strong className={direction(detail.annual.at(-1)?.predicted_direction)}>{directionLabel(detail.annual.at(-1)?.predicted_direction)}</strong><small>总分 {score(detail.annual.at(-1)?.total_score)}</small></div></div>
+                    <div className="detail-kpis"><div><span>年运方向命中率</span><strong>{percent(detail.stock.annual_hit_rate)}</strong><small>命中 {detailAnnualCounts.hits}/{detailAnnualCounts.directional} · 完整 {detailAnnualCounts.complete} · 中性 {detailAnnualCounts.neutral}</small></div><div><span>节气月方向命中率</span><strong>{percent(detail.stock.monthly_hit_rate)}</strong><small>命中 {detailMonthlyCounts.hits}/{detailMonthlyCounts.directional} · 完整 {detailMonthlyCounts.complete} · 中性 {detailMonthlyCounts.neutral}</small></div><div><span>起始年份</span><strong>{detail.annual[0]?.year ?? "—"}</strong><small>上市后有效行情起</small></div><div><span>最新年运</span><strong className={direction(detail.annual.at(-1)?.predicted_direction)}>{directionLabel(detail.annual.at(-1)?.predicted_direction)}</strong><small>总分 {score(detail.annual.at(-1)?.total_score)}</small></div></div>
                     <div className="detail-layout"><article className="panel chart-panel"><div className="chart-head"><div><span className="eyebrow">SIGNAL OVERLAY</span><h2>{period === "annual" ? "年运 × 年K" : "流月 × 节气月K"}</h2><div className="kline-basis-tabs" aria-label="行情周期口径"><button className={klineMode === "period" ? "active" : ""} onClick={() => setKlineMode("period")}>命理周期K · 主验证</button><button className={klineMode === "calendar" ? "active" : ""} onClick={() => setKlineMode("calendar")}>标准日历K · 辅助</button></div></div><div className="period-tabs"><button className={period === "annual" ? "active" : ""} onClick={() => { setPeriod("annual"); setDetailYear("全部"); }}><strong>年K</strong><small>流年</small></button><button className={period === "monthly" ? "active" : ""} onClick={() => setPeriod("monthly")}><strong>节气月K</strong><small>流月</small></button></div></div><KlineChart rows={shownRows} period={period} klineMode={klineMode} /></article><aside className="side-stack"><article className="panel score-card"><div className="panel-head"><div><span className="eyebrow">SCORE WEIGHTS</span><h3>固定权重</h3></div></div>{period === "annual" ? <div className="weight-bars"><div><span>大运</span><i><em style={{ width: "60%" }} /></i><strong>60%</strong></div><div><span>流年</span><i><em className="violet" style={{ width: "40%" }} /></i><strong>40%</strong></div></div> : <div className="weight-bars"><div><span>大运</span><i><em style={{ width: "36%" }} /></i><strong>36%</strong></div><div><span>流年</span><i><em className="violet" style={{ width: "24%" }} /></i><strong>24%</strong></div><div><span>流月</span><i><em className="cyan" style={{ width: "40%" }} /></i><strong>40%</strong></div></div>}<p>模型分数范围 −5 至 +5；参数在全部年份固定。</p></article><article className="panel sync-card"><span>命理周期K · 主同步率</span><strong>{percent(shownRows.length ? shownRows.filter((row) => row.sync === true).length / Math.max(1, shownRows.filter((row) => typeof row.sync === "boolean").length) : undefined)}</strong><p>{shownRows.filter((row) => row.sync === true).length} 次同步 / {shownRows.filter((row) => typeof row.sync === "boolean").length} 次可判定；日历K不混入主命中率。</p></article></aside></div>
                     <article className="panel calc-panel"><div className="panel-head"><div><span className="eyebrow">CALCULATION LEDGER</span><h2>逐期计算与行情核对</h2></div>{period === "monthly" && <select value={detailYear} onChange={(e) => setDetailYear(e.target.value)} aria-label="选择年份"><option>全部</option>{years.map((year) => <option key={year}>{year}</option>)}</select>}</div><CalculationTable rows={shownRows.slice().reverse()} period={period} /></article>
                   </>
@@ -668,12 +690,17 @@ export default function Home() {
 }
 
 function StockTable({ rows, onOpen }: { rows: StockIndexItem[]; onOpen: (stock: StockIndexItem) => void }) {
-  return <div className="table-scroll"><table><thead><tr><th>股票</th><th>指数 / 板块</th><th>上市时间 ET</th><th>上市时刻推算八字</th><th>主用神</th><th>年运同步</th><th>节气月同步</th><th>样本</th><th><span className="sr-only">操作</span></th></tr></thead><tbody>{rows.map((stock) => { const info = basisInfo(stock.listing_time_basis); return <tr key={stock.ticker} onClick={() => onOpen(stock)}><td><div className="stock-cell"><b>{stock.ticker}</b><span>{stock.name}</span></div></td><td><div className="stacked"><span>{stock.index_membership}</span><small>{stock.sector}</small></div></td><td><div className="stacked mono"><span>{stock.listing_date || "—"}</span><small>{stock.time_et || "—"} <em className={info.proxy ? "proxy-text" : "verified-text"}>{info.label}</em></small></div></td><td className="bazi-cell">{stock.bazi || "—"}</td><td><span className="god-chip">{stock.main_god || "—"}</span></td><td><Rate value={stock.annual_hit_rate} /></td><td><Rate value={stock.monthly_hit_rate} /></td><td><div className="stacked mono"><span>{stock.annual_samples ?? "—"} 年</span><small>{stock.monthly_samples ?? "—"} 月</small></div></td><td><button className="row-arrow" onClick={(event) => { event.stopPropagation(); onOpen(stock); }} aria-label={`查看 ${stock.ticker} 详情`}>→</button></td></tr>; })}</tbody></table>{!rows.length && <div className="empty-state">没有符合条件的股票，请调整筛选。</div>}</div>;
+  return <div className="table-scroll"><table><thead><tr><th>股票</th><th>指数 / 板块</th><th>上市时间 ET</th><th>上市时刻推算八字</th><th>主用神</th><th>年运方向命中</th><th>节气月方向命中</th><th>周期构成</th><th><span className="sr-only">操作</span></th></tr></thead><tbody>{rows.map((stock) => { const info = basisInfo(stock.listing_time_basis); return <tr key={stock.ticker} onClick={() => onOpen(stock)}><td><div className="stock-cell"><b>{stock.ticker}</b><span>{stock.name}</span></div></td><td><div className="stacked"><span>{stock.index_membership}</span><small>{stock.sector}</small></div></td><td><div className="stacked mono"><span>{stock.listing_date || "—"}</span><small>{stock.time_et || "—"} <em className={info.proxy ? "proxy-text" : "verified-text"}>{info.label}</em></small></div></td><td className="bazi-cell">{stock.bazi || "—"}</td><td><span className="god-chip">{stock.main_god || "—"}</span></td><td><Rate value={stock.annual_hit_rate} complete={stock.annual_complete_periods} directional={stock.annual_samples} hits={stock.annual_hits} /></td><td><Rate value={stock.monthly_hit_rate} complete={stock.monthly_complete_periods} directional={stock.monthly_samples} hits={stock.monthly_hits} /></td><td><PeriodCounts stock={stock} /></td><td><button className="row-arrow" onClick={(event) => { event.stopPropagation(); onOpen(stock); }} aria-label={`查看 ${stock.ticker} 详情`}>→</button></td></tr>; })}</tbody></table>{!rows.length && <div className="empty-state">没有符合条件的股票，请调整筛选。</div>}</div>;
 }
 
-function Rate({ value }: { value?: number }) {
+function PeriodCounts({ stock }: { stock: StockIndexItem }) {
+  return <div className="period-counts mono"><span><b>年</b> 完整 {stock.annual_complete_periods ?? "—"} · 方向 {stock.annual_samples ?? "—"} · 中性 {stock.annual_neutral_periods ?? "—"}</span><small><b>月</b> 完整 {stock.monthly_complete_periods ?? "—"} · 方向 {stock.monthly_samples ?? "—"} · 中性 {stock.monthly_neutral_periods ?? "—"}</small></div>;
+}
+
+function Rate({ value, complete, directional, hits }: { value?: number; complete?: number; directional?: number; hits?: number }) {
   const n = value === undefined ? undefined : Math.abs(value) <= 1 ? value * 100 : value;
-  return <div className="rate-cell"><strong>{n === undefined ? "—" : `${n.toFixed(1)}%`}</strong><i>{n !== undefined && <em style={{ width: `${Math.max(0, Math.min(100, n))}%` }} />}</i></div>;
+  const label = n !== undefined ? `${n.toFixed(1)}%` : complete === 0 ? "历史不足" : directional === 0 ? "全部中性" : "—";
+  return <div className="rate-cell"><strong>{label}</strong><small>{directional === undefined ? "口径待生成" : `命中 ${hits ?? 0}/${directional}`}</small><i>{n !== undefined && <em style={{ width: `${Math.max(0, Math.min(100, n))}%` }} />}</i></div>;
 }
 
 function CalculationTable({ rows, period }: { rows: PeriodRow[]; period: "annual" | "monthly" }) {
