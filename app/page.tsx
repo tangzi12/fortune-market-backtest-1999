@@ -20,6 +20,7 @@ type StockIndexItem = {
   index_membership: string;
   listing_date?: string;
   time_et?: string;
+  first_luck_start_et?: string;
   bazi?: string;
   main_god?: string;
   annual_hit_rate?: number;
@@ -119,7 +120,7 @@ function makeDemoDetail(stock: StockIndexItem): StockDetail {
       annual_score: Math.round(Math.cos((i + seed) * 0.57) * 4 * 10) / 10,
       total_score: score, status: score >= 3 ? "强势偏涨" : score >= 1 ? "偏涨" : score <= -3 ? "强势偏跌" : score <= -1 ? "偏跌" : "中性",
       predicted_direction: predicted, kline: { open, high, low, close, return: change * 100, direction: actual }, sync: predicted === actual,
-      calculation_detail: `大运60% + 流年40% = ${score.toFixed(1)}`,
+      calculation_detail: `行运60% + 流年40% = ${score.toFixed(1)}`,
     });
   }
   let monthClose = annual[Math.max(0, annual.length - 4)]?.kline?.close || close * 0.7;
@@ -141,7 +142,7 @@ function makeDemoDetail(stock: StockIndexItem): StockDetail {
         year_baseline: Math.sin(year) * 3.5, month_period_score: Math.cos(idx * 0.7) * 4.5, total_score: score,
         status: score >= 1 ? "偏涨" : score <= -1 ? "偏跌" : "中性", predicted_direction: predicted,
         kline: { open, high: Math.max(open, monthClose) * 1.04, low: Math.min(open, monthClose) * 0.96, close: monthClose, return: change * 100, direction: actual },
-        sync: predicted === actual, calculation_detail: `36%大运 + 24%流年 + 40%流月 = ${score.toFixed(1)}`,
+        sync: predicted === actual, calculation_detail: `36%行运 + 24%流年 + 40%流月 = ${score.toFixed(1)}`,
       });
     }
   }
@@ -242,6 +243,19 @@ function directionLabel(value: unknown) {
   return d === "up" ? "看涨" : d === "down" ? "看跌" : "中性";
 }
 
+function splitEtDateTime(value: unknown) {
+  const [date = "", time = ""] = String(value ?? "").trim().split(/\s+/, 2);
+  return { date: date || "—", time: time || "—" };
+}
+
+function luckKindLabel(value: unknown) {
+  const raw = String(value ?? "").trim();
+  const normalized = raw.toLowerCase().replace(/[\s-]+/g, "_");
+  if (["minor", "minor_luck", "small", "small_luck", "xiaoyun", "pre_luck", "小运"].includes(normalized)) return "小运";
+  if (["major", "major_luck", "big", "big_luck", "dayun", "大运"].includes(normalized)) return "大运";
+  return raw;
+}
+
 function normalizeIndex(payload: unknown): AppData {
   const root = asObject(payload);
   const list = Array.isArray(root.stocks) ? root.stocks : Array.isArray(payload) ? payload : [];
@@ -253,6 +267,7 @@ function normalizeIndex(payload: unknown): AppData {
       name: String(row.name ?? row.company ?? row.ticker ?? "—"),
       sector: String(row.sector ?? row.gics_sector ?? "未分类"),
       index_membership: Array.isArray(row.index_membership) ? row.index_membership.join(" · ") : String(row.index_membership ?? row.index ?? "—"),
+      first_luck_start_et: String(row.first_luck_start_et ?? ""),
       annual_hit_rate: asNumber(row.annual_hit_rate), monthly_hit_rate: asNumber(row.monthly_hit_rate),
       annual_samples: asNumber(row.annual_samples), monthly_samples: asNumber(row.monthly_samples),
       annual_complete_periods: asNumber(row.annual_complete_periods), annual_neutral_periods: asNumber(row.annual_neutral_periods), annual_hits: asNumber(row.annual_hits),
@@ -294,9 +309,13 @@ function calculationText(row: PeriodRow, period: "annual" | "monthly") {
   const calculation = asObject(row.calculation);
   const rawSegments = calculation.big_luck_segments ?? calculation.segments;
   const segments = Array.isArray(rawSegments) ? rawSegments.map((segment) => {
-    if (Array.isArray(segment)) return `${segment[0] ?? "—"} ${percent(segment[1], 1)}×${score(segment[2])}`;
+    if (Array.isArray(segment)) {
+      const kind = luckKindLabel(segment[3]);
+      return `${kind ? `${kind} ` : ""}${segment[0] ?? "—"} ${percent(segment[1], 1)}×${score(segment[2])}`;
+    }
     const item = asObject(segment);
-    return `${item.pillar ?? "—"} ${percent(item.weight ?? item.elapsed_weight, 1)}×${score(item.period_score)}`;
+    const kind = luckKindLabel(item.kind ?? item.luck_kind ?? item.phase);
+    return `${kind ? `${kind} ` : ""}${item.pillar ?? "—"} ${percent(item.weight ?? item.elapsed_weight, 1)}×${score(item.period_score)}`;
   }).join("；") : "—";
   const annualComponent = asObject(calculation.annual_component ?? calculation.annual);
   const monthComponent = asObject(calculation.month_component ?? calculation.month);
@@ -308,8 +327,8 @@ function calculationText(row: PeriodRow, period: "annual" | "monthly") {
   const annualExtra = describe(annualComponent);
   const monthExtra = describe(monthComponent);
   return period === "annual"
-    ? `大运 ${score(row.big_luck_score)} [${segments}]；流年 ${score(row.annual_score)}${annualExtra ? `（${annualExtra}）` : ""}；60%×大运 + 40%×流年 = ${score(row.total_score)}`
-    : `大运 ${score(row.big_luck_score)} [${segments}]；流年 ${score(row.annual_score)}；流月 ${score(row.month_period_score)}${monthExtra ? `（${monthExtra}）` : ""}；36%×大运 + 24%×流年 + 40%×流月 = ${score(row.total_score)}`;
+    ? `行运 ${score(row.big_luck_score)} [${segments}]；流年 ${score(row.annual_score)}${annualExtra ? `（${annualExtra}）` : ""}；60%×行运 + 40%×流年 = ${score(row.total_score)}`
+    : `行运 ${score(row.big_luck_score)} [${segments}]；流年 ${score(row.annual_score)}；流月 ${score(row.month_period_score)}${monthExtra ? `（${monthExtra}）` : ""}；36%×行运 + 24%×流年 + 40%×流月 = ${score(row.total_score)}`;
 }
 
 function normalizeDetail(payload: unknown, fallback: StockIndexItem, summaryPayload?: unknown): StockDetail {
@@ -642,7 +661,7 @@ export default function Home() {
                     <div className="panel-head"><div><span className="eyebrow">MODEL VALIDATION</span><h2>方向同步率</h2></div><span className="panel-note">中性信号单列，不混入方向命中</span></div>
                     <div className="accuracy-stage"><div className="accuracy-ring" style={{ "--value": `${Math.max(0, Math.min(100, (annualRate ?? 0) <= 1 ? (annualRate ?? 0) * 100 : (annualRate ?? 0)))}%` } as React.CSSProperties}><div><strong>{percent(annualRate)}</strong><span>年运总体</span></div></div><div className="accuracy-breakdown"><div><span>预测上涨命中</span><b className="up">{percent(metric(annualMetrics, ["up_hit_rate", "bullish_hit_rate"]))}</b><i><em style={{ width: percent(metric(annualMetrics, ["up_hit_rate", "bullish_hit_rate"], 0)) }} /></i></div><div><span>预测下跌命中</span><b className="down">{percent(metric(annualMetrics, ["down_hit_rate", "bearish_hit_rate"]))}</b><i><em className="red" style={{ width: percent(metric(annualMetrics, ["down_hit_rate", "bearish_hit_rate"], 0)) }} /></i></div><div><span>节气月独立命中</span><b>{percent(monthlyRate)}</b><i><em className="violet" style={{ width: percent(monthlyRate ?? 0) }} /></i></div></div></div>
                     <div className="model-verdict"><span>基准检验</span><div><strong>当前年运 {percent(annualRate)}</strong><i>低于</i><b>永久看涨 {percent(annualBaseline)}</b></div><div><strong>当前月运 {percent(monthlyRate)}</strong><i>低于</i><b>永久看涨 {percent(monthlyBaseline)}</b></div><p>首轮结果尚不支持该方法具备超越简单方向基准的历史预测优势。</p></div>
-                    <div className="formula-ribbon"><span>月运总分</span><strong>36% 大运</strong><i>+</i><strong>24% 流年</strong><i>+</i><strong>40% 流月</strong></div>
+                    <div className="formula-ribbon"><span>月运总分</span><strong>36% 行运</strong><i>+</i><strong>24% 流年</strong><i>+</i><strong>40% 流月</strong></div>
                   </article>
                   <article className="panel basis-panel">
                     <div className="panel-head"><div><span className="eyebrow">TIME BASIS AUDIT</span><h2>上市时间依据</h2></div><span className="panel-note">时刻可信度直接影响时柱</span></div>
@@ -671,11 +690,11 @@ export default function Home() {
                 <div className="detail-top"><button className="back-button" onClick={() => { setSelected(null); setDetail(null); }}>← 关闭个股详情</button><span>{detailDemo ? "演示详情 · 数据文件就绪后自动替换" : "本地历史数据"}</span></div>
                 {detailLoading || !detail ? <div className="loading-screen compact"><i /><strong>正在读取 {selected.ticker}</strong></div> : (
                   <>
-                    <header className="stock-hero panel"><div className="stock-identity"><span className="ticker-avatar">{selected.ticker.slice(0, 3)}</span><div><span className="eyebrow">{detail.stock.index_membership || selected.index_membership}</span><h1>{detail.stock.ticker} <em>{detail.stock.name}</em></h1><p>{detail.stock.sector} · 上市 {detail.stock.listing_date || "—"} {detail.stock.time_et || "—"} ET</p></div></div><div className="stock-bazi"><div><span>上市时刻推算八字</span><strong>{String(detail.stock.bazi ?? "—")}</strong></div><div><span>主用神</span><strong>{String(detail.stock.main_god ?? "—")}</strong></div></div><div className={`basis-badge ${selectedBasis.proxy ? "proxy" : "verified"}`}><span>{selectedBasis.label}</span><strong>置信度 {selectedBasis.confidence}</strong></div></header>
+                    <header className="stock-hero panel"><div className="stock-identity"><span className="ticker-avatar">{selected.ticker.slice(0, 3)}</span><div><span className="eyebrow">{detail.stock.index_membership || selected.index_membership}</span><h1>{detail.stock.ticker} <em>{detail.stock.name}</em></h1><div className="stock-times"><span>{detail.stock.sector} · 上市 {detail.stock.listing_date || "—"} {detail.stock.time_et || "—"} ET</span><span>起运时间 {String(detail.stock.first_luck_start_et || "—")} ET</span></div></div></div><div className="stock-bazi"><div><span>上市时刻推算八字</span><strong>{String(detail.stock.bazi ?? "—")}</strong></div><div><span>主用神</span><strong>{String(detail.stock.main_god ?? "—")}</strong></div></div><div className={`basis-badge ${selectedBasis.proxy ? "proxy" : "verified"}`}><span>{selectedBasis.label}</span><strong>置信度 {selectedBasis.confidence}</strong></div></header>
                     {detailError && <div className="detail-warning"><strong>数据暂缺</strong><span>{detailError} 页面不会用模拟行情代替生产结果。</span></div>}
                     {selectedBasis.proxy && <div className="detail-warning"><strong>时刻依据警示</strong><span>本股票使用“{selectedBasis.label}”，并非已核实的真实首笔成交时刻；八字与结果应视为代理口径敏感性测试。</span></div>}
                     <div className="detail-kpis"><div><span>年运方向命中率</span><strong>{percent(detail.stock.annual_hit_rate)}</strong><small>命中 {detailAnnualCounts.hits}/{detailAnnualCounts.directional} · 完整 {detailAnnualCounts.complete} · 中性 {detailAnnualCounts.neutral}</small></div><div><span>节气月方向命中率</span><strong>{percent(detail.stock.monthly_hit_rate)}</strong><small>命中 {detailMonthlyCounts.hits}/{detailMonthlyCounts.directional} · 完整 {detailMonthlyCounts.complete} · 中性 {detailMonthlyCounts.neutral}</small></div><div><span>起始年份</span><strong>{detail.annual[0]?.year ?? "—"}</strong><small>上市后有效行情起</small></div><div><span>最新年运</span><strong className={direction(detail.annual.at(-1)?.predicted_direction)}>{directionLabel(detail.annual.at(-1)?.predicted_direction)}</strong><small>总分 {score(detail.annual.at(-1)?.total_score)}</small></div></div>
-                    <div className="detail-layout"><article className="panel chart-panel"><div className="chart-head"><div><span className="eyebrow">SIGNAL OVERLAY</span><h2>{period === "annual" ? "年运 × 年K" : "流月 × 节气月K"}</h2><div className="kline-basis-tabs" aria-label="行情周期口径"><button className={klineMode === "period" ? "active" : ""} onClick={() => setKlineMode("period")}>命理周期K · 主验证</button><button className={klineMode === "calendar" ? "active" : ""} onClick={() => setKlineMode("calendar")}>标准日历K · 辅助</button></div></div><div className="period-tabs"><button className={period === "annual" ? "active" : ""} onClick={() => { setPeriod("annual"); setDetailYear("全部"); }}><strong>年K</strong><small>流年</small></button><button className={period === "monthly" ? "active" : ""} onClick={() => setPeriod("monthly")}><strong>节气月K</strong><small>流月</small></button></div></div><KlineChart rows={shownRows} period={period} klineMode={klineMode} /></article><aside className="side-stack"><article className="panel score-card"><div className="panel-head"><div><span className="eyebrow">SCORE WEIGHTS</span><h3>固定权重</h3></div></div>{period === "annual" ? <div className="weight-bars"><div><span>大运</span><i><em style={{ width: "60%" }} /></i><strong>60%</strong></div><div><span>流年</span><i><em className="violet" style={{ width: "40%" }} /></i><strong>40%</strong></div></div> : <div className="weight-bars"><div><span>大运</span><i><em style={{ width: "36%" }} /></i><strong>36%</strong></div><div><span>流年</span><i><em className="violet" style={{ width: "24%" }} /></i><strong>24%</strong></div><div><span>流月</span><i><em className="cyan" style={{ width: "40%" }} /></i><strong>40%</strong></div></div>}<p>模型分数范围 −5 至 +5；参数在全部年份固定。</p></article><article className="panel sync-card"><span>命理周期K · 主同步率</span><strong>{percent(shownRows.length ? shownRows.filter((row) => row.sync === true).length / Math.max(1, shownRows.filter((row) => typeof row.sync === "boolean").length) : undefined)}</strong><p>{shownRows.filter((row) => row.sync === true).length} 次同步 / {shownRows.filter((row) => typeof row.sync === "boolean").length} 次可判定；日历K不混入主命中率。</p></article></aside></div>
+                    <div className="detail-layout"><article className="panel chart-panel"><div className="chart-head"><div><span className="eyebrow">SIGNAL OVERLAY</span><h2>{period === "annual" ? "年运 × 年K" : "流月 × 节气月K"}</h2><div className="kline-basis-tabs" aria-label="行情周期口径"><button className={klineMode === "period" ? "active" : ""} onClick={() => setKlineMode("period")}>命理周期K · 主验证</button><button className={klineMode === "calendar" ? "active" : ""} onClick={() => setKlineMode("calendar")}>标准日历K · 辅助</button></div></div><div className="period-tabs"><button className={period === "annual" ? "active" : ""} onClick={() => { setPeriod("annual"); setDetailYear("全部"); }}><strong>年K</strong><small>流年</small></button><button className={period === "monthly" ? "active" : ""} onClick={() => setPeriod("monthly")}><strong>节气月K</strong><small>流月</small></button></div></div><KlineChart rows={shownRows} period={period} klineMode={klineMode} /></article><aside className="side-stack"><article className="panel score-card"><div className="panel-head"><div><span className="eyebrow">SCORE WEIGHTS</span><h3>固定权重</h3></div></div>{period === "annual" ? <div className="weight-bars"><div><span>行运</span><i><em style={{ width: "60%" }} /></i><strong>60%</strong></div><div><span>流年</span><i><em className="violet" style={{ width: "40%" }} /></i><strong>40%</strong></div></div> : <div className="weight-bars"><div><span>行运</span><i><em style={{ width: "36%" }} /></i><strong>36%</strong></div><div><span>流年</span><i><em className="violet" style={{ width: "24%" }} /></i><strong>24%</strong></div><div><span>流月</span><i><em className="cyan" style={{ width: "40%" }} /></i><strong>40%</strong></div></div>}<p>行运含起运前小运与起运后大运；模型分数范围 −5 至 +5，参数固定。</p></article><article className="panel sync-card"><span>命理周期K · 主同步率</span><strong>{percent(shownRows.length ? shownRows.filter((row) => row.sync === true).length / Math.max(1, shownRows.filter((row) => typeof row.sync === "boolean").length) : undefined)}</strong><p>{shownRows.filter((row) => row.sync === true).length} 次同步 / {shownRows.filter((row) => typeof row.sync === "boolean").length} 次可判定；日历K不混入主命中率。</p></article></aside></div>
                     <article className="panel calc-panel"><div className="panel-head"><div><span className="eyebrow">CALCULATION LEDGER</span><h2>逐期计算与行情核对</h2></div>{period === "monthly" && <select value={detailYear} onChange={(e) => setDetailYear(e.target.value)} aria-label="选择年份"><option>全部</option>{years.map((year) => <option key={year}>{year}</option>)}</select>}</div><CalculationTable rows={shownRows.slice().reverse()} period={period} /></article>
                   </>
                 )}
@@ -690,7 +709,32 @@ export default function Home() {
 }
 
 function StockTable({ rows, onOpen }: { rows: StockIndexItem[]; onOpen: (stock: StockIndexItem) => void }) {
-  return <div className="table-scroll"><table><thead><tr><th>股票</th><th>指数 / 板块</th><th>上市时间 ET</th><th>上市时刻推算八字</th><th>主用神</th><th>年运方向命中</th><th>节气月方向命中</th><th>周期构成</th><th><span className="sr-only">操作</span></th></tr></thead><tbody>{rows.map((stock) => { const info = basisInfo(stock.listing_time_basis); return <tr key={stock.ticker} onClick={() => onOpen(stock)}><td><div className="stock-cell"><b>{stock.ticker}</b><span>{stock.name}</span></div></td><td><div className="stacked"><span>{stock.index_membership}</span><small>{stock.sector}</small></div></td><td><div className="stacked mono"><span>{stock.listing_date || "—"}</span><small>{stock.time_et || "—"} <em className={info.proxy ? "proxy-text" : "verified-text"}>{info.label}</em></small></div></td><td className="bazi-cell">{stock.bazi || "—"}</td><td><span className="god-chip">{stock.main_god || "—"}</span></td><td><Rate value={stock.annual_hit_rate} complete={stock.annual_complete_periods} directional={stock.annual_samples} hits={stock.annual_hits} /></td><td><Rate value={stock.monthly_hit_rate} complete={stock.monthly_complete_periods} directional={stock.monthly_samples} hits={stock.monthly_hits} /></td><td><PeriodCounts stock={stock} /></td><td><button className="row-arrow" onClick={(event) => { event.stopPropagation(); onOpen(stock); }} aria-label={`查看 ${stock.ticker} 详情`}>→</button></td></tr>; })}</tbody></table>{!rows.length && <div className="empty-state">没有符合条件的股票，请调整筛选。</div>}</div>;
+  return (
+    <div className="table-scroll">
+      <table>
+        <thead><tr><th>股票</th><th>指数 / 板块</th><th>上市时间 ET</th><th>起运时间 ET</th><th>上市时刻推算八字</th><th>主用神</th><th>年运方向命中</th><th>节气月方向命中</th><th>周期构成</th><th><span className="sr-only">操作</span></th></tr></thead>
+        <tbody>{rows.map((stock) => {
+          const info = basisInfo(stock.listing_time_basis);
+          const luckStart = splitEtDateTime(stock.first_luck_start_et);
+          return (
+            <tr key={stock.ticker} onClick={() => onOpen(stock)}>
+              <td><div className="stock-cell"><b>{stock.ticker}</b><span>{stock.name}</span></div></td>
+              <td><div className="stacked"><span>{stock.index_membership}</span><small>{stock.sector}</small></div></td>
+              <td><div className="stacked mono"><span>{stock.listing_date || "—"}</span><small>{stock.time_et || "—"} <em className={info.proxy ? "proxy-text" : "verified-text"}>{info.label}</em></small></div></td>
+              <td className="luck-start-cell"><div className="stacked mono"><span>{luckStart.date}</span><small>{luckStart.time}</small></div></td>
+              <td className="bazi-cell">{stock.bazi || "—"}</td>
+              <td><span className="god-chip">{stock.main_god || "—"}</span></td>
+              <td><Rate value={stock.annual_hit_rate} complete={stock.annual_complete_periods} directional={stock.annual_samples} hits={stock.annual_hits} /></td>
+              <td><Rate value={stock.monthly_hit_rate} complete={stock.monthly_complete_periods} directional={stock.monthly_samples} hits={stock.monthly_hits} /></td>
+              <td><PeriodCounts stock={stock} /></td>
+              <td><button className="row-arrow" onClick={(event) => { event.stopPropagation(); onOpen(stock); }} aria-label={`查看 ${stock.ticker} 详情`}>→</button></td>
+            </tr>
+          );
+        })}</tbody>
+      </table>
+      {!rows.length && <div className="empty-state">没有符合条件的股票，请调整筛选。</div>}
+    </div>
+  );
 }
 
 function PeriodCounts({ stock }: { stock: StockIndexItem }) {
@@ -708,7 +752,7 @@ function CalculationTable({ rows, period }: { rows: PeriodRow[]; period: "annual
   return (
     <div className="table-scroll calc-scroll">
       <table>
-        <thead><tr><th>周期</th><th>干支</th>{period === "monthly" && <th>大运 / 流年 / 流月</th>}<th>总分 / 状态</th><th>预测</th><th>命理周期K（主）</th><th>日历K（辅助）</th><th>主同步</th><th>计算明细</th></tr></thead>
+        <thead><tr><th>周期</th><th>干支</th>{period === "monthly" && <th>行运 / 流年 / 流月</th>}<th>总分 / 状态</th><th>预测</th><th>命理周期K（主）</th><th>日历K（辅助）</th><th>主同步</th><th>计算明细</th></tr></thead>
         <tbody>{rows.map((row, i) => {
           const k = periodKline(row);
           const calendar = calendarKline(row);
@@ -719,7 +763,7 @@ function CalculationTable({ rows, period }: { rows: PeriodRow[]; period: "annual
               <td><div className="stacked mono"><span>{periodLabel(row)}</span><small>{String(row.start_et ?? "—").slice(0, 10)} → {String(row.end_et ?? "—").slice(0, 10)}</small></div></td>
               <td><strong className="pillar">{row.pillar || "—"}</strong></td>
               {period === "monthly" && <td><div className="score-triplet"><span>运 {score(row.big_luck_score)}</span><span>年 {score(row.annual_score ?? row.year_baseline)}</span><span>月 {score(row.month_period_score)}</span></div></td>}
-              <td><div className="stacked"><span>{score(row.total_score)} · {row.status || "—"}</span><small>{period === "annual" ? "60%大运 + 40%流年" : "36%大运 + 24%流年 + 40%流月"}</small></div></td>
+              <td><div className="stacked"><span>{score(row.total_score)} · {row.status || "—"}</span><small>{period === "annual" ? "60%行运 + 40%流年" : "36%行运 + 24%流年 + 40%流月"}</small></div></td>
               <td><span className={`direction-chip ${direction(row.predicted_direction)}`}>{directionLabel(row.predicted_direction)}</span></td>
               <td><div className="stacked mono"><span className={actual}>{signedPercent(k.return)}</span><small>O {score(k.open)} · C {score(k.close)}</small></div></td>
               <td><div className="stacked mono"><span className={calendarActual}>{signedPercent(calendar.return)}</span><small>O {score(calendar.open)} · C {score(calendar.close)}</small></div></td>
@@ -736,5 +780,22 @@ function CalculationTable({ rows, period }: { rows: PeriodRow[]; period: "annual
 
 function Methodology({ summary, basis, proxyCount }: { summary: JsonMap; basis: { label: string; count: number }[]; proxyCount: number }) {
   const quality = asObject(summary.data_quality);
-  return <section className="method-section"><div className="section-title"><span className="eyebrow">METHODOLOGY & DATA QUALITY</span><h1>先把验证口径说清楚</h1><p>计算规则、行情周期与限制全部公开。任何命中率都必须和数据质量、样本覆盖及简单基准一起看。</p></div><div className="method-grid"><article className="panel method-main"><div className="step"><b>01</b><div><h3>上市时刻 → 股票命盘</h3><p>以美东时间记录上市时刻，确定日干、月令与主用神；按股票年干阴阳决定大运顺逆。时间依据不是精确首笔时，必须标为代理口径。</p></div></div><div className="step"><b>02</b><div><h3>年运固定权重</h3><div className="big-formula"><strong>年运</strong><span>=</span><em>60% 大运</em><span>+</span><em>40% 流年</em></div><p>十二长生状态与天干对主用神的关系共同形成周期分；年内换运按实际天数加权。</p></div></div><div className="step"><b>03</b><div><h3>节气月独立预测</h3><div className="big-formula"><strong>月运</strong><span>=</span><em>36% 大运</em><span>+</span><em>24% 流年</em><span>+</span><em>40% 流月</em></div><p>寅月从立春起，依十二节气月切分。价格也用同一 ET 边界聚合，标准公历月K只作参照。</p></div></div><div className="step"><b>04</b><div><h3>同步判定</h3><p>预测上涨对应周期复权收盘高于开盘、预测下跌对应收盘低于开盘即为同步；中性单列覆盖率，不塞进方向命中率。</p></div></div></article><aside className="method-side"><article className="panel audit-card"><span className="eyebrow">LISTING TIME AUDIT</span><h3>上市时间依据分层</h3>{basis.map((item, index) => <div className="audit-row" key={item.label}><i className={`basis-color c${index}`} /><span>{item.label}</span><strong>{item.count}</strong></div>)}<p className="audit-warning">其中 {proxyCount || 280} 只为行情起点代理，相关命盘不是经核验的真实 IPO 八字。</p></article><article className="panel quality-card"><span className="eyebrow">KNOWN LIMITATIONS</span><h3>数据质量与偏差</h3><ul><li><i className="warn" /><span><strong>幸存者偏差</strong>以当前成分股回看历史，不能代表历史时点的完整指数。</span></li><li><i className="warn" /><span><strong>时间代理误差</strong>常规开盘和行情起点可能改变时柱，需做置信度分层。</span></li><li><i className="ok" /><span><strong>本地复权日线</strong>年K与节气月K从同一底层日线聚合。</span></li><li><i className="ok" /><span><strong>参数冻结</strong>回测期间不按命中率反向调参。</span></li></ul><div className="quality-meta"><span>复权缺口记录</span><strong>{metric(quality, ["adjustment_factor_gaps", "honda_adjustment_gap"], 17)} 个交易日</strong></div></article></aside></div><div className="disclaimer"><strong>研究边界</strong><p>本页面用于检验一套规则与历史行情的统计同步程度，不构成投资建议、收益承诺或因果证明。历史拟合即使高于基准，也可能来自样本选择、市场结构或偶然性。</p></div></section>;
+  return (
+    <section className="method-section">
+      <div className="section-title"><span className="eyebrow">METHODOLOGY & DATA QUALITY</span><h1>先把验证口径说清楚</h1><p>计算规则、行情周期与限制全部公开。任何命中率都必须和数据质量、样本覆盖及简单基准一起看。</p></div>
+      <div className="method-grid">
+        <article className="panel method-main">
+          <div className="step"><b>01</b><div><h3>上市时刻 → 股票命盘</h3><p>以美东时间记录上市时刻，确定日干、月令与主用神；按股票年干阴阳决定行运顺逆，起运前使用小运，起运后进入大运。时间依据不是精确首笔时，必须标为代理口径。</p></div></div>
+          <div className="step"><b>02</b><div><h3>年运固定权重</h3><div className="big-formula"><strong>年运</strong><span>=</span><em>60% 行运</em><span>+</span><em>40% 流年</em></div><p>行运（起运前小运、起运后大运）与流年分别按十二长生状态及天干对主用神的关系形成周期分；年内换运按实际天数加权。</p></div></div>
+          <div className="step"><b>03</b><div><h3>节气月独立预测</h3><div className="big-formula"><strong>月运</strong><span>=</span><em>36% 行运</em><span>+</span><em>24% 流年</em><span>+</span><em>40% 流月</em></div><p>寅月从立春起，依十二节气月切分。价格也用同一 ET 边界聚合，标准公历月K只作参照。</p></div></div>
+          <div className="step"><b>04</b><div><h3>同步判定</h3><p>预测上涨对应周期复权收盘高于开盘、预测下跌对应收盘低于开盘即为同步；中性单列覆盖率，不塞进方向命中率。</p></div></div>
+        </article>
+        <aside className="method-side">
+          <article className="panel audit-card"><span className="eyebrow">LISTING TIME AUDIT</span><h3>上市时间依据分层</h3>{basis.map((item, index) => <div className="audit-row" key={item.label}><i className={`basis-color c${index}`} /><span>{item.label}</span><strong>{item.count}</strong></div>)}<p className="audit-warning">其中 {proxyCount || 280} 只为行情起点代理，相关命盘不是经核验的真实 IPO 八字。</p></article>
+          <article className="panel quality-card"><span className="eyebrow">KNOWN LIMITATIONS</span><h3>数据质量与偏差</h3><ul><li><i className="warn" /><span><strong>幸存者偏差</strong>以当前成分股回看历史，不能代表历史时点的完整指数。</span></li><li><i className="warn" /><span><strong>时间代理误差</strong>常规开盘和行情起点可能改变时柱，需做置信度分层。</span></li><li><i className="ok" /><span><strong>本地复权日线</strong>年K与节气月K从同一底层日线聚合。</span></li><li><i className="ok" /><span><strong>参数冻结</strong>回测期间不按命中率反向调参。</span></li></ul><div className="quality-meta"><span>复权缺口记录</span><strong>{metric(quality, ["adjustment_factor_gaps", "honda_adjustment_gap"], 17)} 个交易日</strong></div></article>
+        </aside>
+      </div>
+      <div className="disclaimer"><strong>研究边界</strong><p>本页面用于检验一套规则与历史行情的统计同步程度，不构成投资建议、收益承诺或因果证明。历史拟合即使高于基准，也可能来自样本选择、市场结构或偶然性。</p></div>
+    </section>
+  );
 }

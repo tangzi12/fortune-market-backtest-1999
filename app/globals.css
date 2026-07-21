@@ -180,6 +180,7 @@ tbody tr:hover { background: rgba(255,255,255,.032); }
 .mono { font-family: var(--font-geist-mono), monospace; }
 .verified-text { color: var(--green) !important; }
 .proxy-text { color: var(--red) !important; }
+.luck-start-cell { min-width: 140px; white-space: nowrap; }
 .bazi-cell { min-width: 145px; color: #eadfc3; font-family: "Songti SC", serif; letter-spacing: .06em; }
 .god-chip { display: inline-grid; place-items: center; min-width: 28px; min-height: 26px; padding: 0 7px; border: 1px solid var(--line); border-radius: 7px; background: var(--gold-soft); color: var(--gold); font-weight: 700; }
 .rate-cell { display: grid; min-width: 70px; gap: 6px; }
@@ -214,10 +215,11 @@ tbody tr:hover { background: rgba(255,255,255,.032); }
 .back-button { padding: 0; border: 0; background: none; color: var(--gold); font-size: 11px; }
 .stock-hero { display: grid; grid-template-columns: minmax(300px, 1.1fr) minmax(320px, .9fr) auto; align-items: center; gap: 24px; padding: 22px; }
 .stock-identity { display: flex; align-items: center; gap: 14px; }
+.stock-identity > div { min-width: 0; }
 .ticker-avatar { width: 50px; height: 50px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid var(--edge); border-radius: 13px; background: var(--gold-soft); color: var(--gold); font-family: var(--font-geist-mono), monospace; font-size: 13px; font-weight: 800; }
 .stock-identity h1 { margin: 0; font-family: var(--font-geist-mono), monospace; font-size: 26px; }
 .stock-identity h1 em { margin-left: 7px; color: var(--soft); font-family: var(--font-geist-sans), sans-serif; font-size: 15px; font-style: normal; font-weight: 550; }
-.stock-identity p { margin: 5px 0 0; color: var(--muted); font-size: 10px; }
+.stock-times { display: grid; gap: 3px; margin-top: 5px; color: var(--muted); font-family: var(--font-geist-mono), monospace; font-size: 9px; line-height: 1.35; }
 .stock-bazi { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
 .stock-bazi div { display: grid; gap: 6px; padding: 10px 12px; border: 1px solid rgba(255,255,255,.07); border-radius: 9px; background: var(--surface); }
 .stock-bazi span { color: var(--muted); font-size: 9px; }
@@ -474,6 +476,7 @@ html { color-scheme: light; }
 .warning-card strong { color: #b4232f; }
 .sample-table-panel, .full-table { overflow: hidden; }
 table { min-width: 1280px; }
+.sample-table-panel table, .full-table table { min-width: 1440px; }
 th { background: #f8f9fb; color: #5d606b; }
 td { color: var(--soft); }
 tbody tr { cursor: pointer; }
