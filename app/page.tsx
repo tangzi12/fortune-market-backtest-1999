@@ -29,6 +29,11 @@ type StockIndexItem = {
   reverse_fit_score?: number;
   reverse_fit_margin?: number;
   reverse_annual_full_balanced_accuracy?: number;
+  reverse_annual_hit_rate_excluding_neutral?: number;
+  reverse_annual_full_accuracy?: number;
+  reverse_annual_hits?: number;
+  reverse_annual_neutral_predictions?: number;
+  reverse_annual_explicit_predictions?: number;
   reverse_monthly_full_balanced_accuracy?: number;
   reverse_annual_eligible?: boolean;
   reverse_monthly_eligible?: boolean;
@@ -37,6 +42,11 @@ type StockIndexItem = {
   reverse_matches_algorithm?: boolean;
   algorithm_fit_score?: number;
   algorithm_annual_full_balanced_accuracy?: number;
+  algorithm_annual_hit_rate_excluding_neutral?: number;
+  algorithm_annual_full_accuracy?: number;
+  algorithm_annual_hits?: number;
+  algorithm_annual_neutral_predictions?: number;
+  algorithm_annual_explicit_predictions?: number;
   algorithm_monthly_full_balanced_accuracy?: number;
   annual_hit_rate?: number;
   monthly_hit_rate?: number;
@@ -285,7 +295,7 @@ function reverseGodInfo(stock: StockIndexItem) {
   const noData = status === "no_data";
   const available = status === "sufficient" && Boolean(god);
   const rawMargin = asNumber(stock.reverse_fit_margin);
-  const fitScore = asNumber(stock.reverse_fit_score);
+  const fitScore = asNumber(stock.reverse_annual_full_balanced_accuracy ?? stock.reverse_fit_score);
   const normalizedMargin = rawMargin === undefined ? undefined : Math.abs(rawMargin) > 1 ? rawMargin / 100 : rawMargin;
   const matchesAlgorithm = booleanValue(stock.reverse_main_god_matches_algorithm ?? stock.reverse_matches_algorithm) ?? (available ? god === String(stock.main_god ?? "").trim() : undefined);
   return {
@@ -317,6 +327,11 @@ function normalizeIndex(payload: unknown): AppData {
       reverse_main_god_label: String(row.reverse_main_god_label ?? "K线逆推（样本内）"),
       reverse_fit_score: asNumber(row.reverse_fit_score), reverse_fit_margin: asNumber(row.reverse_fit_margin),
       reverse_annual_full_balanced_accuracy: asNumber(row.reverse_annual_full_balanced_accuracy),
+      reverse_annual_hit_rate_excluding_neutral: asNumber(row.reverse_annual_hit_rate_excluding_neutral),
+      reverse_annual_full_accuracy: asNumber(row.reverse_annual_full_accuracy),
+      reverse_annual_hits: asNumber(row.reverse_annual_hits),
+      reverse_annual_neutral_predictions: asNumber(row.reverse_annual_neutral_predictions),
+      reverse_annual_explicit_predictions: asNumber(row.reverse_annual_explicit_predictions),
       reverse_monthly_full_balanced_accuracy: asNumber(row.reverse_monthly_full_balanced_accuracy),
       reverse_annual_eligible: booleanValue(row.reverse_annual_eligible),
       reverse_monthly_eligible: booleanValue(row.reverse_monthly_eligible),
@@ -324,6 +339,11 @@ function normalizeIndex(payload: unknown): AppData {
       reverse_main_god_matches_algorithm: booleanValue(row.reverse_main_god_matches_algorithm ?? row.reverse_matches_algorithm),
       algorithm_fit_score: asNumber(row.algorithm_fit_score),
       algorithm_annual_full_balanced_accuracy: asNumber(row.algorithm_annual_full_balanced_accuracy),
+      algorithm_annual_hit_rate_excluding_neutral: asNumber(row.algorithm_annual_hit_rate_excluding_neutral),
+      algorithm_annual_full_accuracy: asNumber(row.algorithm_annual_full_accuracy),
+      algorithm_annual_hits: asNumber(row.algorithm_annual_hits),
+      algorithm_annual_neutral_predictions: asNumber(row.algorithm_annual_neutral_predictions),
+      algorithm_annual_explicit_predictions: asNumber(row.algorithm_annual_explicit_predictions),
       algorithm_monthly_full_balanced_accuracy: asNumber(row.algorithm_monthly_full_balanced_accuracy),
       annual_hit_rate: asNumber(row.annual_hit_rate), monthly_hit_rate: asNumber(row.monthly_hit_rate),
       annual_samples: asNumber(row.annual_samples), monthly_samples: asNumber(row.monthly_samples),
@@ -619,7 +639,9 @@ export default function Home() {
     }).sort((a, b) => sortBy === "monthly"
       ? (b.monthly_hit_rate ?? -1) - (a.monthly_hit_rate ?? -1)
       : sortBy === "reverse_fit"
-        ? (reverseGodInfo(b).available ? (b.reverse_fit_score ?? -1) : -1) - (reverseGodInfo(a).available ? (a.reverse_fit_score ?? -1) : -1)
+        ? (reverseGodInfo(b).available ? (b.reverse_annual_full_balanced_accuracy ?? b.reverse_fit_score ?? -1) : -1) - (reverseGodInfo(a).available ? (a.reverse_annual_full_balanced_accuracy ?? a.reverse_fit_score ?? -1) : -1)
+      : sortBy === "reverse_hit"
+        ? (reverseGodInfo(b).available ? (b.reverse_annual_hit_rate_excluding_neutral ?? -1) : -1) - (reverseGodInfo(a).available ? (a.reverse_annual_hit_rate_excluding_neutral ?? -1) : -1)
       : sortBy === "samples" ? (b.annual_samples ?? 0) - (a.annual_samples ?? 0)
       : sortBy === "ticker" ? a.ticker.localeCompare(b.ticker)
       : (b.annual_hit_rate ?? -1) - (a.annual_hit_rate ?? -1));
@@ -703,7 +725,7 @@ export default function Home() {
             {section === "overview" && (
               <>
                 <section className="hero">
-                  <div className="hero-copy"><span className="eyebrow">1999—2025 · HISTORICAL REVIEW</span><h1>命理信号，放进真实<br /><em>年K与节气月K</em>检验。</h1><p>先看过去能否同步，再谈未来。现行命理算法保持参数冻结；K线逆推另作明确标记的样本内敏感性对照。</p><div className="hero-actions"><button className="primary" onClick={() => navigate("universe")}>查看全部股票 <span>→</span></button><button onClick={() => navigate("methodology")}>阅读计算口径</button></div></div>
+                  <div className="hero-copy"><span className="eyebrow">1999—2025 · HISTORICAL REVIEW</span><h1>命理信号，放进真实<br /><em>年K与节气月K</em>检验。</h1><p>先看过去能否同步，再谈未来。现行命理算法保持参数冻结；K线逆推只看年运，并另作明确标记的样本内敏感性对照。</p><div className="hero-actions"><button className="primary" onClick={() => navigate("universe")}>查看全部股票 <span>→</span></button><button onClick={() => navigate("methodology")}>阅读计算口径</button></div></div>
                   <div className="hero-terminal" aria-label="回测快照"><div className="terminal-head"><span><i /> BACKTEST / AGGREGATE</span><b>ET · 节气切分</b></div><MiniBars values={sparkValues} /><div className="terminal-stats"><div><span>年运同步率</span><strong>{percent(annualRate)}</strong></div><div><span>月运同步率</span><strong>{percent(monthlyRate)}</strong></div><div><span>股票覆盖</span><strong>{metric(coverage, ["stocks", "stock_count", "stock_count_with_prices"], stocks.length || 518)}</strong></div></div></div>
                 </section>
 
@@ -740,7 +762,7 @@ export default function Home() {
                   <label className="search-box"><span>⌕</span><input value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} placeholder="搜索 AAPL、苹果、信息技术…" aria-label="搜索股票" />{query && <button onClick={() => { setQuery(""); setPage(1); }} aria-label="清除搜索">×</button>}</label>
                   <select value={indexFilter} onChange={(e) => { setIndexFilter(e.target.value); setPage(1); }} aria-label="按指数筛选"><option>全部指数</option><option>S&P 500</option><option>Nasdaq-100</option></select>
                   <select value={sectorFilter} onChange={(e) => { setSectorFilter(e.target.value); setPage(1); }} aria-label="按板块筛选"><option>全部板块</option>{sectors.map((sector) => <option key={sector}>{sector}</option>)}</select>
-                  <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }} aria-label="排序"><option value="annual">年运方向命中率 ↓</option><option value="monthly">月运方向命中率 ↓</option><option value="reverse_fit">K线逆推拟合分 ↓</option><option value="samples">方向样本 ↓</option><option value="ticker">代码 A—Z</option></select>
+                  <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }} aria-label="排序"><option value="annual">算法年运普通命中率（排除中性）↓</option><option value="reverse_fit">逆推年运 full BA ↓</option><option value="reverse_hit">逆推年运普通命中率（排除中性）↓</option><option value="monthly">月运方向命中率 ↓</option><option value="samples">方向样本 ↓</option><option value="ticker">代码 A—Z</option></select>
                 </div>
                 <div className="result-meta"><span>找到 <strong>{filtered.length}</strong> 只股票</span><small>命中率仅反映历史样本，不代表未来收益</small></div>
                 <div className="panel full-table"><StockTable rows={visible} onOpen={openStock} /><div className="pagination"><button disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>← 上一页</button><span>第 {page} / {totalPages} 页</span><button disabled={page === totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>下一页 →</button></div></div>
@@ -773,37 +795,63 @@ export default function Home() {
   );
 }
 
+function annualGodMetrics(stock: StockIndexItem, source: "algorithm" | "reverse") {
+  if (source === "reverse") {
+    return {
+      fba: asNumber(stock.reverse_annual_full_balanced_accuracy ?? stock.reverse_fit_score),
+      hitRate: asNumber(stock.reverse_annual_hit_rate_excluding_neutral),
+      fullAccuracy: asNumber(stock.reverse_annual_full_accuracy),
+      hits: asNumber(stock.reverse_annual_hits),
+      explicit: asNumber(stock.reverse_annual_explicit_predictions),
+      neutral: asNumber(stock.reverse_annual_neutral_predictions),
+    };
+  }
+  return {
+    fba: asNumber(stock.algorithm_annual_full_balanced_accuracy ?? stock.algorithm_fit_score),
+    hitRate: asNumber(stock.algorithm_annual_hit_rate_excluding_neutral ?? stock.annual_hit_rate),
+    fullAccuracy: asNumber(stock.algorithm_annual_full_accuracy),
+    hits: asNumber(stock.algorithm_annual_hits ?? stock.annual_hits),
+    explicit: asNumber(stock.algorithm_annual_explicit_predictions ?? stock.annual_samples),
+    neutral: asNumber(stock.algorithm_annual_neutral_predictions ?? stock.annual_neutral_periods),
+  };
+}
+
 function ReverseGodCell({ stock }: { stock: StockIndexItem }) {
   const info = reverseGodInfo(stock);
+  const annual = annualGodMetrics(stock, "reverse");
   if (!info.available) {
-    return <div className="reverse-god-cell unavailable"><strong>{info.unavailableLabel}</strong><small>K线逆推 · 样本内</small></div>;
+    return <div className="reverse-god-cell unavailable"><strong>{info.unavailableLabel}</strong><small>K线逆推 · 仅年运 · 样本内</small></div>;
   }
   return (
     <div className="reverse-god-cell">
       <div><span className="reverse-god-chip">{info.god}</span><em className={info.matchesAlgorithm ? "same" : "different"}>{info.matchesAlgorithm ? "同算法" : "与算法不同"}</em>{info.unstable && <em className="unstable">近似并列</em>}{info.belowBaseline && <em className="baseline">≤50%基准</em>}</div>
-      <small>根据历史K线逆推 · 样本内 · FBA {percent(stock.reverse_fit_score)}</small>
+      <small>年运 full BA {percent(annual.fba)} · 普通命中（排除中性）{percent(annual.hitRate)}{annual.explicit !== undefined ? `（${annual.hits ?? 0}/${annual.explicit}）` : ""}</small>
+      <small>根据历史K线逆推 · 仅年运 · 样本内</small>
     </div>
   );
 }
 
 function ReverseGodComparison({ stock }: { stock: StockIndexItem }) {
   const info = reverseGodInfo(stock);
+  const algorithmAnnual = annualGodMetrics(stock, "algorithm");
+  const reverseAnnual = annualGodMetrics(stock, "reverse");
   return (
     <article className="panel god-comparison" aria-label="算法主用神与K线逆推主用神对照">
-      <div className="god-comparison-heading"><span className="eyebrow">MAIN-GOD SENSITIVITY</span><h2>主用神选择对照</h2><p>左侧来自既定命理算法；右侧只是在已经观察到的历史K线上寻找样本内拟合较高的候选值。</p></div>
-      <div className="god-option algorithm-option"><span>算法主用神 · 命理算法</span><strong>{stock.main_god || "—"}</strong><small>同口径综合FBA {percent(stock.algorithm_fit_score)}{asNumber(stock.algorithm_fit_score) !== undefined && Number(stock.algorithm_fit_score) <= 0.50 ? " · 未超过50%恒向基准" : ""}</small></div>
+      <div className="god-comparison-heading"><span className="eyebrow">MAIN-GOD SENSITIVITY</span><h2>主用神选择对照 · 仅看年运</h2><p>左侧来自既定命理算法；右侧只用已经观察到的历史年K，在十天干中寻找样本内年运 full BA 最高的候选值。月运不参与选神。</p></div>
+      <div className="god-option algorithm-option"><span>算法主用神 · 命理算法</span><strong>{stock.main_god || "—"}</strong><small>年运 full BA {percent(algorithmAnnual.fba)} · 普通命中率（排除中性）{percent(algorithmAnnual.hitRate)}{algorithmAnnual.fba !== undefined && algorithmAnnual.fba <= 0.50 ? " · 未超过50%恒向基准" : ""}</small></div>
       <span className="comparison-arrow" aria-hidden="true">⇄</span>
       <div className={`god-option reverse-option ${info.available ? "" : "unavailable"}`}>
-        <span>根据历史K线逆推 · 样本内</span>
+        <span>根据历史K线逆推 · 仅年运 · 样本内</span>
         <strong>{info.available ? info.god : info.unavailableLabel}</strong>
-        <small>{info.available ? `${info.matchesAlgorithm ? "与算法相同" : "与算法不同"} · 综合FBA ${percent(stock.reverse_fit_score)}${info.belowBaseline ? " · 未超过50%恒向基准" : ""}` : "未生成逆推主用神"}</small>
+        <small>{info.available ? `${info.matchesAlgorithm ? "与算法相同" : "与算法不同"} · 年运 full BA ${percent(reverseAnnual.fba)} · 普通命中率（排除中性）${percent(reverseAnnual.hitRate)}${info.belowBaseline ? " · 未超过50%恒向基准" : ""}` : "未生成逆推主用神"}</small>
       </div>
       <div className="reverse-fit-metrics">
-        <div><span>命理算法 full BA</span><strong>年 {percent(stock.algorithm_annual_full_balanced_accuracy)}（{stock.reverse_annual_eligible ? "采用" : "样本不足，不计入"}） · 月 {percent(stock.algorithm_monthly_full_balanced_accuracy)}（{stock.reverse_monthly_eligible ? "采用" : "样本不足，不计入"}）</strong></div>
+        <div><span>命理算法 · 年运同口径</span><strong>选神 full BA {percent(algorithmAnnual.fba)} · 普通命中（排除中性）{percent(algorithmAnnual.hitRate)}{algorithmAnnual.explicit !== undefined ? `（${algorithmAnnual.hits ?? 0}/${algorithmAnnual.explicit}）` : ""} · 全样本准确率（中性计错）{percent(algorithmAnnual.fullAccuracy)} · 中性预测 {algorithmAnnual.neutral ?? "—"}</strong></div>
         {info.available ? <>
-          <div><span>样本内逆推 full BA</span><strong>年 {percent(stock.reverse_annual_full_balanced_accuracy)}（{stock.reverse_annual_eligible ? "采用" : "样本不足，不计入"}） · 月 {percent(stock.reverse_monthly_full_balanced_accuracy)}（{stock.reverse_monthly_eligible ? "采用" : "样本不足，不计入"}）</strong>{info.belowBaseline && <em>未超过50%恒向基准</em>}</div>
+          <div><span>K线逆推 · 年运同口径</span><strong>选神 full BA {percent(reverseAnnual.fba)} · 普通命中（排除中性）{percent(reverseAnnual.hitRate)}{reverseAnnual.explicit !== undefined ? `（${reverseAnnual.hits ?? 0}/${reverseAnnual.explicit}）` : ""} · 全样本准确率（中性计错）{percent(reverseAnnual.fullAccuracy)} · 中性预测 {reverseAnnual.neutral ?? "—"}</strong>{info.belowBaseline && <em>未超过50%恒向基准</em>}</div>
           <div><span>逆推次选 / 领先差</span><strong>{info.secondGod || "—"} / {percent(stock.reverse_fit_margin)}</strong>{info.unstable && <em>结果不稳定 · 冠亚近似并列</em>}</div>
         </> : <div className="reverse-fit-unavailable"><span>样本内逆推</span><strong>{info.unavailableLabel}，探索值不作为逆推结果展示</strong></div>}
+        <div><span>节气月运</span><strong>不参与主用神逆推与排名，仅保留为独立回测展示</strong></div>
       </div>
       <p className="reverse-leakage-note"><strong>数据泄漏与过拟合警示：</strong>逆推值使用本股票的已知历史K线选择，只是样本内拟合，不是预测结果，也不能替代独立样本验证。</p>
     </article>
@@ -814,7 +862,7 @@ function StockTable({ rows, onOpen }: { rows: StockIndexItem[]; onOpen: (stock: 
   return (
     <div className="table-scroll">
       <table>
-        <thead><tr><th>股票</th><th>指数 / 板块</th><th>上市时间 ET</th><th>起运时间 ET</th><th>上市时刻推算八字</th><th><span className="th-stack">算法主用神<small>命理算法 · full BA</small></span></th><th><span className="th-stack">逆推主用神<small>历史K线 · 样本内 · full BA</small></span></th><th>年运方向命中</th><th>节气月方向命中</th><th>周期构成</th><th><span className="sr-only">操作</span></th></tr></thead>
+        <thead><tr><th>股票</th><th>指数 / 板块</th><th>上市时间 ET</th><th>起运时间 ET</th><th>上市时刻推算八字</th><th><span className="th-stack">算法主用神<small>仅年运 · full BA / 普通命中（排除中性）</small></span></th><th><span className="th-stack">逆推主用神<small>历史年K · 样本内 · full BA / 普通命中（排除中性）</small></span></th><th>算法年运普通命中<br />（排除中性）</th><th>节气月方向命中</th><th>周期构成</th><th><span className="sr-only">操作</span></th></tr></thead>
         <tbody>{rows.map((stock) => {
           const info = basisInfo(stock.listing_time_basis);
           const luckStart = splitEtDateTime(stock.first_luck_start_et);
@@ -825,7 +873,7 @@ function StockTable({ rows, onOpen }: { rows: StockIndexItem[]; onOpen: (stock: 
               <td><div className="stacked mono"><span>{stock.listing_date || "—"}</span><small>{stock.time_et || "—"} <em className={info.proxy ? "proxy-text" : "verified-text"}>{info.label}</em></small></div></td>
               <td className="luck-start-cell"><div className="stacked mono"><span>{luckStart.date}</span><small>{luckStart.time}</small></div></td>
               <td className="bazi-cell">{stock.bazi || "—"}</td>
-              <td><div className="algorithm-god-cell"><span className="god-chip">{stock.main_god || "—"}</span><small>命理算法 · FBA {percent(stock.algorithm_fit_score)}</small></div></td>
+              <td><div className="algorithm-god-cell"><span className="god-chip">{stock.main_god || "—"}</span><small>年运 full BA {percent(annualGodMetrics(stock, "algorithm").fba)}</small><small>普通命中（排除中性）{percent(annualGodMetrics(stock, "algorithm").hitRate)}</small></div></td>
               <td><ReverseGodCell stock={stock} /></td>
               <td><Rate value={stock.annual_hit_rate} complete={stock.annual_complete_periods} directional={stock.annual_samples} hits={stock.annual_hits} /></td>
               <td><Rate value={stock.monthly_hit_rate} complete={stock.monthly_complete_periods} directional={stock.monthly_samples} hits={stock.monthly_hits} /></td>
@@ -892,7 +940,7 @@ function Methodology({ summary, basis, proxyCount }: { summary: JsonMap; basis: 
           <div className="step"><b>02</b><div><h3>年运固定权重</h3><div className="big-formula"><strong>年运</strong><span>=</span><em>60% 行运</em><span>+</span><em>40% 流年</em></div><p>行运（起运前小运、起运后大运）与流年分别按十二长生状态及天干对主用神的关系形成周期分；年内换运按实际天数加权。</p></div></div>
           <div className="step"><b>03</b><div><h3>节气月独立预测</h3><div className="big-formula"><strong>月运</strong><span>=</span><em>36% 行运</em><span>+</span><em>24% 流年</em><span>+</span><em>40% 流月</em></div><p>寅月从立春起，依十二节气月切分。价格也用同一 ET 边界聚合，标准公历月K只作参照。</p></div></div>
           <div className="step"><b>04</b><div><h3>同步判定</h3><p>预测上涨对应周期复权收盘高于开盘、预测下跌对应收盘低于开盘即为同步；中性单列覆盖率，不塞进方向命中率。</p></div></div>
-          <div className="step reverse-method-step"><b>05</b><div><h3>K线逆推主用神 · 仅限样本内探索</h3><p>年口径门槛为样本 N≥8、实际上涨/下跌各≥3；月口径门槛为样本 N≥36、实际上涨/下跌各≥12。达到任一可用口径才生成逆推值；full balanced accuracy（full BA）把预测中性也计为未命中，综合分对可用的年/月 full BA 等权。综合FBA ≤50% 表示未超过恒向基准；冠亚领先差＜2个百分点标为近似并列、结果不稳定。</p><div className="method-leakage-warning"><strong>数据泄漏与过拟合警示</strong><span>同一段历史K线既用于选择主用神又用于报告成绩，所以逆推值不是预测结果。正式验证必须把选神期与验证期分离，并只在从未参与选神的未来或留出样本上计分。</span></div></div></div>
+          <div className="step reverse-method-step"><b>05</b><div><h3>K线逆推主用神 · 仅按年运</h3><p>固定其余参数后穷举十天干，只按年运 full balanced accuracy（full BA）排名，月运完全不参与选神。门槛为完整年样本 N≥8，且实际上涨、下跌各≥3；预测中性计为未命中。年运 full BA ≤50% 表示未超过恒向基准；冠亚领先差＜2个百分点标为近似并列、结果不稳定。普通年运命中率另列，仅以给出明确涨跌预测的年份为分母，不用于选神。</p><div className="method-leakage-warning"><strong>数据泄漏与过拟合警示</strong><span>同一段历史年K既用于选择主用神又用于报告成绩，所以逆推值属于样本内拟合，不是预测结果。正式验证必须把选神期与验证期分离，并只在从未参与选神的未来或留出样本上计分。</span></div></div></div>
         </article>
         <aside className="method-side">
           <article className="panel audit-card"><span className="eyebrow">LISTING TIME AUDIT</span><h3>上市时间依据分层</h3>{basis.map((item, index) => <div className="audit-row" key={item.label}><i className={`basis-color c${index}`} /><span>{item.label}</span><strong>{item.count}</strong></div>)}<p className="audit-warning">其中 {proxyCount || 280} 只为行情起点代理，相关命盘不是经核验的真实 IPO 八字。</p></article>

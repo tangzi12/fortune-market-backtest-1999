@@ -124,11 +124,20 @@ test("labels K-line reverse-engineered main gods as in-sample fits and publishes
     "reverse_main_god_label",
     "reverse_fit_score",
     "reverse_annual_full_balanced_accuracy",
-    "reverse_monthly_full_balanced_accuracy",
+    "reverse_annual_hit_rate_excluding_neutral",
+    "reverse_annual_full_accuracy",
+    "reverse_annual_hits",
+    "reverse_annual_neutral_predictions",
+    "reverse_annual_explicit_predictions",
     "reverse_annual_eligible",
-    "reverse_monthly_eligible",
     "reverse_sample_status",
     "reverse_main_god_matches_algorithm",
+    "algorithm_annual_full_balanced_accuracy",
+    "algorithm_annual_hit_rate_excluding_neutral",
+    "algorithm_annual_full_accuracy",
+    "algorithm_annual_hits",
+    "algorithm_annual_neutral_predictions",
+    "algorithm_annual_explicit_predictions",
   ];
 
   let sufficient = 0;
@@ -138,16 +147,17 @@ test("labels K-line reverse-engineered main gods as in-sample fits and publishes
     assert.equal(stock.reverse_main_god_label, "K线逆推（样本内）", `${stock.ticker} reverse label`);
     assert.match(String(stock.reverse_sample_status), /^(sufficient|insufficient|no_data)$/, `${stock.ticker} reverse status`);
     assert.equal(typeof stock.reverse_annual_eligible, "boolean", `${stock.ticker} annual eligibility`);
-    assert.equal(typeof stock.reverse_monthly_eligible, "boolean", `${stock.ticker} monthly eligibility`);
     if (stock.reverse_sample_status === "sufficient") {
       sufficient += 1;
+      assert.equal(stock.reverse_annual_eligible, true, `${stock.ticker} sufficient fit must be annual-eligible`);
       assert.match(String(stock.reverse_main_god), /^[甲乙丙丁戊己庚辛壬癸]$/, `${stock.ticker} reverse main god`);
       assert.equal(typeof stock.reverse_fit_score, "number", `${stock.ticker} reverse fit score`);
-      assert.ok(
-        typeof stock.reverse_annual_full_balanced_accuracy === "number" || typeof stock.reverse_monthly_full_balanced_accuracy === "number",
-        `${stock.ticker} needs at least one eligible full BA horizon`,
-      );
+      assert.equal(typeof stock.reverse_annual_full_balanced_accuracy, "number", `${stock.ticker} annual full BA`);
+      assert.equal(stock.reverse_fit_score, stock.reverse_annual_full_balanced_accuracy, `${stock.ticker} ranking score must be annual full BA only`);
       assert.equal(typeof stock.reverse_main_god_matches_algorithm, "boolean", `${stock.ticker} algorithm comparison`);
+      if (stock.reverse_annual_explicit_predictions > 0) {
+        assert.ok(Math.abs(stock.reverse_annual_hit_rate_excluding_neutral - stock.reverse_annual_hits / stock.reverse_annual_explicit_predictions) < 1e-6, `${stock.ticker} ordinary annual hit rate`);
+      }
     } else {
       unavailable += 1;
     }
@@ -155,30 +165,35 @@ test("labels K-line reverse-engineered main gods as in-sample fits and publishes
   assert.ok(sufficient > 0, "dataset should expose eligible in-sample reverse fits");
   assert.ok(unavailable > 0, "dataset should retain an explicit insufficient/no-data population");
 
-  const algorithmColumn = pageSource.indexOf("算法主用神<small>命理算法 · full BA</small>");
-  const reverseColumn = pageSource.indexOf("逆推主用神<small>历史K线 · 样本内 · full BA</small>");
-  const annualColumn = pageSource.indexOf("<th>年运方向命中</th>");
+  const algorithmColumn = pageSource.indexOf("算法主用神<small>仅年运 · full BA / 普通命中（排除中性）</small>");
+  const reverseColumn = pageSource.indexOf("逆推主用神<small>历史年K · 样本内 · full BA / 普通命中（排除中性）</small>");
+  const annualColumn = pageSource.indexOf("<th>算法年运普通命中<br />（排除中性）</th>");
   assert.ok(algorithmColumn >= 0 && algorithmColumn < reverseColumn && reverseColumn < annualColumn, "main-god comparison columns must stay adjacent");
   assert.match(pageSource, /算法主用神 · 命理算法/);
-  assert.match(pageSource, /根据历史K线逆推 · 样本内/);
+  assert.match(pageSource, /根据历史K线逆推 · 仅年运 · 样本内/);
   assert.match(pageSource, /样本不足/);
   assert.match(pageSource, /reverse_second_main_god/);
   assert.match(pageSource, /reverse_fit_margin/);
-  assert.match(pageSource, /algorithm_fit_score/);
+  assert.match(pageSource, /algorithm_annual_full_balanced_accuracy/);
+  assert.match(pageSource, /reverse_annual_hit_rate_excluding_neutral/);
+  assert.match(pageSource, /algorithm_annual_hit_rate_excluding_neutral/);
   assert.match(pageSource, /结果不稳定 · 冠亚近似并列/);
   assert.match(pageSource, /数据泄漏与过拟合警示/);
   assert.match(pageSource, /不是预测结果/);
-  assert.match(pageSource, /年口径门槛为样本 N≥8、实际上涨\/下跌各≥3/);
-  assert.match(pageSource, /月口径门槛为样本 N≥36、实际上涨\/下跌各≥12/);
-  assert.match(pageSource, /预测中性也计为未命中/);
-  assert.match(pageSource, /综合FBA ≤50%/);
+  assert.match(pageSource, /穷举十天干，只按年运 full balanced accuracy/);
+  assert.match(pageSource, /月运完全不参与选神/);
+  assert.match(pageSource, /完整年样本 N≥8，且实际上涨、下跌各≥3/);
+  assert.match(pageSource, /预测中性计为未命中/);
+  assert.match(pageSource, /年运 full BA ≤50%/);
   assert.match(pageSource, /未超过50%恒向基准/);
   assert.match(pageSource, /探索值不作为逆推结果展示/);
   assert.match(pageSource, /近似并列/);
-  assert.match(pageSource, /样本不足，不计入/);
   assert.match(pageSource, /冠亚领先差＜2个百分点/);
-  assert.match(pageSource, /<option value="reverse_fit">K线逆推拟合分 ↓<\/option>/);
-  assert.match(styles, /\.sample-table-panel table, \.full-table table \{ min-width: 1660px; \}/);
+  assert.match(pageSource, /普通年运命中率另列/);
+  assert.match(pageSource, /<option value="reverse_fit">逆推年运 full BA ↓<\/option>/);
+  assert.match(pageSource, /<option value="reverse_hit">逆推年运普通命中率（排除中性）↓<\/option>/);
+  assert.match(pageSource, /全样本准确率（中性计错）/);
+  assert.match(styles, /\.sample-table-panel table, \.full-table table \{ min-width: 1740px; \}/);
   assert.match(styles, /\.reverse-god-chip/);
   assert.match(styles, /\.method-leakage-warning/);
 });

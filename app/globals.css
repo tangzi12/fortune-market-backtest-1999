@@ -185,9 +185,10 @@ tbody tr:hover { background: rgba(255,255,255,.032); }
 .th-stack { display: grid; gap: 2px; }
 .th-stack small { color: var(--muted); font-size: 7px; font-weight: 600; letter-spacing: .03em; }
 .god-chip { display: inline-grid; place-items: center; min-width: 28px; min-height: 26px; padding: 0 7px; border: 1px solid var(--line); border-radius: 7px; background: var(--gold-soft); color: var(--gold); font-weight: 700; }
-.algorithm-god-cell { display: flex; align-items: center; gap: 7px; min-width: 135px; }
+.algorithm-god-cell { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 3px 7px; min-width: 175px; }
+.algorithm-god-cell .god-chip { grid-row: 1 / span 2; }
 .algorithm-god-cell small { color: var(--muted); font-size: 8px; white-space: nowrap; }
-.reverse-god-cell { display: grid; min-width: 205px; gap: 5px; }
+.reverse-god-cell { display: grid; min-width: 240px; gap: 4px; }
 .reverse-god-cell > div { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
 .reverse-god-cell small { color: var(--violet); font-size: 8px; white-space: nowrap; }
 .reverse-god-cell em { padding: 2px 5px; border-radius: 999px; background: #f3f0ff; color: var(--violet); font-size: 7px; font-style: normal; white-space: nowrap; }
@@ -523,7 +524,7 @@ html { color-scheme: light; }
 .warning-card strong { color: #b4232f; }
 .sample-table-panel, .full-table { overflow: hidden; }
 table { min-width: 1280px; }
-.sample-table-panel table, .full-table table { min-width: 1660px; }
+.sample-table-panel table, .full-table table { min-width: 1740px; }
 th { background: #f8f9fb; color: #5d606b; }
 td { color: var(--soft); }
 tbody tr { cursor: pointer; }
