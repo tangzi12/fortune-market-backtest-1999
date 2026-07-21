@@ -111,3 +111,74 @@ test("publishes every first-luck start time and keeps the UI terminology aligned
   ]);
   assert.equal(meta2018.total_score, -1.865127716095);
 });
+
+test("labels K-line reverse-engineered main gods as in-sample fits and publishes the audit fields", async () => {
+  const [indexText, pageSource, styles] = await Promise.all([
+    readFile(new URL("../public/data/index.json", import.meta.url), "utf8"),
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  const stockIndex = JSON.parse(indexText);
+  const requiredFields = [
+    "reverse_main_god",
+    "reverse_main_god_label",
+    "reverse_fit_score",
+    "reverse_annual_full_balanced_accuracy",
+    "reverse_monthly_full_balanced_accuracy",
+    "reverse_annual_eligible",
+    "reverse_monthly_eligible",
+    "reverse_sample_status",
+    "reverse_main_god_matches_algorithm",
+  ];
+
+  let sufficient = 0;
+  let unavailable = 0;
+  for (const stock of stockIndex.stocks) {
+    for (const field of requiredFields) assert.ok(Object.hasOwn(stock, field), `${stock.ticker} missing ${field}`);
+    assert.equal(stock.reverse_main_god_label, "K线逆推（样本内）", `${stock.ticker} reverse label`);
+    assert.match(String(stock.reverse_sample_status), /^(sufficient|insufficient|no_data)$/, `${stock.ticker} reverse status`);
+    assert.equal(typeof stock.reverse_annual_eligible, "boolean", `${stock.ticker} annual eligibility`);
+    assert.equal(typeof stock.reverse_monthly_eligible, "boolean", `${stock.ticker} monthly eligibility`);
+    if (stock.reverse_sample_status === "sufficient") {
+      sufficient += 1;
+      assert.match(String(stock.reverse_main_god), /^[甲乙丙丁戊己庚辛壬癸]$/, `${stock.ticker} reverse main god`);
+      assert.equal(typeof stock.reverse_fit_score, "number", `${stock.ticker} reverse fit score`);
+      assert.ok(
+        typeof stock.reverse_annual_full_balanced_accuracy === "number" || typeof stock.reverse_monthly_full_balanced_accuracy === "number",
+        `${stock.ticker} needs at least one eligible full BA horizon`,
+      );
+      assert.equal(typeof stock.reverse_main_god_matches_algorithm, "boolean", `${stock.ticker} algorithm comparison`);
+    } else {
+      unavailable += 1;
+    }
+  }
+  assert.ok(sufficient > 0, "dataset should expose eligible in-sample reverse fits");
+  assert.ok(unavailable > 0, "dataset should retain an explicit insufficient/no-data population");
+
+  const algorithmColumn = pageSource.indexOf("算法主用神<small>命理算法 · full BA</small>");
+  const reverseColumn = pageSource.indexOf("逆推主用神<small>历史K线 · 样本内 · full BA</small>");
+  const annualColumn = pageSource.indexOf("<th>年运方向命中</th>");
+  assert.ok(algorithmColumn >= 0 && algorithmColumn < reverseColumn && reverseColumn < annualColumn, "main-god comparison columns must stay adjacent");
+  assert.match(pageSource, /算法主用神 · 命理算法/);
+  assert.match(pageSource, /根据历史K线逆推 · 样本内/);
+  assert.match(pageSource, /样本不足/);
+  assert.match(pageSource, /reverse_second_main_god/);
+  assert.match(pageSource, /reverse_fit_margin/);
+  assert.match(pageSource, /algorithm_fit_score/);
+  assert.match(pageSource, /结果不稳定 · 冠亚近似并列/);
+  assert.match(pageSource, /数据泄漏与过拟合警示/);
+  assert.match(pageSource, /不是预测结果/);
+  assert.match(pageSource, /年口径门槛为样本 N≥8、实际上涨\/下跌各≥3/);
+  assert.match(pageSource, /月口径门槛为样本 N≥36、实际上涨\/下跌各≥12/);
+  assert.match(pageSource, /预测中性也计为未命中/);
+  assert.match(pageSource, /综合FBA ≤50%/);
+  assert.match(pageSource, /未超过50%恒向基准/);
+  assert.match(pageSource, /探索值不作为逆推结果展示/);
+  assert.match(pageSource, /近似并列/);
+  assert.match(pageSource, /样本不足，不计入/);
+  assert.match(pageSource, /冠亚领先差＜2个百分点/);
+  assert.match(pageSource, /<option value="reverse_fit">K线逆推拟合分 ↓<\/option>/);
+  assert.match(styles, /\.sample-table-panel table, \.full-table table \{ min-width: 1660px; \}/);
+  assert.match(styles, /\.reverse-god-chip/);
+  assert.match(styles, /\.method-leakage-warning/);
+});
