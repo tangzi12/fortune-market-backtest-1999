@@ -112,13 +112,19 @@ test("publishes every first-luck start time and keeps the UI terminology aligned
   assert.equal(meta2018.total_score, -1.865127716095);
 });
 
-test("labels K-line reverse-engineered main gods as in-sample fits and publishes the audit fields", async () => {
-  const [indexText, pageSource, styles] = await Promise.all([
+test("only replaces the algorithm main god when every annual improvement gate passes", async () => {
+  const [indexText, pageSource, styles, costText, metaText, summaryText] = await Promise.all([
     readFile(new URL("../public/data/index.json", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/stocks/COST.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/stocks/META.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/summary.json", import.meta.url), "utf8"),
   ]);
   const stockIndex = JSON.parse(indexText);
+  const cost = JSON.parse(costText).stock;
+  const meta = JSON.parse(metaText).stock;
+  const summary = JSON.parse(summaryText);
   const requiredFields = [
     "reverse_main_god",
     "reverse_main_god_label",
@@ -129,70 +135,126 @@ test("labels K-line reverse-engineered main gods as in-sample fits and publishes
     "reverse_annual_hits",
     "reverse_annual_neutral_predictions",
     "reverse_annual_explicit_predictions",
+    "reverse_annual_direction_coverage",
     "reverse_annual_eligible",
     "reverse_sample_status",
     "reverse_main_god_matches_algorithm",
+    "reverse_replacement_applied",
+    "reverse_selection_status",
+    "reverse_qualified_candidate_count",
     "algorithm_annual_full_balanced_accuracy",
     "algorithm_annual_hit_rate_excluding_neutral",
     "algorithm_annual_full_accuracy",
     "algorithm_annual_hits",
     "algorithm_annual_neutral_predictions",
     "algorithm_annual_explicit_predictions",
+    "algorithm_annual_direction_coverage",
   ];
 
   let sufficient = 0;
   let unavailable = 0;
+  let replacements = 0;
   for (const stock of stockIndex.stocks) {
     for (const field of requiredFields) assert.ok(Object.hasOwn(stock, field), `${stock.ticker} missing ${field}`);
     assert.equal(stock.reverse_main_god_label, "K线逆推（样本内）", `${stock.ticker} reverse label`);
     assert.match(String(stock.reverse_sample_status), /^(sufficient|insufficient|no_data)$/, `${stock.ticker} reverse status`);
+    assert.match(String(stock.reverse_selection_status), /^(replaced|retained_no_qualified_candidate|retained_insufficient_samples|retained_no_data)$/, `${stock.ticker} selection status`);
     assert.equal(typeof stock.reverse_annual_eligible, "boolean", `${stock.ticker} annual eligibility`);
+    assert.match(String(stock.reverse_main_god), /^[甲乙丙丁戊己庚辛壬癸]$/, `${stock.ticker} selected main god`);
+    assert.equal(typeof stock.reverse_replacement_applied, "boolean", `${stock.ticker} replacement marker`);
+    assert.equal(typeof stock.reverse_qualified_candidate_count, "number", `${stock.ticker} qualified count`);
+    if (stock.reverse_fit_score !== null) {
+      assert.equal(stock.reverse_fit_score, stock.reverse_annual_hit_rate_excluding_neutral, `${stock.ticker} fit score must be ordinary annual hit rate`);
+    }
+    if (stock.reverse_annual_explicit_predictions > 0) {
+      assert.ok(Math.abs(stock.reverse_annual_hit_rate_excluding_neutral - stock.reverse_annual_hits / stock.reverse_annual_explicit_predictions) < 1e-6, `${stock.ticker} ordinary annual hit rate`);
+    }
+    if (stock.reverse_annual_directional_samples > 0) {
+      assert.ok(Math.abs(stock.reverse_annual_direction_coverage - stock.reverse_annual_explicit_predictions / stock.reverse_annual_directional_samples) < 1e-6, `${stock.ticker} selected coverage`);
+      assert.ok(Math.abs(stock.algorithm_annual_direction_coverage - stock.algorithm_annual_explicit_predictions / stock.reverse_annual_directional_samples) < 1e-6, `${stock.ticker} algorithm coverage`);
+    }
     if (stock.reverse_sample_status === "sufficient") {
       sufficient += 1;
       assert.equal(stock.reverse_annual_eligible, true, `${stock.ticker} sufficient fit must be annual-eligible`);
-      assert.match(String(stock.reverse_main_god), /^[甲乙丙丁戊己庚辛壬癸]$/, `${stock.ticker} reverse main god`);
       assert.equal(typeof stock.reverse_fit_score, "number", `${stock.ticker} reverse fit score`);
       assert.equal(typeof stock.reverse_annual_full_balanced_accuracy, "number", `${stock.ticker} annual full BA`);
-      assert.equal(stock.reverse_fit_score, stock.reverse_annual_full_balanced_accuracy, `${stock.ticker} ranking score must be annual full BA only`);
       assert.equal(typeof stock.reverse_main_god_matches_algorithm, "boolean", `${stock.ticker} algorithm comparison`);
-      if (stock.reverse_annual_explicit_predictions > 0) {
-        assert.ok(Math.abs(stock.reverse_annual_hit_rate_excluding_neutral - stock.reverse_annual_hits / stock.reverse_annual_explicit_predictions) < 1e-6, `${stock.ticker} ordinary annual hit rate`);
+      if (stock.reverse_replacement_applied) {
+        replacements += 1;
+        assert.equal(stock.reverse_selection_status, "replaced", `${stock.ticker} replacement status`);
+        assert.notEqual(stock.reverse_main_god, stock.main_god, `${stock.ticker} replacement must change the god`);
+        assert.ok(stock.reverse_qualified_candidate_count > 0, `${stock.ticker} must have a qualified candidate`);
+        assert.ok(stock.reverse_annual_hit_rate_excluding_neutral > stock.algorithm_annual_hit_rate_excluding_neutral, `${stock.ticker} ordinary hit rate must strictly improve`);
+        assert.ok(stock.reverse_annual_full_accuracy + 1e-6 >= stock.algorithm_annual_full_accuracy, `${stock.ticker} full accuracy must not fall`);
+        assert.ok(stock.reverse_annual_direction_coverage + 1e-6 >= stock.algorithm_annual_direction_coverage, `${stock.ticker} coverage must not fall`);
+      } else {
+        assert.equal(stock.reverse_selection_status, "retained_no_qualified_candidate", `${stock.ticker} qualified fallback status`);
+        assert.equal(stock.reverse_main_god, stock.main_god, `${stock.ticker} must retain original god`);
+        assert.equal(stock.reverse_qualified_candidate_count, 0, `${stock.ticker} fallback must have no qualified candidate`);
       }
     } else {
       unavailable += 1;
+      assert.equal(stock.reverse_replacement_applied, false, `${stock.ticker} insufficient data cannot replace`);
+      assert.equal(stock.reverse_main_god, stock.main_god, `${stock.ticker} insufficient data retains original god`);
+      assert.equal(stock.reverse_selection_status, stock.reverse_sample_status === "no_data" ? "retained_no_data" : "retained_insufficient_samples", `${stock.ticker} insufficient/no-data status`);
     }
   }
-  assert.ok(sufficient > 0, "dataset should expose eligible in-sample reverse fits");
+  assert.equal(sufficient, 461);
+  assert.equal(replacements, 329);
   assert.ok(unavailable > 0, "dataset should retain an explicit insufficient/no-data population");
+  assert.equal(summary.reverse_main_god_fit.replacement_count, 329);
+  assert.equal(summary.reverse_main_god_fit.retained_count, 189);
 
-  const algorithmColumn = pageSource.indexOf("算法主用神<small>仅年运 · full BA / 普通命中（排除中性）</small>");
-  const reverseColumn = pageSource.indexOf("逆推主用神<small>历史年K · 样本内 · full BA / 普通命中（排除中性）</small>");
-  const annualColumn = pageSource.indexOf("<th>算法年运普通命中<br />（排除中性）</th>");
+  assert.deepEqual(
+    [cost.main_god, cost.reverse_main_god, cost.reverse_second_main_god],
+    ["壬", "己", "庚"],
+  );
+  assert.deepEqual(
+    [cost.algorithm_annual_hit_rate_excluding_neutral, cost.reverse_annual_hit_rate_excluding_neutral],
+    [0.466667, 0.933333],
+  );
+  assert.deepEqual(
+    [cost.algorithm_annual_full_accuracy, cost.reverse_annual_full_accuracy],
+    [0.259259, 0.518519],
+  );
+  assert.deepEqual(
+    [cost.algorithm_annual_direction_coverage, cost.reverse_annual_direction_coverage],
+    [0.555556, 0.555556],
+  );
+  const rejectedCostJia = cost.reverse_candidate_ranking.find((candidate) => candidate.main_god === "甲");
+  assert.equal(rejectedCostJia.passes_improvement_gate, false);
+  assert.equal(rejectedCostJia.passes_ordinary_hit_rate_gate, false);
+  assert.equal(rejectedCostJia.passes_full_accuracy_gate, false);
+  assert.deepEqual(
+    [meta.main_god, meta.reverse_main_god, meta.reverse_second_main_god],
+    ["癸", "丁", "己"],
+  );
+
+  const algorithmColumn = pageSource.indexOf("原主用神<small>命理算法选定 · 年运普通命中</small>");
+  const reverseColumn = pageSource.indexOf("改进筛选结果<small>三门槛通过才替换 · full BA仅诊断/破平</small>");
+  const annualColumn = pageSource.indexOf("<th>原主用神年运普通命中<br />（排除中性）</th>");
   assert.ok(algorithmColumn >= 0 && algorithmColumn < reverseColumn && reverseColumn < annualColumn, "main-god comparison columns must stay adjacent");
-  assert.match(pageSource, /算法主用神 · 命理算法/);
-  assert.match(pageSource, /根据历史K线逆推 · 仅年运 · 样本内/);
+  assert.match(pageSource, /原主用神 · 命理算法/);
+  assert.match(pageSource, /普通年运命中率必须严格高于原主用神/);
+  assert.match(pageSource, /全样本准确率不得下降/);
+  assert.match(pageSource, /方向覆盖率不得下降/);
+  assert.match(pageSource, /无候选全部通过时，明确保留原主用神/);
   assert.match(pageSource, /样本不足/);
   assert.match(pageSource, /reverse_second_main_god/);
   assert.match(pageSource, /reverse_fit_margin/);
   assert.match(pageSource, /algorithm_annual_full_balanced_accuracy/);
   assert.match(pageSource, /reverse_annual_hit_rate_excluding_neutral/);
   assert.match(pageSource, /algorithm_annual_hit_rate_excluding_neutral/);
-  assert.match(pageSource, /结果不稳定 · 冠亚近似并列/);
+  assert.match(pageSource, /reverse_annual_direction_coverage/);
+  assert.match(pageSource, /algorithm_annual_direction_coverage/);
   assert.match(pageSource, /数据泄漏与过拟合警示/);
   assert.match(pageSource, /不是预测结果/);
-  assert.match(pageSource, /穷举十天干，只按年运 full balanced accuracy/);
-  assert.match(pageSource, /月运完全不参与选神/);
+  assert.match(pageSource, /full BA（full balanced accuracy）/);
+  assert.match(pageSource, /只作平衡性诊断与同分破平/);
+  assert.match(pageSource, /月运不参与/);
   assert.match(pageSource, /完整年样本 N≥8，且实际上涨、下跌各≥3/);
-  assert.match(pageSource, /预测中性计为未命中/);
-  assert.match(pageSource, /年运 full BA ≤50%/);
-  assert.match(pageSource, /未超过50%恒向基准/);
-  assert.match(pageSource, /探索值不作为逆推结果展示/);
-  assert.match(pageSource, /近似并列/);
-  assert.match(pageSource, /冠亚领先差＜2个百分点/);
-  assert.match(pageSource, /普通年运命中率另列/);
-  assert.match(pageSource, /<option value="reverse_fit">逆推年运 full BA ↓<\/option>/);
-  assert.match(pageSource, /<option value="reverse_hit">逆推年运普通命中率（排除中性）↓<\/option>/);
-  assert.match(pageSource, /全样本准确率（中性计错）/);
+  assert.match(pageSource, /<option value="reverse_fit">改进结果年运普通命中率↓<\/option>/);
+  assert.match(pageSource, /未找到同时通过三项门槛的改进候选/);
   assert.match(styles, /\.sample-table-panel table, \.full-table table \{ min-width: 1740px; \}/);
   assert.match(styles, /\.reverse-god-chip/);
   assert.match(styles, /\.method-leakage-warning/);
