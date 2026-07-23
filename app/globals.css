@@ -61,11 +61,13 @@ button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focu
 .brand strong { font-size: 14px; letter-spacing: 0.08em; }
 .brand small { color: var(--muted); font-size: 8px; font-weight: 700; letter-spacing: 0.16em; }
 .topbar nav { display: flex; align-self: stretch; gap: 4px; }
-.topbar nav button { position: relative; padding: 0 18px; border: 0; background: transparent; color: var(--muted); font-size: 13px; font-weight: 650; }
-.topbar nav button::after { content: ""; position: absolute; left: 18px; right: 18px; bottom: -1px; height: 2px; border-radius: 4px; background: transparent; }
-.topbar nav button:hover { color: var(--ink); }
+.topbar nav button, .topbar nav a { position: relative; display: grid; place-items: center; padding: 0 18px; border: 0; background: transparent; color: var(--muted); font-size: 13px; font-weight: 650; text-decoration: none; }
+.topbar nav button::after, .topbar nav a::after { content: ""; position: absolute; left: 18px; right: 18px; bottom: -1px; height: 2px; border-radius: 4px; background: transparent; }
+.topbar nav button:hover, .topbar nav a:hover { color: var(--ink); }
 .topbar nav button.active { color: var(--gold); }
 .topbar nav button.active::after { background: var(--gold); box-shadow: 0 0 12px rgba(255, 216, 94, 0.5); }
+.topbar nav .v2-nav-link { margin: 13px 0 13px 8px; padding: 0 13px; border: 1px solid #b8c8fa; border-radius: 8px; background: #eef3ff; color: var(--gold); font-size: 11px; }
+.topbar nav .v2-nav-link::after { display: none; }
 .data-pill { justify-self: end; display: inline-flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid rgba(255,255,255,.08); border-radius: 999px; background: var(--surface); color: var(--soft); font-size: 11px; font-weight: 700; }
 .data-pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 9px currentColor; }
 .data-pill i.amber { background: var(--gold-2); }

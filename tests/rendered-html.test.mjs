@@ -12,13 +12,13 @@ async function readMaybeGzipText(url) {
     : payload.toString("utf8");
 }
 
-async function render() {
+async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
 
   return worker.fetch(
-    new Request("http://localhost/", { headers: { accept: "text/html" } }),
+    new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }),
     { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
     { waitUntil() {}, passThroughOnException() {} },
   );
@@ -36,6 +36,71 @@ test("server-renders the finished backtest shell and metadata", async () => {
   assert.match(html, /正在装载历史回测/);
   assert.match(html, /连接股票索引、年运与节气月运数据/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
+});
+
+test("serves an independent V2 magnitude route without replacing V0", async () => {
+  const [response, rootResponse] = await Promise.all([render("/v2-magnitude"), render("/")]);
+  assert.equal(response.status, 200);
+  assert.equal(rootResponse.status, 200);
+  const [html, rootHtml] = await Promise.all([response.text(), rootResponse.text()]);
+  assert.match(html, /正在装载 V2 时间外回测/);
+  assert.match(rootHtml, /年运历史回测 · 命理信号 × 真实K线/);
+  const pageSource = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(pageSource, /href="v2-magnitude\/">V2 幅度回测/);
+  const staticV2Html = await readFile(new URL("../github-pages/v2-magnitude/index.html", import.meta.url), "utf8");
+  assert.match(staticV2Html, /V2 幅度回测 · 同股跨年排序与12个月MFE/);
+  await access(new URL("../github-pages/v2-magnitude/main.tsx", import.meta.url));
+});
+
+test("publishes an auditable V2-alpha rolling magnitude backtest in an isolated data namespace", async () => {
+  const [summaryText, indexText, schemaText, v0SummaryText, v0IndexText, source] = await Promise.all([
+    readFile(new URL("../public/data/v2-magnitude/summary.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/v2-magnitude/index.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/v2-magnitude/feature-schema.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/summary.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/index.json", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/build_v2_magnitude_backtest.py", import.meta.url), "utf8"),
+  ]);
+  const summary = JSON.parse(summaryText);
+  const index = JSON.parse(indexText);
+  const schema = JSON.parse(schemaText);
+  const v0Summary = JSON.parse(v0SummaryText);
+  const v0Index = JSON.parse(v0IndexText);
+
+  assert.equal(summary.model_status, "experimental_sequence_proxy_fallback");
+  assert.equal(summary.full_v2_typed_state_available, false);
+  assert.equal(summary.training_eligible_as_full_v2, false);
+  assert.ok(summary.scope.strict_oos_rows > 30000);
+  assert.ok(summary.scope.strict_oos_stocks > 2400);
+  assert.equal(summary.evaluation.scored_rows, summary.scope.strict_oos_rows);
+  assert.equal(summary.evaluation.direction.samples, summary.scope.strict_oos_rows);
+  assert.equal(index.stock_count, summary.scope.strict_oos_stocks);
+  assert.equal(index.stocks.length, index.stock_count);
+  assert.equal(schema.feature_count, summary.scope.feature_count);
+  assert.ok(schema.features.length > 100);
+
+  for (const fold of summary.evaluation.folds) {
+    assert.ok(fold.train_year_max < fold.test_year, JSON.stringify(fold));
+  }
+  assert.match(summary.training_protocol.main_god_source, /不使用K线逆推主用神/);
+  assert.equal(summary.training_protocol.price_features_used, false);
+  assert.match(source, /DEFAULT_OUTPUT\s*=.*"v2-magnitude"/);
+  assert.doesNotMatch(source, /reverse_main_god|reverse_fit_score/);
+
+  for (const ticker of ["AAPL", "META", "MSFT", "NVDA"]) {
+    const stock = index.stocks.find((row) => row.ticker === ticker);
+    assert.ok(stock, ticker);
+    const payload = JSON.parse(await readMaybeGzipText(new URL(`../public/data/v2-magnitude/${stock.payload}`, import.meta.url)));
+    assert.equal(payload.stock.ticker, ticker);
+    assert.ok(payload.periods.length > 0);
+    for (const period of payload.periods.filter((row) => row.v2_magnitude)) {
+      assert.ok(period.v2_magnitude.trained_through_year < period.year, `${ticker} ${period.year}`);
+    }
+  }
+
+  assert.equal(v0Index.stock_count, 2519);
+  assert.equal(v0Summary.coverage.stock_count_with_prices, 2519);
+  assert.ok(!("v2_magnitude" in v0Summary), "V0 summary must not be overwritten by V2");
 });
 
 test("ships the verified dataset, explicit period counts, and light theme", async () => {

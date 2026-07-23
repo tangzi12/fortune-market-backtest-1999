@@ -1,5 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { resolve } from "node:path";
 
 export default defineConfig({
   root: "github-pages",
@@ -9,5 +10,11 @@ export default defineConfig({
   build: {
     outDir: "../dist-pages",
     emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "github-pages/index.html"),
+        v2Magnitude: resolve(__dirname, "github-pages/v2-magnitude/index.html"),
+      },
+    },
   },
 });

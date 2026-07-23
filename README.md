@@ -26,12 +26,30 @@
 
 ```bash
 npm install
+npm run build:v2
 npm run dev
 npm test
 npm run build:pages
 ```
 
 网页读取 `public/data/index.json`、`public/data/summary.json` 和按需解压的 `public/data/stocks/*.json.gz`。gzip 只降低静态传输与部署体积，不删减任何年运、月运或 K 线字段。GitHub Pages 静态构建输出到 `dist-pages/`；Sites 构建输出到 `dist/`。
+
+## 独立 V2 幅度回测
+
+V0 年运方向页保持原样；新入口 `/v2-magnitude/` 使用隔离的数据目录
+`public/data/v2-magnitude/`。当前可执行版本是明确标注的
+`sequence-proxy fallback`：以同股跨年幅度排序、滚动 12 个月 MFE 和中性年份强制择向为
+目标，按年份做扩展窗口时间外回测。它尚未使用未冻结的完整
+`node_state + typed_event_state`，因此不能标作完整 V2。
+
+重新生成数据：
+
+```bash
+python3 scripts/build_v2_magnitude_backtest.py
+```
+
+脚本只写入 `public/data/v2-magnitude/`，不会改写 V0 数据。页面同时展示永久看涨基准、
+同股排序、倍数事件捕获、时间切片和防泄漏说明；结果不优于基准时也按原值显示。
 
 ## 研究边界
 

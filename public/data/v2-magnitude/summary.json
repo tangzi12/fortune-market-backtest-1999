@@ -1,0 +1,2263 @@
+{
+  "schema_version": "v2-magnitude-web-1.0.0",
+  "generated_at": "2026-07-23T04:03:50.799693+00:00",
+  "model": {
+    "version": "v2-magnitude-sequence-proxy-0.1.0",
+    "feature_version": "v2-magnitude-sequence-proxy-features-0.1.0",
+    "status": "experimental_sequence_proxy_fallback",
+    "full_v2_typed_state_available": false,
+    "training_eligible_as_full_v2": false
+  },
+  "model_version": "v2-magnitude-sequence-proxy-0.1.0",
+  "feature_version": "v2-magnitude-sequence-proxy-features-0.1.0",
+  "model_status": "experimental_sequence_proxy_fallback",
+  "full_v2_typed_state_available": false,
+  "training_eligible_as_full_v2": false,
+  "source": {
+    "source_index_sha256": "8b86c3ba9d75822f514622dacf2a4eb367e0dc9eeb156d9cb1358f1c5eadbe6a",
+    "source_generated_at": "2026-07-21T18:12:29.956Z",
+    "source_data_cutoff": "2026-07-10",
+    "source_universe": {
+      "definition": "S&P 500与Nasdaq-100当前成分股，加IWM当前可交易股票持仓代理，再加当前大麻板块联合池",
+      "holdings_date": "2026-07-17",
+      "union_stock_count": 2519,
+      "index_counts": {
+        "S&P 500": 503,
+        "Nasdaq-100": 103,
+        "Russell 2000": 1954
+      },
+      "theme_counts": {
+        "大麻板块": 49
+      },
+      "russell2000_proxy_count": 1954,
+      "russell2000_source": {
+        "id": "R1",
+        "category": "Russell 2000当前代理股票池",
+        "name": "iShares Russell 2000 ETF (IWM) official holdings CSV",
+        "url": "https://www.ishares.com/us/products/239710/ishares-russell-2000-etf/latest-holdings.csv",
+        "snapshot_path": "data/sources/iwm_holdings_2026-07-17.csv",
+        "as_of": "2026-07-17",
+        "sha256": "bf75c11fdda8e9f054892d2c76f7ff271d8b1e7b20792e0d0ef66d1bd3133b8a"
+      },
+      "russell2000_proxy_definition": "IWM持仓中Asset Class=Equity、Ticker有效、交易所为NASDAQ/NYSE/NYSE American、持仓价格大于0，并经Nasdaq Trader当前美国上市证券目录确认的唯一代码；已排除已知会制造虚假K线方向的数据质量异常；它是当前IWM持仓代理，不是FTSE Russell授权成分文件。",
+      "russell2000_source_url": "https://www.ishares.com/us/products/239710/ishares-russell-2000-etf/latest-holdings.csv",
+      "russell2000_source_sha256": "bf75c11fdda8e9f054892d2c76f7ff271d8b1e7b20792e0d0ef66d1bd3133b8a",
+      "russell2000_raw_holding_rows": 1978,
+      "russell2000_equity_rows": 1972,
+      "russell2000_tradable_unique_tickers": 1957,
+      "russell2000_unavailable_count": 6,
+      "russell2000_unavailable": [
+        {
+          "ticker": "AKE",
+          "official_ticker": "AKE",
+          "name": "AKERO THERAPEUTICS CVR",
+          "exchange": "NASDAQ",
+          "db_price_rows": 0,
+          "first_trade_date": null,
+          "reason": "not_currently_exchange_listed",
+          "detail": null
+        },
+        {
+          "ticker": "CBIO",
+          "official_ticker": "CBIO",
+          "name": "CRESCENT BIOPHARMA INC",
+          "exchange": "NASDAQ",
+          "db_price_rows": 3142,
+          "first_trade_date": "2014-01-10",
+          "reason": "price_quality_exclusion",
+          "detail": "Yahoo复权事件串入旧同名证券的特别分派，混合序列会制造虚假跳变"
+        },
+        {
+          "ticker": "DEC",
+          "official_ticker": "DEC",
+          "name": "DIVERSIFIED ENERGY COMPANY",
+          "exchange": "NYSE",
+          "db_price_rows": 1385,
+          "first_trade_date": "2021-01-04",
+          "reason": "price_quality_exclusion",
+          "detail": "行情含美国上市前的伦敦历史且漏记20:1合股，混合序列会制造虚假涨幅"
+        },
+        {
+          "ticker": "KORE",
+          "official_ticker": "KORE",
+          "name": "KORE GROUP HOLDINGS INC",
+          "exchange": "NYSE",
+          "db_price_rows": 1399,
+          "first_trade_date": "2020-12-11",
+          "reason": "not_currently_exchange_listed",
+          "detail": null
+        },
+        {
+          "ticker": "NFBK",
+          "official_ticker": "NFBK",
+          "name": "NORTHFIELD BANCORP INC",
+          "exchange": "NASDAQ",
+          "db_price_rows": 2514,
+          "first_trade_date": "2007-11-08",
+          "reason": "not_currently_exchange_listed",
+          "detail": null
+        },
+        {
+          "ticker": "VHI",
+          "official_ticker": "VHI",
+          "name": "VALHI INC",
+          "exchange": "NYSE",
+          "db_price_rows": 6921,
+          "first_trade_date": "1980-03-17",
+          "reason": "price_quality_exclusion",
+          "detail": "早期缺失因子与后续复权因子不连续，混合序列会制造虚假跌幅"
+        }
+      ],
+      "russell2000_exchange_listing_snapshots": [
+        {
+          "source_url": "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqlisted.txt",
+          "snapshot_path": "/Users/zixiangtang/Documents/千亿基金/tmp/russell2000/nasdaqlisted_2026-07-21.txt",
+          "sha256": "f9f9f6a8c1070b08085e31363d992e0ba4a0a6f42be40b92e94419aca93463aa"
+        },
+        {
+          "source_url": "https://www.nasdaqtrader.com/dynamic/SymDir/otherlisted.txt",
+          "snapshot_path": "/Users/zixiangtang/Documents/千亿基金/tmp/russell2000/otherlisted_2026-07-21.txt",
+          "sha256": "3a40fa1a6fe4de8a1efaa6af26ff0e5f7dd9707120ccfbbdfdc973c982f9ca0e"
+        }
+      ],
+      "russell2000_price_quality_exclusions": {
+        "CBIO": "Yahoo复权事件串入旧同名证券的特别分派，混合序列会制造虚假跳变",
+        "DEC": "行情含美国上市前的伦敦历史且漏记20:1合股，混合序列会制造虚假涨幅",
+        "VHI": "早期缺失因子与后续复权因子不连续，混合序列会制造虚假跌幅"
+      },
+      "cannabis_theme": "大麻板块",
+      "cannabis_as_of": "2026-07-21",
+      "cannabis_count": 49,
+      "cannabis_added_count": 47,
+      "cannabis_overlap_count": 2,
+      "cannabis_etf_count": 6,
+      "cannabis_otc_count": 20,
+      "cannabis_definition": "MSOS、YOLO、MJ、CNBS当前非零股票或掉期底层敞口，加美国全国性交易所仍挂牌且以大麻、CBD或专门大麻金融为核心业务的证券，以及仍挂牌的大麻主题ETF。",
+      "cannabis_normalization": "GLASF/TCNNF按当前美国挂牌代码GLAS/TRLV合并；YOLO加拿大代码CWEB/LOVE分别映射为美国OTC代码CWBHF/LOVFF，避免与美国同代码证券碰撞。",
+      "cannabis_exclusion_rule": "排除现金、国债、重复swap腿、权证、零值遗留头寸、已退市或无可用Yahoo日K的证券，以及仅有宽泛烟酒药企敞口的公司。",
+      "cannabis_listing_date_rule": "默认采用Yahoo firstTradeDate作为低置信度行情起点代理；若Yahoo历史含空壳、前身或晚于当前经营主体首日，则改用经公司或监管文件核实的经营证券首次交易/身份重置日作为命理起盘，转板与换码只记事件、不重置八字。",
+      "cannabis_price_integrity_rule": "逐日复权收益与Yahoo拆股事件交叉核对。可信行情起点与命理起盘分开管理；确认由前身证券或漏记资本合并造成的断点从行情验证中剔除，没有落在拆股日且有持续成交的极端涨跌保留为真实市场结果并标警示。",
+      "cannabis_price_quality_policy": {
+        "title": "大麻板块行情质量策略",
+        "version": "2026-07-22.1",
+        "as_of": "2026-07-22",
+        "rule": "命理起盘与可验证行情起点分离。前身证券、空壳历史或供应商漏记公司行动不能进入方向回测；已核实且不在拆股日的极端市场涨跌保留。"
+      },
+      "cannabis_price_audits": [
+        {
+          "ticker": "GRUSF",
+          "valid_from": "2019-05-14",
+          "status": "left_censored",
+          "reason": "Yahoo在GRUSF下回填了2010年以来Eagleford、Intelligent Content和Novicius等前身历史；Grown Rogue于2018-11-26在CSE成为当前经营证券，GRUSF美国OTC代码于2019-05-14启用，因此美国行情验证从2019-05-14开始。",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1463000/000121390020016651/ea123819ex99-6_grownrogue.htm"
+        },
+        {
+          "ticker": "INCR",
+          "valid_from": "2021-09-01",
+          "status": "left_censored",
+          "reason": "Yahoo的跨市场序列未记录2021-04-08的1-for-4.44926资本合并，产生伪跳变；美国方向回测从经核实的Nasdaq首日2021-09-01开始。命理起盘仍按2019-02-11当前大麻经营身份形成日计算。",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1857030/000149315222009360/ex99-3.htm"
+        },
+        {
+          "ticker": "RYM",
+          "date": "2023-04-10",
+          "status": "retained_observed_move",
+          "reason": "三次反向拆股均已在Yahoo事件与价格序列中复权；非拆股日的极端低价股涨跌保留，方向标签对流动性高度敏感。",
+          "source_url": null
+        },
+        {
+          "ticker": "AYRWF",
+          "date": "2025-08-01",
+          "status": "retained_observed_move",
+          "reason": "2025-07-31至08-01的连续暴跌发生在公开重组、旧权益清盘及债权人取得NewCo权益的进程中，并非漏记拆股；作为CNBS非零残余敞口保留并标记困境股警示。",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1847462/000110465925075745/tm2522968d1_6k.htm"
+        }
+      ],
+      "cannabis_source_snapshots": [
+        {
+          "id": "MSOS",
+          "as_of": "2026-07-20",
+          "path": "data/sources/msos_holdings_2026-07-20.xls",
+          "url": "https://advisorshares.com/wp-content/uploads/csv/holdings/AS_MSOS_Holdings_File.XLS",
+          "sha256": "e6b67f5d6961d22fcb8cb49b88d89e291f3886cb84d30cf89be87d56668135d6",
+          "bytes": 54272
+        },
+        {
+          "id": "YOLO",
+          "as_of": "2026-07-20",
+          "path": "data/sources/yolo_holdings_2026-07-20.csv",
+          "url": "https://advisorshares.com/wp-content/uploads/csv/holdings/AdvisorShares_YOLO_Holdings_File.csv",
+          "sha256": "cce2212bb1d16bce2c663a59f5c21f8628267bbb8aa9f4713b67ed0dc4703067",
+          "bytes": 1680
+        },
+        {
+          "id": "CNBS",
+          "as_of": "2026-07-21",
+          "path": "data/sources/cnbs_holdings_2026-07-21.json",
+          "url": "https://amplifyetfs.com/cnbs-holdings/",
+          "sha256": "ee7442297b7403ac1eef62d53b4f7e4470b3c0b1db9c438979536dd423e752bc",
+          "bytes": 48408
+        },
+        {
+          "id": "MJ",
+          "as_of": "2026-07-21",
+          "path": "data/sources/mj_holdings_2026-07-21.json",
+          "url": "https://amplifyetfs.com/mj-holdings/",
+          "sha256": "9f153d99497a1edd941ee01ab6b0d08f523c641b67047ffdaaf68c39081510ee",
+          "bytes": 14243
+        },
+        {
+          "id": "CANNABIS_UNION",
+          "as_of": "2026-07-21",
+          "path": "data/sources/cannabis_universe_2026-07-21.json",
+          "url": null,
+          "sha256": "c900fba3d99c3fad8cd9407fe22792b20c01abe657c6e86d3cc1b9e3c422388b",
+          "bytes": 16210
+        },
+        {
+          "id": "CANNABIS_PRICE_QUALITY",
+          "as_of": "2026-07-22",
+          "path": "data/sources/cannabis_price_quality_policy_2026-07-22.json",
+          "url": null,
+          "sha256": "b1ac994237e22995a8193d95f567a49c93e3f66d548cecf3e8a17e46abf613e9",
+          "bytes": 2024
+        }
+      ],
+      "cannabis_excluded": [
+        {
+          "ticker": "CBSTF",
+          "name": "The Cannabist Company Holdings Inc.",
+          "reason": "Yahoo 404，无可用日K"
+        },
+        {
+          "ticker": "CBDHF",
+          "name": "HempFusion Wellness Inc.",
+          "reason": "MSOS零值遗留头寸，不是当前有效敞口"
+        },
+        {
+          "ticker": "ALEAF",
+          "name": "Aleafia Health Inc.",
+          "reason": "CNBS零值遗留头寸"
+        },
+        {
+          "ticker": "CLVR",
+          "name": "Clever Leaves Holdings Inc.",
+          "reason": "CNBS零值遗留头寸"
+        },
+        {
+          "ticker": "TCNNF",
+          "name": "Trulieve Cannabis Corp.旧OTC代码",
+          "reason": "已规范化合并到当前NYSE代码TRLV，防止重复"
+        },
+        {
+          "ticker": "GLASF",
+          "name": "Glass House Brands旧OTC代码",
+          "reason": "已规范化合并到当前NYSE代码GLAS，防止重复"
+        },
+        {
+          "ticker": "CWEB",
+          "name": "YOLO中的Charlotte's Web加拿大代码",
+          "reason": "映射为CWBHF，避免误撞Direxion中国互联网ETF"
+        },
+        {
+          "ticker": "LOVE",
+          "name": "YOLO中的Cannara Biotech加拿大代码",
+          "reason": "映射为LOVFF，避免误撞Lovesac家具股"
+        },
+        {
+          "ticker": "AKAN",
+          "name": "Akanda Corp.",
+          "reason": "2025年停止原CanMart大麻业务并转入电信资产，不再属于当前大麻核心业务"
+        },
+        {
+          "ticker": "GNLN",
+          "name": "Greenlane Holdings, Inc.",
+          "reason": "已转为以Berachain为核心的数字资产财库，不再属于当前大麻核心业务"
+        }
+      ]
+    },
+    "source_stock_count": 2519
+  },
+  "coverage": {
+    "source_universe_stocks": 2519,
+    "complete_rows": 41195,
+    "complete_stocks": 2431,
+    "complete_year_min": 1999,
+    "complete_year_max": 2025,
+    "strict_oos_rows": 36229,
+    "strict_oos_stocks": 2431,
+    "strict_oos_year_min": 2004,
+    "strict_oos_year_max": 2025,
+    "burn_in_rows_not_scored": 4966,
+    "feature_count": 244,
+    "fold_count": 22
+  },
+  "scope": {
+    "source_universe_stocks": 2519,
+    "complete_rows": 41195,
+    "complete_stocks": 2431,
+    "complete_year_min": 1999,
+    "complete_year_max": 2025,
+    "strict_oos_rows": 36229,
+    "strict_oos_stocks": 2431,
+    "strict_oos_year_min": 2004,
+    "strict_oos_year_max": 2025,
+    "burn_in_rows_not_scored": 4966,
+    "feature_count": 244,
+    "fold_count": 22
+  },
+  "validation": {
+    "independent_holdout": false,
+    "mechanical_past_only_split": true,
+    "interpretation": "每个预测折只用更早年份拟合，但研究团队已看过历史区间；2023–2025明确标为seen_replay，不能称独立holdout。",
+    "time_slices": {
+      "historical_rolling_diagnostic": {
+        "label": "historical_rolling_diagnostic",
+        "independent_holdout": false,
+        "researcher_exposure": "historical_diagnostic",
+        "samples": 20865,
+        "stocks": 1774,
+        "year_min": 2004,
+        "year_max": 2018,
+        "v2_direction": {
+          "samples": 20865,
+          "actual_up_rate": 0.63009825,
+          "predicted_up_rate": 0.77479032,
+          "accuracy": 0.58672418,
+          "balanced_accuracy": 0.5163303,
+          "roc_auc": 0.51159061,
+          "brier_score": 0.24851349,
+          "always_up_accuracy": 0.63009825,
+          "always_down_accuracy": 0.36990175,
+          "up_recall": 0.78687153,
+          "down_recall": 0.24578906
+        },
+        "a0_v0_direction": {
+          "samples": 20865,
+          "explicit_samples": 11386,
+          "neutral_samples": 9479,
+          "direction_coverage": 0.54569854,
+          "full_accuracy_neutral_counted_wrong": 0.27045291,
+          "explicit_accuracy": 0.49560864,
+          "explicit_balanced_accuracy": 0.48623551,
+          "explicit_up_recall": 0.52079591,
+          "explicit_down_recall": 0.4516751
+        },
+        "always_up_accuracy": 0.63009825,
+        "neutral_resolution": {
+          "samples": 9479,
+          "actual_up_rate": 0.62348349,
+          "predicted_up_rate": 0.7623167,
+          "accuracy": 0.57843654,
+          "balanced_accuracy": 0.5145398,
+          "roc_auc": 0.50175953,
+          "brier_score": 0.2534536,
+          "always_up_accuracy": 0.62348349,
+          "always_down_accuracy": 0.37651651,
+          "up_recall": 0.77326565,
+          "down_recall": 0.25581395
+        },
+        "mfe_predicted_vs_actual_spearman": 0.07619384,
+        "a0_score_vs_mfe_spearman": -0.00073859,
+        "within_ticker_ordering": {
+          "eligible_stocks_min_3_oos_years": 1640,
+          "macro_mean_spearman": 0.01964487,
+          "macro_median_spearman": 0.01785714,
+          "pairwise_comparable_pairs": 133021,
+          "pairwise_concordance": 0.50721315
+        },
+        "top_decile": {
+          "selected_share": 0.1,
+          "actual_top_decile_capture_micro": 0.14708691,
+          "actual_top_decile_capture_macro_year": 0.14609441,
+          "selected_mean_mfe": 0.57668401,
+          "universe_mean_mfe": 0.49065302,
+          "mean_mfe_lift": 1.17533978,
+          "threshold_retrieval": {
+            "2x": {
+              "threshold_mfe": 1.0,
+              "events": 1807,
+              "base_rate": 0.08660436,
+              "top_decile_events": 271,
+              "top_decile_rate": 0.12941738,
+              "top_decile_lift": 1.4943518,
+              "event_recall_in_top_decile": 0.14997233
+            },
+            "5x": {
+              "threshold_mfe": 4.0,
+              "events": 162,
+              "base_rate": 0.0077642,
+              "top_decile_events": 29,
+              "top_decile_rate": 0.01384909,
+              "top_decile_lift": 1.78371184,
+              "event_recall_in_top_decile": 0.17901235
+            },
+            "10x": {
+              "threshold_mfe": 9.0,
+              "events": 37,
+              "base_rate": 0.0017733,
+              "top_decile_events": 4,
+              "top_decile_rate": 0.00191022,
+              "top_decile_lift": 1.07720901,
+              "event_recall_in_top_decile": 0.10810811
+            }
+          }
+        }
+      },
+      "rolling_development": {
+        "label": "rolling_development",
+        "independent_holdout": false,
+        "researcher_exposure": "rolling_development",
+        "samples": 8222,
+        "stocks": 2291,
+        "year_min": 2019,
+        "year_max": 2022,
+        "v2_direction": {
+          "samples": 8222,
+          "actual_up_rate": 0.57115057,
+          "predicted_up_rate": 0.5605692,
+          "accuracy": 0.47932377,
+          "balanced_accuracy": 0.47009922,
+          "roc_auc": 0.48921531,
+          "brier_score": 0.28779429,
+          "always_up_accuracy": 0.57115057,
+          "always_down_accuracy": 0.42884943,
+          "up_recall": 0.53492334,
+          "down_recall": 0.4052751
+        },
+        "a0_v0_direction": {
+          "samples": 8222,
+          "explicit_samples": 4607,
+          "neutral_samples": 3615,
+          "direction_coverage": 0.56032595,
+          "full_accuracy_neutral_counted_wrong": 0.28630504,
+          "explicit_accuracy": 0.51096158,
+          "explicit_balanced_accuracy": 0.49520636,
+          "explicit_up_recall": 0.5928972,
+          "explicit_down_recall": 0.39751553
+        },
+        "always_up_accuracy": 0.57115057,
+        "neutral_resolution": {
+          "samples": 3615,
+          "actual_up_rate": 0.55905947,
+          "predicted_up_rate": 0.56542185,
+          "accuracy": 0.4780083,
+          "balanced_accuracy": 0.46986023,
+          "roc_auc": 0.49707122,
+          "brier_score": 0.28578432,
+          "always_up_accuracy": 0.55905947,
+          "always_down_accuracy": 0.44094053,
+          "up_recall": 0.53884216,
+          "down_recall": 0.40087829
+        },
+        "mfe_predicted_vs_actual_spearman": 0.25491634,
+        "a0_score_vs_mfe_spearman": 0.01143979,
+        "within_ticker_ordering": {
+          "eligible_stocks_min_3_oos_years": 1958,
+          "macro_mean_spearman": 0.1375949,
+          "macro_median_spearman": 0.2,
+          "pairwise_comparable_pairs": 11483,
+          "pairwise_concordance": 0.56352869
+        },
+        "top_decile": {
+          "selected_share": 0.1,
+          "actual_top_decile_capture_micro": 0.16504854,
+          "actual_top_decile_capture_macro_year": 0.16733176,
+          "selected_mean_mfe": 1.03890012,
+          "universe_mean_mfe": 0.55647847,
+          "mean_mfe_lift": 1.86691883,
+          "threshold_retrieval": {
+            "2x": {
+              "threshold_mfe": 1.0,
+              "events": 804,
+              "base_rate": 0.09778643,
+              "top_decile_events": 131,
+              "top_decile_rate": 0.15898058,
+              "top_decile_lift": 1.62579397,
+              "event_recall_in_top_decile": 0.16293532
+            },
+            "5x": {
+              "threshold_mfe": 4.0,
+              "events": 97,
+              "base_rate": 0.01179762,
+              "top_decile_events": 25,
+              "top_decile_rate": 0.03033981,
+              "top_decile_lift": 2.57168952,
+              "event_recall_in_top_decile": 0.25773196
+            },
+            "10x": {
+              "threshold_mfe": 9.0,
+              "events": 31,
+              "base_rate": 0.00377037,
+              "top_decile_events": 7,
+              "top_decile_rate": 0.00849515,
+              "top_decile_lift": 2.25313185,
+              "event_recall_in_top_decile": 0.22580645
+            }
+          }
+        }
+      },
+      "seen_replay": {
+        "label": "seen_replay",
+        "independent_holdout": false,
+        "researcher_exposure": "seen_replay",
+        "samples": 7142,
+        "stocks": 2431,
+        "year_min": 2023,
+        "year_max": 2025,
+        "v2_direction": {
+          "samples": 7142,
+          "actual_up_rate": 0.56986838,
+          "predicted_up_rate": 0.93867264,
+          "accuracy": 0.55922711,
+          "balanced_accuracy": 0.49788715,
+          "roc_auc": 0.49335965,
+          "brier_score": 0.27093649,
+          "always_up_accuracy": 0.56986838,
+          "always_down_accuracy": 0.43013162,
+          "up_recall": 0.93685504,
+          "down_recall": 0.05891927
+        },
+        "a0_v0_direction": {
+          "samples": 7142,
+          "explicit_samples": 4010,
+          "neutral_samples": 3132,
+          "direction_coverage": 0.56146738,
+          "full_accuracy_neutral_counted_wrong": 0.28815458,
+          "explicit_accuracy": 0.51321696,
+          "explicit_balanced_accuracy": 0.50392749,
+          "explicit_up_recall": 0.58251561,
+          "explicit_down_recall": 0.42533937
+        },
+        "always_up_accuracy": 0.56986838,
+        "neutral_resolution": {
+          "samples": 3132,
+          "actual_up_rate": 0.58365262,
+          "predicted_up_rate": 0.94284802,
+          "accuracy": 0.57375479,
+          "balanced_accuracy": 0.49965432,
+          "roc_auc": 0.49865777,
+          "brier_score": 0.26368422,
+          "always_up_accuracy": 0.58365262,
+          "always_down_accuracy": 0.41634738,
+          "up_recall": 0.94256018,
+          "down_recall": 0.05674847
+        },
+        "mfe_predicted_vs_actual_spearman": -0.05516604,
+        "a0_score_vs_mfe_spearman": -0.00353591,
+        "within_ticker_ordering": {
+          "eligible_stocks_min_3_oos_years": 2333,
+          "macro_mean_spearman": -0.18538363,
+          "macro_median_spearman": -0.5,
+          "pairwise_comparable_pairs": 6999,
+          "pairwise_concordance": 0.42120303
+        },
+        "top_decile": {
+          "selected_share": 0.1,
+          "actual_top_decile_capture_micro": 0.21787709,
+          "actual_top_decile_capture_macro_year": 0.21783519,
+          "selected_mean_mfe": 0.97362508,
+          "universe_mean_mfe": 0.61660765,
+          "mean_mfe_lift": 1.5790026,
+          "threshold_retrieval": {
+            "2x": {
+              "threshold_mfe": 1.0,
+              "events": 989,
+              "base_rate": 0.13847662,
+              "top_decile_events": 192,
+              "top_decile_rate": 0.26815642,
+              "top_decile_lift": 1.9364744,
+              "event_recall_in_top_decile": 0.19413549
+            },
+            "5x": {
+              "threshold_mfe": 4.0,
+              "events": 115,
+              "base_rate": 0.01610193,
+              "top_decile_events": 21,
+              "top_decile_rate": 0.02932961,
+              "top_decile_lift": 1.82149624,
+              "event_recall_in_top_decile": 0.1826087
+            },
+            "10x": {
+              "threshold_mfe": 9.0,
+              "events": 29,
+              "base_rate": 0.00406049,
+              "top_decile_events": 5,
+              "top_decile_rate": 0.00698324,
+              "top_decile_lift": 1.71980351,
+              "event_recall_in_top_decile": 0.17241379
+            }
+          }
+        }
+      }
+    },
+    "schedule_validated_518": {
+      "declared_stocks": 518,
+      "complete_history_available_stocks": 512,
+      "strict_oos_stocks": 512,
+      "missing_complete_history_tickers": [
+        "CRWV",
+        "FDXF",
+        "HONA",
+        "Q",
+        "SNDK",
+        "SPCX"
+      ],
+      "schedule_status": "S0/调候/顺逆/起运/运段经v2.1清单复算；本模型仍未使用未冻结的完整typed/node训练矩阵。",
+      "metrics": {
+        "samples": 10041,
+        "stocks": 512,
+        "year_min": 2004,
+        "year_max": 2025,
+        "v2_direction": {
+          "samples": 10041,
+          "actual_up_rate": 0.71337516,
+          "predicted_up_rate": 0.79762972,
+          "accuracy": 0.62135245,
+          "balanced_accuracy": 0.49307833,
+          "roc_auc": 0.47880305,
+          "brier_score": 0.23537996,
+          "always_up_accuracy": 0.71337516,
+          "always_down_accuracy": 0.28662484,
+          "up_recall": 0.79366187,
+          "down_recall": 0.19249479
+        },
+        "a0_v0_direction": {
+          "samples": 10041,
+          "explicit_samples": 5659,
+          "neutral_samples": 4382,
+          "direction_coverage": 0.56358928,
+          "full_accuracy_neutral_counted_wrong": 0.28921422,
+          "explicit_accuracy": 0.51316487,
+          "explicit_balanced_accuracy": 0.49080581,
+          "explicit_up_recall": 0.54306931,
+          "explicit_down_recall": 0.43854231
+        },
+        "always_up_accuracy": 0.71337516,
+        "neutral_resolution": {
+          "samples": 4382,
+          "actual_up_rate": 0.71268827,
+          "predicted_up_rate": 0.79529895,
+          "accuracy": 0.61889548,
+          "balanced_accuracy": 0.49179815,
+          "roc_auc": 0.47947471,
+          "brier_score": 0.23546052,
+          "always_up_accuracy": 0.71268827,
+          "always_down_accuracy": 0.28731173,
+          "up_recall": 0.79058598,
+          "down_recall": 0.19301033
+        },
+        "mfe_predicted_vs_actual_spearman": 0.15331167,
+        "a0_score_vs_mfe_spearman": -0.00356151,
+        "within_ticker_ordering": {
+          "eligible_stocks_min_3_oos_years": 505,
+          "macro_mean_spearman": 0.04949029,
+          "macro_median_spearman": 0.05,
+          "pairwise_comparable_pairs": 99759,
+          "pairwise_concordance": 0.51512144
+        },
+        "top_decile": {
+          "selected_share": 0.1,
+          "actual_top_decile_capture_micro": 0.2061144,
+          "actual_top_decile_capture_macro_year": 0.20560362,
+          "selected_mean_mfe": 0.49918085,
+          "universe_mean_mfe": 0.34961257,
+          "mean_mfe_lift": 1.42781149,
+          "threshold_retrieval": {
+            "2x": {
+              "threshold_mfe": 1.0,
+              "events": 415,
+              "base_rate": 0.04133054,
+              "top_decile_events": 105,
+              "top_decile_rate": 0.1035503,
+              "top_decile_lift": 2.50541812,
+              "event_recall_in_top_decile": 0.25301205
+            },
+            "5x": {
+              "threshold_mfe": 4.0,
+              "events": 20,
+              "base_rate": 0.00199183,
+              "top_decile_events": 7,
+              "top_decile_rate": 0.00690335,
+              "top_decile_lift": 3.4658284,
+              "event_recall_in_top_decile": 0.35
+            },
+            "10x": {
+              "threshold_mfe": 9.0,
+              "events": 1,
+              "base_rate": 9.959e-05,
+              "top_decile_events": 0,
+              "top_decile_rate": 0.0,
+              "top_decile_lift": 0.0,
+              "event_recall_in_top_decile": 0.0
+            }
+          }
+        }
+      }
+    },
+    "experimental_full_pool_2519": {
+      "declared_stocks": 2519,
+      "complete_history_available_stocks": 2431,
+      "strict_oos_stocks": 2431,
+      "model_status": "experimental_sequence_proxy_fallback",
+      "metrics": {
+        "samples": 36229,
+        "stocks": 2431,
+        "year_min": 2004,
+        "year_max": 2025,
+        "v2_direction": {
+          "samples": 36229,
+          "actual_up_rate": 0.60484695,
+          "predicted_up_rate": 0.75848078,
+          "accuracy": 0.55692953,
+          "balanced_accuracy": 0.50285315,
+          "roc_auc": 0.49339761,
+          "brier_score": 0.26184843,
+          "always_up_accuracy": 0.60484695,
+          "always_down_accuracy": 0.39515305,
+          "up_recall": 0.76073564,
+          "down_recall": 0.24497066
+        },
+        "a0_v0_direction": {
+          "samples": 36229,
+          "explicit_samples": 20003,
+          "neutral_samples": 16226,
+          "direction_coverage": 0.55212675,
+          "full_accuracy_neutral_counted_wrong": 0.27754009,
+          "explicit_accuracy": 0.5026746,
+          "explicit_balanced_accuracy": 0.4902309,
+          "explicit_up_recall": 0.54805002,
+          "explicit_down_recall": 0.43241177
+        },
+        "always_up_accuracy": 0.60484695,
+        "neutral_resolution": {
+          "samples": 16226,
+          "actual_up_rate": 0.60144213,
+          "predicted_up_rate": 0.75329718,
+          "accuracy": 0.55515839,
+          "balanced_accuracy": 0.50393015,
+          "roc_auc": 0.49390695,
+          "brier_score": 0.26263133,
+          "always_up_accuracy": 0.60144213,
+          "always_down_accuracy": 0.39855787,
+          "up_recall": 0.75642996,
+          "down_recall": 0.25143034
+        },
+        "mfe_predicted_vs_actual_spearman": 0.08816314,
+        "a0_score_vs_mfe_spearman": 0.00167998,
+        "within_ticker_ordering": {
+          "eligible_stocks_min_3_oos_years": 2333,
+          "macro_mean_spearman": 0.00265433,
+          "macro_median_spearman": 0.01298701,
+          "pairwise_comparable_pairs": 322421,
+          "pairwise_concordance": 0.51051886
+        },
+        "top_decile": {
+          "selected_share": 0.1,
+          "actual_top_decile_capture_micro": 0.16510732,
+          "actual_top_decile_capture_macro_year": 0.15973858,
+          "selected_mean_mfe": 0.75969884,
+          "universe_mean_mfe": 0.53042184,
+          "mean_mfe_lift": 1.43225406,
+          "threshold_retrieval": {
+            "2x": {
+              "threshold_mfe": 1.0,
+              "events": 3600,
+              "base_rate": 0.09936791,
+              "top_decile_events": 594,
+              "top_decile_rate": 0.16345625,
+              "top_decile_lift": 1.6449601,
+              "event_recall_in_top_decile": 0.165
+            },
+            "5x": {
+              "threshold_mfe": 4.0,
+              "events": 374,
+              "base_rate": 0.01032322,
+              "top_decile_events": 75,
+              "top_decile_rate": 0.02063841,
+              "top_decile_lift": 1.99922229,
+              "event_recall_in_top_decile": 0.20053476
+            },
+            "10x": {
+              "threshold_mfe": 9.0,
+              "events": 97,
+              "base_rate": 0.00267741,
+              "top_decile_events": 16,
+              "top_decile_rate": 0.00440286,
+              "top_decile_lift": 1.64444621,
+              "event_recall_in_top_decile": 0.16494845
+            }
+          }
+        }
+      }
+    }
+  },
+  "overall": {
+    "samples": 36229,
+    "v2_forced_direction": {
+      "samples": 36229,
+      "actual_up_rate": 0.60484695,
+      "predicted_up_rate": 0.75848078,
+      "accuracy": 0.55692953,
+      "balanced_accuracy": 0.50285315,
+      "roc_auc": 0.49339761,
+      "brier_score": 0.26184843,
+      "always_up_accuracy": 0.60484695,
+      "always_down_accuracy": 0.39515305,
+      "up_recall": 0.76073564,
+      "down_recall": 0.24497066
+    },
+    "a0_v0_direction": {
+      "samples": 36229,
+      "explicit_samples": 20003,
+      "neutral_samples": 16226,
+      "direction_coverage": 0.55212675,
+      "full_accuracy_neutral_counted_wrong": 0.27754009,
+      "explicit_accuracy": 0.5026746,
+      "explicit_balanced_accuracy": 0.4902309,
+      "explicit_up_recall": 0.54805002,
+      "explicit_down_recall": 0.43241177
+    },
+    "always_up": {
+      "accuracy": 0.60484695,
+      "balanced_accuracy": 0.5
+    },
+    "a0_neutral_rows_resolved_by_v2": {
+      "samples": 16226,
+      "actual_up_rate": 0.60144213,
+      "predicted_up_rate": 0.75329718,
+      "accuracy": 0.55515839,
+      "balanced_accuracy": 0.50393015,
+      "roc_auc": 0.49390695,
+      "brier_score": 0.26263133,
+      "always_up_accuracy": 0.60144213,
+      "always_down_accuracy": 0.39855787,
+      "up_recall": 0.75642996,
+      "down_recall": 0.25143034
+    }
+  },
+  "neutral": {
+    "samples": 16226,
+    "actual_up_rate": 0.60144213,
+    "predicted_up_rate": 0.75329718,
+    "accuracy": 0.55515839,
+    "balanced_accuracy": 0.50393015,
+    "roc_auc": 0.49390695,
+    "brier_score": 0.26263133,
+    "always_up_accuracy": 0.60144213,
+    "always_down_accuracy": 0.39855787,
+    "up_recall": 0.75642996,
+    "down_recall": 0.25143034
+  },
+  "magnitude": {
+    "samples": 36229,
+    "mfe": {
+      "mean_actual": 0.53042184,
+      "median_actual": 0.27732694,
+      "mean_predicted": 0.39509262,
+      "median_predicted": 0.38170794,
+      "log_mae": 0.22399498,
+      "log_rmse": 0.33561566,
+      "predicted_vs_actual_spearman": 0.08816314,
+      "base_v0_score_vs_actual_spearman": 0.00167998
+    },
+    "mae_drawdown": {
+      "mean_actual": 0.2569379,
+      "mean_predicted": 0.24509337,
+      "mae": 0.17181473,
+      "rmse": 0.21640189,
+      "predicted_vs_actual_spearman": 0.16457967
+    },
+    "within_ticker_ordering": {
+      "eligible_stocks_min_3_oos_years": 2333,
+      "macro_mean_spearman": 0.00265433,
+      "macro_median_spearman": 0.01298701,
+      "pairwise_comparable_pairs": 322421,
+      "pairwise_concordance": 0.51051886
+    },
+    "top_decile": {
+      "selected_share": 0.1,
+      "actual_top_decile_capture_micro": 0.16510732,
+      "actual_top_decile_capture_macro_year": 0.15973858,
+      "selected_mean_mfe": 0.75969884,
+      "universe_mean_mfe": 0.53042184,
+      "mean_mfe_lift": 1.43225406,
+      "threshold_retrieval": {
+        "2x": {
+          "threshold_mfe": 1.0,
+          "events": 3600,
+          "base_rate": 0.09936791,
+          "top_decile_events": 594,
+          "top_decile_rate": 0.16345625,
+          "top_decile_lift": 1.6449601,
+          "event_recall_in_top_decile": 0.165
+        },
+        "5x": {
+          "threshold_mfe": 4.0,
+          "events": 374,
+          "base_rate": 0.01032322,
+          "top_decile_events": 75,
+          "top_decile_rate": 0.02063841,
+          "top_decile_lift": 1.99922229,
+          "event_recall_in_top_decile": 0.20053476
+        },
+        "10x": {
+          "threshold_mfe": 9.0,
+          "events": 97,
+          "base_rate": 0.00267741,
+          "top_decile_events": 16,
+          "top_decile_rate": 0.00440286,
+          "top_decile_lift": 1.64444621,
+          "event_recall_in_top_decile": 0.16494845
+        }
+      },
+      "by_year": [
+        {
+          "year": 2004,
+          "rows": 1089,
+          "selected": 109,
+          "actual_top_decile_capture": 0.16513761,
+          "selected_mean_mfe": 0.46119417,
+          "universe_mean_mfe": 0.49978778
+        },
+        {
+          "year": 2005,
+          "rows": 1132,
+          "selected": 114,
+          "actual_top_decile_capture": 0.10526316,
+          "selected_mean_mfe": 0.39933593,
+          "universe_mean_mfe": 0.48235382
+        },
+        {
+          "year": 2006,
+          "rows": 1179,
+          "selected": 118,
+          "actual_top_decile_capture": 0.16101695,
+          "selected_mean_mfe": 0.40998936,
+          "universe_mean_mfe": 0.37664392
+        },
+        {
+          "year": 2007,
+          "rows": 1220,
+          "selected": 122,
+          "actual_top_decile_capture": 0.13114754,
+          "selected_mean_mfe": 0.35130781,
+          "universe_mean_mfe": 0.35875607
+        },
+        {
+          "year": 2008,
+          "rows": 1273,
+          "selected": 128,
+          "actual_top_decile_capture": 0.109375,
+          "selected_mean_mfe": 0.26341216,
+          "universe_mean_mfe": 0.30813557
+        },
+        {
+          "year": 2009,
+          "rows": 1293,
+          "selected": 130,
+          "actual_top_decile_capture": 0.13846154,
+          "selected_mean_mfe": 1.29157054,
+          "universe_mean_mfe": 1.02608199
+        },
+        {
+          "year": 2010,
+          "rows": 1312,
+          "selected": 132,
+          "actual_top_decile_capture": 0.15909091,
+          "selected_mean_mfe": 0.70316866,
+          "universe_mean_mfe": 0.56550592
+        },
+        {
+          "year": 2011,
+          "rows": 1361,
+          "selected": 137,
+          "actual_top_decile_capture": 0.13138686,
+          "selected_mean_mfe": 0.31262046,
+          "universe_mean_mfe": 0.28957255
+        },
+        {
+          "year": 2012,
+          "rows": 1385,
+          "selected": 139,
+          "actual_top_decile_capture": 0.1294964,
+          "selected_mean_mfe": 0.46003185,
+          "universe_mean_mfe": 0.36089433
+        },
+        {
+          "year": 2013,
+          "rows": 1436,
+          "selected": 144,
+          "actual_top_decile_capture": 0.22222222,
+          "selected_mean_mfe": 0.88359124,
+          "universe_mean_mfe": 0.5954113
+        },
+        {
+          "year": 2014,
+          "rows": 1491,
+          "selected": 150,
+          "actual_top_decile_capture": 0.11333333,
+          "selected_mean_mfe": 0.39921778,
+          "universe_mean_mfe": 0.38881061
+        },
+        {
+          "year": 2015,
+          "rows": 1582,
+          "selected": 159,
+          "actual_top_decile_capture": 0.18867925,
+          "selected_mean_mfe": 0.4472277,
+          "universe_mean_mfe": 0.31353213
+        },
+        {
+          "year": 2016,
+          "rows": 1640,
+          "selected": 164,
+          "actual_top_decile_capture": 0.11585366,
+          "selected_mean_mfe": 1.02040094,
+          "universe_mean_mfe": 0.6780661
+        },
+        {
+          "year": 2017,
+          "rows": 1698,
+          "selected": 170,
+          "actual_top_decile_capture": 0.14117647,
+          "selected_mean_mfe": 0.58866206,
+          "universe_mean_mfe": 0.50729997
+        },
+        {
+          "year": 2018,
+          "rows": 1774,
+          "selected": 178,
+          "actual_top_decile_capture": 0.17977528,
+          "selected_mean_mfe": 0.52631249,
+          "universe_mean_mfe": 0.56730898
+        },
+        {
+          "year": 2019,
+          "rows": 1870,
+          "selected": 187,
+          "actual_top_decile_capture": 0.18716578,
+          "selected_mean_mfe": 0.61279881,
+          "universe_mean_mfe": 0.41201105
+        },
+        {
+          "year": 2020,
+          "rows": 1958,
+          "selected": 196,
+          "actual_top_decile_capture": 0.21428571,
+          "selected_mean_mfe": 2.64699375,
+          "universe_mean_mfe": 0.97421812
+        },
+        {
+          "year": 2021,
+          "rows": 2103,
+          "selected": 211,
+          "actual_top_decile_capture": 0.13744076,
+          "selected_mean_mfe": 0.56929812,
+          "universe_mean_mfe": 0.53244078
+        },
+        {
+          "year": 2022,
+          "rows": 2291,
+          "selected": 230,
+          "actual_top_decile_capture": 0.13043478,
+          "selected_mean_mfe": 0.44577238,
+          "universe_mean_mfe": 0.33944271
+        },
+        {
+          "year": 2023,
+          "rows": 2333,
+          "selected": 234,
+          "actual_top_decile_capture": 0.20940171,
+          "selected_mean_mfe": 0.48972762,
+          "universe_mean_mfe": 0.36015103
+        },
+        {
+          "year": 2024,
+          "rows": 2378,
+          "selected": 238,
+          "actual_top_decile_capture": 0.22689076,
+          "selected_mean_mfe": 1.3199044,
+          "universe_mean_mfe": 0.77947131
+        },
+        {
+          "year": 2025,
+          "rows": 2431,
+          "selected": 244,
+          "actual_top_decile_capture": 0.21721311,
+          "selected_mean_mfe": 1.09992643,
+          "universe_mean_mfe": 0.70341288
+        }
+      ]
+    }
+  },
+  "by_year": [
+    {
+      "test_year": 2004,
+      "train_year_min": 1999,
+      "train_year_max": 2003,
+      "train_rows": 4966,
+      "train_stocks": 1056,
+      "test_rows": 1089,
+      "test_stocks": 1089,
+      "past_only_mfe_log_cap": 2.2787848523735104,
+      "actual_up_rate": 0.71349862,
+      "direction_accuracy": 0.7144169,
+      "direction_balanced_accuracy": 0.50352069,
+      "direction_auc": 0.55586081,
+      "mfe_spearman": 0.0897863,
+      "rank_spearman": 0.00871343,
+      "neutral_samples": 367,
+      "neutral_direction_accuracy": 0.6866485
+    },
+    {
+      "test_year": 2005,
+      "train_year_min": 1999,
+      "train_year_max": 2004,
+      "train_rows": 6055,
+      "train_stocks": 1089,
+      "test_rows": 1132,
+      "test_stocks": 1132,
+      "past_only_mfe_log_cap": 2.2198045646682143,
+      "actual_up_rate": 0.69257951,
+      "direction_accuracy": 0.69169611,
+      "direction_balanced_accuracy": 0.49936224,
+      "direction_auc": 0.51776368,
+      "mfe_spearman": 0.09418282,
+      "rank_spearman": -0.00140235,
+      "neutral_samples": 380,
+      "neutral_direction_accuracy": 0.71052632
+    },
+    {
+      "test_year": 2006,
+      "train_year_min": 1999,
+      "train_year_max": 2005,
+      "train_rows": 7187,
+      "train_stocks": 1132,
+      "test_rows": 1179,
+      "test_stocks": 1179,
+      "past_only_mfe_log_cap": 2.2131933968203525,
+      "actual_up_rate": 0.72264631,
+      "direction_accuracy": 0.72179813,
+      "direction_balanced_accuracy": 0.49941315,
+      "direction_auc": 0.50680895,
+      "mfe_spearman": 0.04736806,
+      "rank_spearman": -0.00924081,
+      "neutral_samples": 581,
+      "neutral_direction_accuracy": 0.73493976
+    },
+    {
+      "test_year": 2007,
+      "train_year_min": 1999,
+      "train_year_max": 2006,
+      "train_rows": 8366,
+      "train_stocks": 1179,
+      "test_rows": 1220,
+      "test_stocks": 1220,
+      "past_only_mfe_log_cap": 2.0888302103674716,
+      "actual_up_rate": 0.35819672,
+      "direction_accuracy": 0.35737705,
+      "direction_balanced_accuracy": 0.49885584,
+      "direction_auc": 0.53085007,
+      "mfe_spearman": 0.06054366,
+      "rank_spearman": -0.00847871,
+      "neutral_samples": 552,
+      "neutral_direction_accuracy": 0.35688406
+    },
+    {
+      "test_year": 2008,
+      "train_year_min": 1999,
+      "train_year_max": 2007,
+      "train_rows": 9586,
+      "train_stocks": 1220,
+      "test_rows": 1273,
+      "test_stocks": 1273,
+      "past_only_mfe_log_cap": 2.0543207134542145,
+      "actual_up_rate": 0.09976434,
+      "direction_accuracy": 0.12018853,
+      "direction_balanced_accuracy": 0.50084168,
+      "direction_auc": 0.4595031,
+      "mfe_spearman": 0.02203791,
+      "rank_spearman": -0.01684894,
+      "neutral_samples": 639,
+      "neutral_direction_accuracy": 0.12206573
+    },
+    {
+      "test_year": 2009,
+      "train_year_min": 1999,
+      "train_year_max": 2008,
+      "train_rows": 10859,
+      "train_stocks": 1273,
+      "test_rows": 1293,
+      "test_stocks": 1293,
+      "past_only_mfe_log_cap": 2.02780120400176,
+      "actual_up_rate": 0.81129157,
+      "direction_accuracy": 0.60015468,
+      "direction_balanced_accuracy": 0.53499234,
+      "direction_auc": 0.54562503,
+      "mfe_spearman": 0.11869886,
+      "rank_spearman": 0.09430168,
+      "neutral_samples": 598,
+      "neutral_direction_accuracy": 0.58528428
+    },
+    {
+      "test_year": 2010,
+      "train_year_min": 1999,
+      "train_year_max": 2009,
+      "train_rows": 12152,
+      "train_stocks": 1293,
+      "test_rows": 1312,
+      "test_stocks": 1312,
+      "past_only_mfe_log_cap": 2.143455973693367,
+      "actual_up_rate": 0.83841463,
+      "direction_accuracy": 0.83460366,
+      "direction_balanced_accuracy": 0.49772727,
+      "direction_auc": 0.53389365,
+      "mfe_spearman": 0.14597434,
+      "rank_spearman": 0.09126476,
+      "neutral_samples": 747,
+      "neutral_direction_accuracy": 0.82597055
+    },
+    {
+      "test_year": 2011,
+      "train_year_min": 1999,
+      "train_year_max": 2010,
+      "train_rows": 13464,
+      "train_stocks": 1312,
+      "test_rows": 1361,
+      "test_stocks": 1361,
+      "past_only_mfe_log_cap": 2.058749579672695,
+      "actual_up_rate": 0.58265981,
+      "direction_accuracy": 0.53122704,
+      "direction_balanced_accuracy": 0.53678756,
+      "direction_auc": 0.54776499,
+      "mfe_spearman": 0.08566828,
+      "rank_spearman": 0.0276339,
+      "neutral_samples": 675,
+      "neutral_direction_accuracy": 0.53333333
+    },
+    {
+      "test_year": 2012,
+      "train_year_min": 1999,
+      "train_year_max": 2011,
+      "train_rows": 14825,
+      "train_stocks": 1361,
+      "test_rows": 1385,
+      "test_stocks": 1385,
+      "past_only_mfe_log_cap": 2.0528716051934026,
+      "actual_up_rate": 0.72563177,
+      "direction_accuracy": 0.3898917,
+      "direction_balanced_accuracy": 0.53050537,
+      "direction_auc": 0.58609584,
+      "mfe_spearman": 0.09990397,
+      "rank_spearman": 0.09745949,
+      "neutral_samples": 692,
+      "neutral_direction_accuracy": 0.3482659
+    },
+    {
+      "test_year": 2013,
+      "train_year_min": 1999,
+      "train_year_max": 2012,
+      "train_rows": 16210,
+      "train_stocks": 1385,
+      "test_rows": 1436,
+      "test_stocks": 1436,
+      "past_only_mfe_log_cap": 2.0447945750792904,
+      "actual_up_rate": 0.81128134,
+      "direction_accuracy": 0.81128134,
+      "direction_balanced_accuracy": 0.5,
+      "direction_auc": 0.54490284,
+      "mfe_spearman": 0.17597747,
+      "rank_spearman": 0.09379894,
+      "neutral_samples": 666,
+      "neutral_direction_accuracy": 0.82132132
+    },
+    {
+      "test_year": 2014,
+      "train_year_min": 1999,
+      "train_year_max": 2013,
+      "train_rows": 17646,
+      "train_stocks": 1436,
+      "test_rows": 1491,
+      "test_stocks": 1491,
+      "past_only_mfe_log_cap": 2.032237284648636,
+      "actual_up_rate": 0.70489604,
+      "direction_accuracy": 0.57209926,
+      "direction_balanced_accuracy": 0.54915989,
+      "direction_auc": 0.58713887,
+      "mfe_spearman": 0.0285361,
+      "rank_spearman": 0.01522085,
+      "neutral_samples": 667,
+      "neutral_direction_accuracy": 0.6101949
+    },
+    {
+      "test_year": 2015,
+      "train_year_min": 1999,
+      "train_year_max": 2014,
+      "train_rows": 19137,
+      "train_stocks": 1491,
+      "test_rows": 1582,
+      "test_stocks": 1582,
+      "past_only_mfe_log_cap": 2.0159400494711988,
+      "actual_up_rate": 0.37673831,
+      "direction_accuracy": 0.37673831,
+      "direction_balanced_accuracy": 0.5,
+      "direction_auc": 0.52957087,
+      "mfe_spearman": 0.20533453,
+      "rank_spearman": 0.13812842,
+      "neutral_samples": 752,
+      "neutral_direction_accuracy": 0.3643617
+    },
+    {
+      "test_year": 2016,
+      "train_year_min": 1999,
+      "train_year_max": 2015,
+      "train_rows": 20719,
+      "train_stocks": 1582,
+      "test_rows": 1640,
+      "test_stocks": 1640,
+      "past_only_mfe_log_cap": 1.995100393246085,
+      "actual_up_rate": 0.84756098,
+      "direction_accuracy": 0.84756098,
+      "direction_balanced_accuracy": 0.5,
+      "direction_auc": 0.60049065,
+      "mfe_spearman": 0.14283707,
+      "rank_spearman": 0.05529412,
+      "neutral_samples": 601,
+      "neutral_direction_accuracy": 0.83194676
+    },
+    {
+      "test_year": 2017,
+      "train_year_min": 1999,
+      "train_year_max": 2016,
+      "train_rows": 22359,
+      "train_stocks": 1640,
+      "test_rows": 1698,
+      "test_stocks": 1698,
+      "past_only_mfe_log_cap": 1.985838304634398,
+      "actual_up_rate": 0.69316843,
+      "direction_accuracy": 0.69316843,
+      "direction_balanced_accuracy": 0.5,
+      "direction_auc": 0.53967111,
+      "mfe_spearman": 0.14829796,
+      "rank_spearman": 0.04427584,
+      "neutral_samples": 775,
+      "neutral_direction_accuracy": 0.69935484
+    },
+    {
+      "test_year": 2018,
+      "train_year_min": 1999,
+      "train_year_max": 2017,
+      "train_rows": 24057,
+      "train_stocks": 1698,
+      "test_rows": 1774,
+      "test_stocks": 1774,
+      "past_only_mfe_log_cap": 1.9510227769952737,
+      "actual_up_rate": 0.47576099,
+      "direction_accuracy": 0.52198422,
+      "direction_balanced_accuracy": 0.49932859,
+      "direction_auc": 0.51345424,
+      "mfe_spearman": 0.19582413,
+      "rank_spearman": 0.13029072,
+      "neutral_samples": 787,
+      "neutral_direction_accuracy": 0.53494282
+    },
+    {
+      "test_year": 2019,
+      "train_year_min": 1999,
+      "train_year_max": 2018,
+      "train_rows": 25831,
+      "train_stocks": 1774,
+      "test_rows": 1870,
+      "test_stocks": 1870,
+      "past_only_mfe_log_cap": 1.9314863161909324,
+      "actual_up_rate": 0.63262032,
+      "direction_accuracy": 0.44545455,
+      "direction_balanced_accuracy": 0.53058245,
+      "direction_auc": 0.56636164,
+      "mfe_spearman": 0.10026634,
+      "rank_spearman": 0.09003126,
+      "neutral_samples": 896,
+      "neutral_direction_accuracy": 0.4296875
+    },
+    {
+      "test_year": 2020,
+      "train_year_min": 1999,
+      "train_year_max": 2019,
+      "train_rows": 27701,
+      "train_stocks": 1870,
+      "test_rows": 1958,
+      "test_stocks": 1958,
+      "past_only_mfe_log_cap": 1.914149494681841,
+      "actual_up_rate": 0.62002043,
+      "direction_accuracy": 0.38100102,
+      "direction_balanced_accuracy": 0.50082372,
+      "direction_auc": 0.46096947,
+      "mfe_spearman": 0.24194867,
+      "rank_spearman": 0.13833154,
+      "neutral_samples": 679,
+      "neutral_direction_accuracy": 0.37849779
+    },
+    {
+      "test_year": 2021,
+      "train_year_min": 1999,
+      "train_year_max": 2020,
+      "train_rows": 29659,
+      "train_stocks": 1958,
+      "test_rows": 2103,
+      "test_stocks": 2103,
+      "past_only_mfe_log_cap": 2.0318045799881395,
+      "actual_up_rate": 0.58250119,
+      "direction_accuracy": 0.58250119,
+      "direction_balanced_accuracy": 0.5,
+      "direction_auc": 0.62633397,
+      "mfe_spearman": -0.00109947,
+      "rank_spearman": 0.02205474,
+      "neutral_samples": 1029,
+      "neutral_direction_accuracy": 0.57823129
+    },
+    {
+      "test_year": 2022,
+      "train_year_min": 1999,
+      "train_year_max": 2021,
+      "train_rows": 31762,
+      "train_stocks": 2103,
+      "test_rows": 2291,
+      "test_stocks": 2291,
+      "past_only_mfe_log_cap": 2.0086361073525,
+      "actual_up_rate": 0.46879092,
+      "direction_accuracy": 0.49628983,
+      "direction_balanced_accuracy": 0.52385931,
+      "direction_auc": 0.58109701,
+      "mfe_spearman": 0.15558735,
+      "rank_spearman": 0.10348849,
+      "neutral_samples": 1011,
+      "neutral_direction_accuracy": 0.48565776
+    },
+    {
+      "test_year": 2023,
+      "train_year_min": 1999,
+      "train_year_max": 2022,
+      "train_rows": 34053,
+      "train_stocks": 2291,
+      "test_rows": 2333,
+      "test_stocks": 2333,
+      "past_only_mfe_log_cap": 1.995100393246085,
+      "actual_up_rate": 0.45563652,
+      "direction_accuracy": 0.45649378,
+      "direction_balanced_accuracy": 0.5005574,
+      "direction_auc": 0.52388908,
+      "mfe_spearman": 0.13374997,
+      "rank_spearman": 0.14400943,
+      "neutral_samples": 960,
+      "neutral_direction_accuracy": 0.45
+    },
+    {
+      "test_year": 2024,
+      "train_year_min": 1999,
+      "train_year_max": 2023,
+      "train_rows": 36386,
+      "train_stocks": 2333,
+      "test_rows": 2378,
+      "test_stocks": 2378,
+      "past_only_mfe_log_cap": 1.9539227845688125,
+      "actual_up_rate": 0.6333053,
+      "direction_accuracy": 0.63288478,
+      "direction_balanced_accuracy": 0.49966799,
+      "direction_auc": 0.57545163,
+      "mfe_spearman": 0.16824684,
+      "rank_spearman": 0.13877996,
+      "neutral_samples": 1121,
+      "neutral_direction_accuracy": 0.64763604
+    },
+    {
+      "test_year": 2025,
+      "train_year_min": 1999,
+      "train_year_max": 2024,
+      "train_rows": 38764,
+      "train_stocks": 2378,
+      "test_rows": 2431,
+      "test_stocks": 2431,
+      "past_only_mfe_log_cap": 2.003412982537762,
+      "actual_up_rate": 0.61744138,
+      "direction_accuracy": 0.58576717,
+      "direction_balanced_accuracy": 0.51034651,
+      "direction_auc": 0.55209036,
+      "mfe_spearman": 0.21372335,
+      "rank_spearman": 0.19178291,
+      "neutral_samples": 1051,
+      "neutral_direction_accuracy": 0.60799239
+    }
+  ],
+  "labels": {
+    "anchor": "立春节气年首个可用交易日开盘",
+    "horizon": "该立春年截至下一立春前最后一个可用交易日，约12个月",
+    "mfe": "max(High/Open - 1, 0)",
+    "mae": "min(Low/Open - 1, 0)",
+    "terminal_direction": "Close/Open - 1 > 0 为上涨，否则为下跌",
+    "within_ticker_rank": "每一训练折只在过去年份内重算同股MFE百分位",
+    "flat_prediction_unit": "decimal_return",
+    "q50_compatibility_alias": "predicted_*_q50为前端兼容别名；当前是条件log中心/点预测，不是经quantile loss校准的正式中位数。"
+  },
+  "training_protocol": {
+    "split": "expanding_year; train.year < test.year",
+    "same_year_training_forbidden": true,
+    "future_training_forbidden": true,
+    "main_god_source": "冻结V0算法主用神；不使用K线逆推主用神",
+    "mfe_cap": "每折仅用训练期log1p(MFE)的99.5%分位，防止极端点支配损失",
+    "issuer_weighting": "训练期按发行主体等权",
+    "direction_class_weighting": "训练期按发行主体等权；保留训练期真实涨跌先验",
+    "estimators": {
+      "mfe": "past-only standardized weighted ridge(log1p MFE)",
+      "mae": "past-only standardized weighted ridge(drawdown magnitude)",
+      "direction": "past-only standardized weighted ridge probability",
+      "within_ticker_rank": "past-only standardized weighted ridge"
+    },
+    "price_features_used": false,
+    "price_usage": "仅监督标签与评价"
+  },
+  "evaluation": {
+    "scored_year_min": 2004,
+    "scored_year_max": 2025,
+    "scored_rows": 36229,
+    "scored_stocks": 2431,
+    "direction": {
+      "samples": 36229,
+      "actual_up_rate": 0.60484695,
+      "predicted_up_rate": 0.75848078,
+      "accuracy": 0.55692953,
+      "balanced_accuracy": 0.50285315,
+      "roc_auc": 0.49339761,
+      "brier_score": 0.26184843,
+      "always_up_accuracy": 0.60484695,
+      "always_down_accuracy": 0.39515305,
+      "up_recall": 0.76073564,
+      "down_recall": 0.24497066
+    },
+    "v0_base_same_rows": {
+      "samples": 36229,
+      "explicit_samples": 20003,
+      "neutral_samples": 16226,
+      "direction_coverage": 0.55212675,
+      "full_accuracy_neutral_counted_wrong": 0.27754009,
+      "explicit_accuracy": 0.5026746,
+      "explicit_balanced_accuracy": 0.4902309,
+      "explicit_up_recall": 0.54805002,
+      "explicit_down_recall": 0.43241177
+    },
+    "v0_neutral_resolution": {
+      "samples": 16226,
+      "actual_up_rate": 0.60144213,
+      "predicted_up_rate": 0.75329718,
+      "accuracy": 0.55515839,
+      "balanced_accuracy": 0.50393015,
+      "roc_auc": 0.49390695,
+      "brier_score": 0.26263133,
+      "always_up_accuracy": 0.60144213,
+      "always_down_accuracy": 0.39855787,
+      "up_recall": 0.75642996,
+      "down_recall": 0.25143034
+    },
+    "magnitude": {
+      "samples": 36229,
+      "mfe": {
+        "mean_actual": 0.53042184,
+        "median_actual": 0.27732694,
+        "mean_predicted": 0.39509262,
+        "median_predicted": 0.38170794,
+        "log_mae": 0.22399498,
+        "log_rmse": 0.33561566,
+        "predicted_vs_actual_spearman": 0.08816314,
+        "base_v0_score_vs_actual_spearman": 0.00167998
+      },
+      "mae_drawdown": {
+        "mean_actual": 0.2569379,
+        "mean_predicted": 0.24509337,
+        "mae": 0.17181473,
+        "rmse": 0.21640189,
+        "predicted_vs_actual_spearman": 0.16457967
+      },
+      "within_ticker_ordering": {
+        "eligible_stocks_min_3_oos_years": 2333,
+        "macro_mean_spearman": 0.00265433,
+        "macro_median_spearman": 0.01298701,
+        "pairwise_comparable_pairs": 322421,
+        "pairwise_concordance": 0.51051886
+      },
+      "top_decile": {
+        "selected_share": 0.1,
+        "actual_top_decile_capture_micro": 0.16510732,
+        "actual_top_decile_capture_macro_year": 0.15973858,
+        "selected_mean_mfe": 0.75969884,
+        "universe_mean_mfe": 0.53042184,
+        "mean_mfe_lift": 1.43225406,
+        "threshold_retrieval": {
+          "2x": {
+            "threshold_mfe": 1.0,
+            "events": 3600,
+            "base_rate": 0.09936791,
+            "top_decile_events": 594,
+            "top_decile_rate": 0.16345625,
+            "top_decile_lift": 1.6449601,
+            "event_recall_in_top_decile": 0.165
+          },
+          "5x": {
+            "threshold_mfe": 4.0,
+            "events": 374,
+            "base_rate": 0.01032322,
+            "top_decile_events": 75,
+            "top_decile_rate": 0.02063841,
+            "top_decile_lift": 1.99922229,
+            "event_recall_in_top_decile": 0.20053476
+          },
+          "10x": {
+            "threshold_mfe": 9.0,
+            "events": 97,
+            "base_rate": 0.00267741,
+            "top_decile_events": 16,
+            "top_decile_rate": 0.00440286,
+            "top_decile_lift": 1.64444621,
+            "event_recall_in_top_decile": 0.16494845
+          }
+        },
+        "by_year": [
+          {
+            "year": 2004,
+            "rows": 1089,
+            "selected": 109,
+            "actual_top_decile_capture": 0.16513761,
+            "selected_mean_mfe": 0.46119417,
+            "universe_mean_mfe": 0.49978778
+          },
+          {
+            "year": 2005,
+            "rows": 1132,
+            "selected": 114,
+            "actual_top_decile_capture": 0.10526316,
+            "selected_mean_mfe": 0.39933593,
+            "universe_mean_mfe": 0.48235382
+          },
+          {
+            "year": 2006,
+            "rows": 1179,
+            "selected": 118,
+            "actual_top_decile_capture": 0.16101695,
+            "selected_mean_mfe": 0.40998936,
+            "universe_mean_mfe": 0.37664392
+          },
+          {
+            "year": 2007,
+            "rows": 1220,
+            "selected": 122,
+            "actual_top_decile_capture": 0.13114754,
+            "selected_mean_mfe": 0.35130781,
+            "universe_mean_mfe": 0.35875607
+          },
+          {
+            "year": 2008,
+            "rows": 1273,
+            "selected": 128,
+            "actual_top_decile_capture": 0.109375,
+            "selected_mean_mfe": 0.26341216,
+            "universe_mean_mfe": 0.30813557
+          },
+          {
+            "year": 2009,
+            "rows": 1293,
+            "selected": 130,
+            "actual_top_decile_capture": 0.13846154,
+            "selected_mean_mfe": 1.29157054,
+            "universe_mean_mfe": 1.02608199
+          },
+          {
+            "year": 2010,
+            "rows": 1312,
+            "selected": 132,
+            "actual_top_decile_capture": 0.15909091,
+            "selected_mean_mfe": 0.70316866,
+            "universe_mean_mfe": 0.56550592
+          },
+          {
+            "year": 2011,
+            "rows": 1361,
+            "selected": 137,
+            "actual_top_decile_capture": 0.13138686,
+            "selected_mean_mfe": 0.31262046,
+            "universe_mean_mfe": 0.28957255
+          },
+          {
+            "year": 2012,
+            "rows": 1385,
+            "selected": 139,
+            "actual_top_decile_capture": 0.1294964,
+            "selected_mean_mfe": 0.46003185,
+            "universe_mean_mfe": 0.36089433
+          },
+          {
+            "year": 2013,
+            "rows": 1436,
+            "selected": 144,
+            "actual_top_decile_capture": 0.22222222,
+            "selected_mean_mfe": 0.88359124,
+            "universe_mean_mfe": 0.5954113
+          },
+          {
+            "year": 2014,
+            "rows": 1491,
+            "selected": 150,
+            "actual_top_decile_capture": 0.11333333,
+            "selected_mean_mfe": 0.39921778,
+            "universe_mean_mfe": 0.38881061
+          },
+          {
+            "year": 2015,
+            "rows": 1582,
+            "selected": 159,
+            "actual_top_decile_capture": 0.18867925,
+            "selected_mean_mfe": 0.4472277,
+            "universe_mean_mfe": 0.31353213
+          },
+          {
+            "year": 2016,
+            "rows": 1640,
+            "selected": 164,
+            "actual_top_decile_capture": 0.11585366,
+            "selected_mean_mfe": 1.02040094,
+            "universe_mean_mfe": 0.6780661
+          },
+          {
+            "year": 2017,
+            "rows": 1698,
+            "selected": 170,
+            "actual_top_decile_capture": 0.14117647,
+            "selected_mean_mfe": 0.58866206,
+            "universe_mean_mfe": 0.50729997
+          },
+          {
+            "year": 2018,
+            "rows": 1774,
+            "selected": 178,
+            "actual_top_decile_capture": 0.17977528,
+            "selected_mean_mfe": 0.52631249,
+            "universe_mean_mfe": 0.56730898
+          },
+          {
+            "year": 2019,
+            "rows": 1870,
+            "selected": 187,
+            "actual_top_decile_capture": 0.18716578,
+            "selected_mean_mfe": 0.61279881,
+            "universe_mean_mfe": 0.41201105
+          },
+          {
+            "year": 2020,
+            "rows": 1958,
+            "selected": 196,
+            "actual_top_decile_capture": 0.21428571,
+            "selected_mean_mfe": 2.64699375,
+            "universe_mean_mfe": 0.97421812
+          },
+          {
+            "year": 2021,
+            "rows": 2103,
+            "selected": 211,
+            "actual_top_decile_capture": 0.13744076,
+            "selected_mean_mfe": 0.56929812,
+            "universe_mean_mfe": 0.53244078
+          },
+          {
+            "year": 2022,
+            "rows": 2291,
+            "selected": 230,
+            "actual_top_decile_capture": 0.13043478,
+            "selected_mean_mfe": 0.44577238,
+            "universe_mean_mfe": 0.33944271
+          },
+          {
+            "year": 2023,
+            "rows": 2333,
+            "selected": 234,
+            "actual_top_decile_capture": 0.20940171,
+            "selected_mean_mfe": 0.48972762,
+            "universe_mean_mfe": 0.36015103
+          },
+          {
+            "year": 2024,
+            "rows": 2378,
+            "selected": 238,
+            "actual_top_decile_capture": 0.22689076,
+            "selected_mean_mfe": 1.3199044,
+            "universe_mean_mfe": 0.77947131
+          },
+          {
+            "year": 2025,
+            "rows": 2431,
+            "selected": 244,
+            "actual_top_decile_capture": 0.21721311,
+            "selected_mean_mfe": 1.09992643,
+            "universe_mean_mfe": 0.70341288
+          }
+        ]
+      }
+    },
+    "folds": [
+      {
+        "test_year": 2004,
+        "train_year_min": 1999,
+        "train_year_max": 2003,
+        "train_rows": 4966,
+        "train_stocks": 1056,
+        "test_rows": 1089,
+        "test_stocks": 1089,
+        "past_only_mfe_log_cap": 2.2787848523735104,
+        "actual_up_rate": 0.71349862,
+        "direction_accuracy": 0.7144169,
+        "direction_balanced_accuracy": 0.50352069,
+        "direction_auc": 0.55586081,
+        "mfe_spearman": 0.0897863,
+        "rank_spearman": 0.00871343,
+        "neutral_samples": 367,
+        "neutral_direction_accuracy": 0.6866485
+      },
+      {
+        "test_year": 2005,
+        "train_year_min": 1999,
+        "train_year_max": 2004,
+        "train_rows": 6055,
+        "train_stocks": 1089,
+        "test_rows": 1132,
+        "test_stocks": 1132,
+        "past_only_mfe_log_cap": 2.2198045646682143,
+        "actual_up_rate": 0.69257951,
+        "direction_accuracy": 0.69169611,
+        "direction_balanced_accuracy": 0.49936224,
+        "direction_auc": 0.51776368,
+        "mfe_spearman": 0.09418282,
+        "rank_spearman": -0.00140235,
+        "neutral_samples": 380,
+        "neutral_direction_accuracy": 0.71052632
+      },
+      {
+        "test_year": 2006,
+        "train_year_min": 1999,
+        "train_year_max": 2005,
+        "train_rows": 7187,
+        "train_stocks": 1132,
+        "test_rows": 1179,
+        "test_stocks": 1179,
+        "past_only_mfe_log_cap": 2.2131933968203525,
+        "actual_up_rate": 0.72264631,
+        "direction_accuracy": 0.72179813,
+        "direction_balanced_accuracy": 0.49941315,
+        "direction_auc": 0.50680895,
+        "mfe_spearman": 0.04736806,
+        "rank_spearman": -0.00924081,
+        "neutral_samples": 581,
+        "neutral_direction_accuracy": 0.73493976
+      },
+      {
+        "test_year": 2007,
+        "train_year_min": 1999,
+        "train_year_max": 2006,
+        "train_rows": 8366,
+        "train_stocks": 1179,
+        "test_rows": 1220,
+        "test_stocks": 1220,
+        "past_only_mfe_log_cap": 2.0888302103674716,
+        "actual_up_rate": 0.35819672,
+        "direction_accuracy": 0.35737705,
+        "direction_balanced_accuracy": 0.49885584,
+        "direction_auc": 0.53085007,
+        "mfe_spearman": 0.06054366,
+        "rank_spearman": -0.00847871,
+        "neutral_samples": 552,
+        "neutral_direction_accuracy": 0.35688406
+      },
+      {
+        "test_year": 2008,
+        "train_year_min": 1999,
+        "train_year_max": 2007,
+        "train_rows": 9586,
+        "train_stocks": 1220,
+        "test_rows": 1273,
+        "test_stocks": 1273,
+        "past_only_mfe_log_cap": 2.0543207134542145,
+        "actual_up_rate": 0.09976434,
+        "direction_accuracy": 0.12018853,
+        "direction_balanced_accuracy": 0.50084168,
+        "direction_auc": 0.4595031,
+        "mfe_spearman": 0.02203791,
+        "rank_spearman": -0.01684894,
+        "neutral_samples": 639,
+        "neutral_direction_accuracy": 0.12206573
+      },
+      {
+        "test_year": 2009,
+        "train_year_min": 1999,
+        "train_year_max": 2008,
+        "train_rows": 10859,
+        "train_stocks": 1273,
+        "test_rows": 1293,
+        "test_stocks": 1293,
+        "past_only_mfe_log_cap": 2.02780120400176,
+        "actual_up_rate": 0.81129157,
+        "direction_accuracy": 0.60015468,
+        "direction_balanced_accuracy": 0.53499234,
+        "direction_auc": 0.54562503,
+        "mfe_spearman": 0.11869886,
+        "rank_spearman": 0.09430168,
+        "neutral_samples": 598,
+        "neutral_direction_accuracy": 0.58528428
+      },
+      {
+        "test_year": 2010,
+        "train_year_min": 1999,
+        "train_year_max": 2009,
+        "train_rows": 12152,
+        "train_stocks": 1293,
+        "test_rows": 1312,
+        "test_stocks": 1312,
+        "past_only_mfe_log_cap": 2.143455973693367,
+        "actual_up_rate": 0.83841463,
+        "direction_accuracy": 0.83460366,
+        "direction_balanced_accuracy": 0.49772727,
+        "direction_auc": 0.53389365,
+        "mfe_spearman": 0.14597434,
+        "rank_spearman": 0.09126476,
+        "neutral_samples": 747,
+        "neutral_direction_accuracy": 0.82597055
+      },
+      {
+        "test_year": 2011,
+        "train_year_min": 1999,
+        "train_year_max": 2010,
+        "train_rows": 13464,
+        "train_stocks": 1312,
+        "test_rows": 1361,
+        "test_stocks": 1361,
+        "past_only_mfe_log_cap": 2.058749579672695,
+        "actual_up_rate": 0.58265981,
+        "direction_accuracy": 0.53122704,
+        "direction_balanced_accuracy": 0.53678756,
+        "direction_auc": 0.54776499,
+        "mfe_spearman": 0.08566828,
+        "rank_spearman": 0.0276339,
+        "neutral_samples": 675,
+        "neutral_direction_accuracy": 0.53333333
+      },
+      {
+        "test_year": 2012,
+        "train_year_min": 1999,
+        "train_year_max": 2011,
+        "train_rows": 14825,
+        "train_stocks": 1361,
+        "test_rows": 1385,
+        "test_stocks": 1385,
+        "past_only_mfe_log_cap": 2.0528716051934026,
+        "actual_up_rate": 0.72563177,
+        "direction_accuracy": 0.3898917,
+        "direction_balanced_accuracy": 0.53050537,
+        "direction_auc": 0.58609584,
+        "mfe_spearman": 0.09990397,
+        "rank_spearman": 0.09745949,
+        "neutral_samples": 692,
+        "neutral_direction_accuracy": 0.3482659
+      },
+      {
+        "test_year": 2013,
+        "train_year_min": 1999,
+        "train_year_max": 2012,
+        "train_rows": 16210,
+        "train_stocks": 1385,
+        "test_rows": 1436,
+        "test_stocks": 1436,
+        "past_only_mfe_log_cap": 2.0447945750792904,
+        "actual_up_rate": 0.81128134,
+        "direction_accuracy": 0.81128134,
+        "direction_balanced_accuracy": 0.5,
+        "direction_auc": 0.54490284,
+        "mfe_spearman": 0.17597747,
+        "rank_spearman": 0.09379894,
+        "neutral_samples": 666,
+        "neutral_direction_accuracy": 0.82132132
+      },
+      {
+        "test_year": 2014,
+        "train_year_min": 1999,
+        "train_year_max": 2013,
+        "train_rows": 17646,
+        "train_stocks": 1436,
+        "test_rows": 1491,
+        "test_stocks": 1491,
+        "past_only_mfe_log_cap": 2.032237284648636,
+        "actual_up_rate": 0.70489604,
+        "direction_accuracy": 0.57209926,
+        "direction_balanced_accuracy": 0.54915989,
+        "direction_auc": 0.58713887,
+        "mfe_spearman": 0.0285361,
+        "rank_spearman": 0.01522085,
+        "neutral_samples": 667,
+        "neutral_direction_accuracy": 0.6101949
+      },
+      {
+        "test_year": 2015,
+        "train_year_min": 1999,
+        "train_year_max": 2014,
+        "train_rows": 19137,
+        "train_stocks": 1491,
+        "test_rows": 1582,
+        "test_stocks": 1582,
+        "past_only_mfe_log_cap": 2.0159400494711988,
+        "actual_up_rate": 0.37673831,
+        "direction_accuracy": 0.37673831,
+        "direction_balanced_accuracy": 0.5,
+        "direction_auc": 0.52957087,
+        "mfe_spearman": 0.20533453,
+        "rank_spearman": 0.13812842,
+        "neutral_samples": 752,
+        "neutral_direction_accuracy": 0.3643617
+      },
+      {
+        "test_year": 2016,
+        "train_year_min": 1999,
+        "train_year_max": 2015,
+        "train_rows": 20719,
+        "train_stocks": 1582,
+        "test_rows": 1640,
+        "test_stocks": 1640,
+        "past_only_mfe_log_cap": 1.995100393246085,
+        "actual_up_rate": 0.84756098,
+        "direction_accuracy": 0.84756098,
+        "direction_balanced_accuracy": 0.5,
+        "direction_auc": 0.60049065,
+        "mfe_spearman": 0.14283707,
+        "rank_spearman": 0.05529412,
+        "neutral_samples": 601,
+        "neutral_direction_accuracy": 0.83194676
+      },
+      {
+        "test_year": 2017,
+        "train_year_min": 1999,
+        "train_year_max": 2016,
+        "train_rows": 22359,
+        "train_stocks": 1640,
+        "test_rows": 1698,
+        "test_stocks": 1698,
+        "past_only_mfe_log_cap": 1.985838304634398,
+        "actual_up_rate": 0.69316843,
+        "direction_accuracy": 0.69316843,
+        "direction_balanced_accuracy": 0.5,
+        "direction_auc": 0.53967111,
+        "mfe_spearman": 0.14829796,
+        "rank_spearman": 0.04427584,
+        "neutral_samples": 775,
+        "neutral_direction_accuracy": 0.69935484
+      },
+      {
+        "test_year": 2018,
+        "train_year_min": 1999,
+        "train_year_max": 2017,
+        "train_rows": 24057,
+        "train_stocks": 1698,
+        "test_rows": 1774,
+        "test_stocks": 1774,
+        "past_only_mfe_log_cap": 1.9510227769952737,
+        "actual_up_rate": 0.47576099,
+        "direction_accuracy": 0.52198422,
+        "direction_balanced_accuracy": 0.49932859,
+        "direction_auc": 0.51345424,
+        "mfe_spearman": 0.19582413,
+        "rank_spearman": 0.13029072,
+        "neutral_samples": 787,
+        "neutral_direction_accuracy": 0.53494282
+      },
+      {
+        "test_year": 2019,
+        "train_year_min": 1999,
+        "train_year_max": 2018,
+        "train_rows": 25831,
+        "train_stocks": 1774,
+        "test_rows": 1870,
+        "test_stocks": 1870,
+        "past_only_mfe_log_cap": 1.9314863161909324,
+        "actual_up_rate": 0.63262032,
+        "direction_accuracy": 0.44545455,
+        "direction_balanced_accuracy": 0.53058245,
+        "direction_auc": 0.56636164,
+        "mfe_spearman": 0.10026634,
+        "rank_spearman": 0.09003126,
+        "neutral_samples": 896,
+        "neutral_direction_accuracy": 0.4296875
+      },
+      {
+        "test_year": 2020,
+        "train_year_min": 1999,
+        "train_year_max": 2019,
+        "train_rows": 27701,
+        "train_stocks": 1870,
+        "test_rows": 1958,
+        "test_stocks": 1958,
+        "past_only_mfe_log_cap": 1.914149494681841,
+        "actual_up_rate": 0.62002043,
+        "direction_accuracy": 0.38100102,
+        "direction_balanced_accuracy": 0.50082372,
+        "direction_auc": 0.46096947,
+        "mfe_spearman": 0.24194867,
+        "rank_spearman": 0.13833154,
+        "neutral_samples": 679,
+        "neutral_direction_accuracy": 0.37849779
+      },
+      {
+        "test_year": 2021,
+        "train_year_min": 1999,
+        "train_year_max": 2020,
+        "train_rows": 29659,
+        "train_stocks": 1958,
+        "test_rows": 2103,
+        "test_stocks": 2103,
+        "past_only_mfe_log_cap": 2.0318045799881395,
+        "actual_up_rate": 0.58250119,
+        "direction_accuracy": 0.58250119,
+        "direction_balanced_accuracy": 0.5,
+        "direction_auc": 0.62633397,
+        "mfe_spearman": -0.00109947,
+        "rank_spearman": 0.02205474,
+        "neutral_samples": 1029,
+        "neutral_direction_accuracy": 0.57823129
+      },
+      {
+        "test_year": 2022,
+        "train_year_min": 1999,
+        "train_year_max": 2021,
+        "train_rows": 31762,
+        "train_stocks": 2103,
+        "test_rows": 2291,
+        "test_stocks": 2291,
+        "past_only_mfe_log_cap": 2.0086361073525,
+        "actual_up_rate": 0.46879092,
+        "direction_accuracy": 0.49628983,
+        "direction_balanced_accuracy": 0.52385931,
+        "direction_auc": 0.58109701,
+        "mfe_spearman": 0.15558735,
+        "rank_spearman": 0.10348849,
+        "neutral_samples": 1011,
+        "neutral_direction_accuracy": 0.48565776
+      },
+      {
+        "test_year": 2023,
+        "train_year_min": 1999,
+        "train_year_max": 2022,
+        "train_rows": 34053,
+        "train_stocks": 2291,
+        "test_rows": 2333,
+        "test_stocks": 2333,
+        "past_only_mfe_log_cap": 1.995100393246085,
+        "actual_up_rate": 0.45563652,
+        "direction_accuracy": 0.45649378,
+        "direction_balanced_accuracy": 0.5005574,
+        "direction_auc": 0.52388908,
+        "mfe_spearman": 0.13374997,
+        "rank_spearman": 0.14400943,
+        "neutral_samples": 960,
+        "neutral_direction_accuracy": 0.45
+      },
+      {
+        "test_year": 2024,
+        "train_year_min": 1999,
+        "train_year_max": 2023,
+        "train_rows": 36386,
+        "train_stocks": 2333,
+        "test_rows": 2378,
+        "test_stocks": 2378,
+        "past_only_mfe_log_cap": 1.9539227845688125,
+        "actual_up_rate": 0.6333053,
+        "direction_accuracy": 0.63288478,
+        "direction_balanced_accuracy": 0.49966799,
+        "direction_auc": 0.57545163,
+        "mfe_spearman": 0.16824684,
+        "rank_spearman": 0.13877996,
+        "neutral_samples": 1121,
+        "neutral_direction_accuracy": 0.64763604
+      },
+      {
+        "test_year": 2025,
+        "train_year_min": 1999,
+        "train_year_max": 2024,
+        "train_rows": 38764,
+        "train_stocks": 2378,
+        "test_rows": 2431,
+        "test_stocks": 2431,
+        "past_only_mfe_log_cap": 2.003412982537762,
+        "actual_up_rate": 0.61744138,
+        "direction_accuracy": 0.58576717,
+        "direction_balanced_accuracy": 0.51034651,
+        "direction_auc": 0.55209036,
+        "mfe_spearman": 0.21372335,
+        "rank_spearman": 0.19178291,
+        "neutral_samples": 1051,
+        "neutral_direction_accuracy": 0.60799239
+      }
+    ],
+    "same_oos_comparison": {
+      "samples": 36229,
+      "v2_forced_direction": {
+        "samples": 36229,
+        "actual_up_rate": 0.60484695,
+        "predicted_up_rate": 0.75848078,
+        "accuracy": 0.55692953,
+        "balanced_accuracy": 0.50285315,
+        "roc_auc": 0.49339761,
+        "brier_score": 0.26184843,
+        "always_up_accuracy": 0.60484695,
+        "always_down_accuracy": 0.39515305,
+        "up_recall": 0.76073564,
+        "down_recall": 0.24497066
+      },
+      "a0_v0_direction": {
+        "samples": 36229,
+        "explicit_samples": 20003,
+        "neutral_samples": 16226,
+        "direction_coverage": 0.55212675,
+        "full_accuracy_neutral_counted_wrong": 0.27754009,
+        "explicit_accuracy": 0.5026746,
+        "explicit_balanced_accuracy": 0.4902309,
+        "explicit_up_recall": 0.54805002,
+        "explicit_down_recall": 0.43241177
+      },
+      "always_up": {
+        "accuracy": 0.60484695,
+        "balanced_accuracy": 0.5
+      },
+      "a0_neutral_rows_resolved_by_v2": {
+        "samples": 16226,
+        "actual_up_rate": 0.60144213,
+        "predicted_up_rate": 0.75329718,
+        "accuracy": 0.55515839,
+        "balanced_accuracy": 0.50393015,
+        "roc_auc": 0.49390695,
+        "brier_score": 0.26263133,
+        "always_up_accuracy": 0.60144213,
+        "always_down_accuracy": 0.39855787,
+        "up_recall": 0.75642996,
+        "down_recall": 0.25143034
+      }
+    }
+  },
+  "warnings": [
+    "完整V2.1 node_state + typed_event_state训练矩阵尚未冻结；本次是明确标注的V0确定性年/月序列代理，不得称为完整V2。",
+    "MFE/MAE由立春年聚合OHLC计算：MFE=High/Open-1，MAE=Low/Open-1；没有日内路径，不能判断低点是否先于高点，也不是事后最低点到最高点倍数。",
+    "股票池是2026年当前成分/持仓联合池，存在当前成分与存活者偏差；结果不是历史时点可交易股票池回测。",
+    "上市时刻仍含行情起点代理。起盘身份/时刻误差会传导到八字和序列特征。",
+    "兼容字段predicted_mfe_q50/predicted_mae_q50当前是log中心/点预测，未用分位数损失校准，页面必须标为点估计而非正式置信区间。",
+    "所有指标是历史滚动时间外诊断，不是尚未观察年份的前瞻证明，也不构成投资建议。"
+  ],
+  "limitations": [
+    "完整V2.1 node_state + typed_event_state训练矩阵尚未冻结；本次是明确标注的V0确定性年/月序列代理，不得称为完整V2。",
+    "MFE/MAE由立春年聚合OHLC计算：MFE=High/Open-1，MAE=Low/Open-1；没有日内路径，不能判断低点是否先于高点，也不是事后最低点到最高点倍数。",
+    "股票池是2026年当前成分/持仓联合池，存在当前成分与存活者偏差；结果不是历史时点可交易股票池回测。",
+    "上市时刻仍含行情起点代理。起盘身份/时刻误差会传导到八字和序列特征。",
+    "兼容字段predicted_mfe_q50/predicted_mae_q50当前是log中心/点预测，未用分位数损失校准，页面必须标为点估计而非正式置信区间。",
+    "所有指标是历史滚动时间外诊断，不是尚未观察年份的前瞻证明，也不构成投资建议。"
+  ],
+  "runtime_seconds": 12.41406487
+}
