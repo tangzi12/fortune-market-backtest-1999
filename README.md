@@ -67,6 +67,34 @@ python3 scripts/build_tenbagger_m0_page_data.py
 脚本只写入 `public/data/tenbagger-m0/`，并移除源文件中的本机绝对路径。正式M0预测只使用
 事件所属立春年之前的完整年K；页面中的实际年K和同股排名仅用于事后核对。
 
+## 191只股票主用神重跑
+
+独立入口 `/tenbagger-main-god/` 按 S&P 500 页面相同的主用神规则与替换门槛，对全部
+191只股票重新计算年运。先使用“日干 × 月令”算出的算法主神；只有候选主神至少有
+8个完整年度、实际上涨和下跌各不少于3年，且排除中性的普通命中率严格提高，同时
+full BA、方向覆盖率均不降低时，才允许替换。
+
+页面把两种结果明确分开：
+
+- “全历史逆推”复刻原 S&P 500 格式，属于样本内解释，不能作为事件发生前的预测成绩；
+- “事件前逆推”只使用十倍事件所属年以前已经完成的年K，才是无未来信息的因果口径。
+
+重新生成输入、运行独立回测并生成网页数据：
+
+```bash
+python3 scripts/build_tenbagger_main_god_input.py
+FORTUNE_OUTPUT_DIR=tmp/tenbagger_main_god/web-data \
+FORTUNE_QUERY_START=1970-01-01 \
+FORTUNE_CUTOFF_DATE=2026-07-10 \
+FORTUNE_SKIP_REGRESSION_CHECKS=1 \
+node ../../research/build_fortune_backtest_web_data.mjs
+python3 scripts/build_tenbagger_main_god_page_data.py
+```
+
+191只股票均有独立行情载荷；其中177只具有完整的十倍事件所属立春年K，可进入当年方向
+核对。上市身份仍有28只使用已核验候选日期、163只使用现存研究代理，因此页面逐只披露
+身份来源与置信度。
+
 ## 研究边界
 
 页面中的“历史 K 线改进主用神”在同一批历史年 K 上选择并报告结果，属于样本内拟合，存在数据泄漏与多重比较偏差。它不是独立预测成绩，也不构成投资建议或收益承诺。

@@ -452,6 +452,7 @@ export default function TenbaggerM0Page() {
           <a href="#summary">结果总览</a>
           <a href="#events">191 只明细</a>
           <a href="#method">口径说明</a>
+          <a href="../tenbagger-main-god/">主神重跑版</a>
         </nav>
         <div className={styles.dataStatus} aria-label={`已载入 ${summary.total} 条事件`}>
           <i aria-hidden="true" />

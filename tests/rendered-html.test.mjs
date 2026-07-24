@@ -91,6 +91,78 @@ test("serves the complete frozen 191-event M0 prediction ledger", async () => {
   assert.ok(!data.source_freeze.source_path);
 });
 
+test("reruns all 191 tenbagger stocks with gated full-history and causal main-god selection", async () => {
+  const [response, dataText, pageSource, staticHtml] = await Promise.all([
+    render("/tenbagger-main-god"),
+    readFile(new URL("../public/data/tenbagger-main-god/index.json", import.meta.url), "utf8"),
+    readFile(new URL("../app/tenbagger-main-god/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../github-pages/tenbagger-main-god/index.html", import.meta.url), "utf8"),
+  ]);
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /正在装载191只股票主用神重跑/);
+  assert.match(staticHtml, /191只一年十倍股 · 主用神独立重跑/);
+  assert.match(pageSource, /全历史样本内/);
+  assert.match(pageSource, /事件前因果/);
+
+  const data = JSON.parse(dataText);
+  assert.equal(data.schema_version, "tenbagger-main-god-191-v1.0.0");
+  assert.equal(data.rows.length, 191);
+  assert.equal(new Set(data.rows.map((row) => row.ticker)).size, 191);
+  assert.equal(data.summary.price_payload_count, 191);
+  assert.equal(data.summary.full_history.eligible_stocks, 113);
+  assert.equal(data.summary.full_history.replacement_count, 75);
+  assert.equal(data.summary.event_prefix.eligible_stocks, 49);
+  assert.equal(data.summary.event_prefix.replacement_count, 34);
+  assert.deepEqual(data.summary.full_history.sample_status_counts, {
+    no_data: 3,
+    insufficient: 75,
+    sufficient: 113,
+  });
+  assert.deepEqual(data.summary.identity, {
+    audited_candidate_used: 28,
+    proxy_used: 163,
+  });
+  assert.equal(data.summary.event_year.algorithm.bullish_capture_count, 73);
+  assert.equal(data.summary.event_year.full_history_in_sample.bullish_capture_count, 65);
+  assert.equal(data.summary.event_year.event_prefix_causal.bullish_capture_count, 76);
+  assert.equal(data.summary.event_year.event_prefix_causal.direction_hits, 71);
+  assert.ok(
+    data.summary.full_history.selected.ordinary_hit_rate >
+      data.summary.full_history.algorithm.ordinary_hit_rate,
+  );
+  assert.ok(
+    data.summary.full_history.selected.direction_coverage >=
+      data.summary.full_history.algorithm.direction_coverage,
+  );
+
+  for (const row of data.rows) {
+    assert.match(row.algorithm_main_god, /^[甲乙丙丁戊己庚辛壬癸]$/);
+    assert.match(row.full_history_fit.selected_main_god, /^[甲乙丙丁戊己庚辛壬癸]$/);
+    assert.match(row.event_prefix_fit.selected_main_god, /^[甲乙丙丁戊己庚辛壬癸]$/);
+    assert.ok(row.history.length > 0, row.ticker);
+    if (row.full_history_fit.replacement_applied) {
+      assert.ok(
+        row.full_history_fit.selected.ordinary_hit_rate >
+          row.full_history_fit.algorithm.ordinary_hit_rate,
+        row.ticker,
+      );
+      assert.ok(
+        row.full_history_fit.selected.hits >= row.full_history_fit.algorithm.hits,
+        row.ticker,
+      );
+      assert.ok(
+        row.full_history_fit.selected.explicit_predictions >=
+          row.full_history_fit.algorithm.explicit_predictions,
+        row.ticker,
+      );
+    }
+    if (row.event_prefix_fit.sample_status !== "sufficient") {
+      assert.equal(row.event_prefix_fit.selected_main_god, row.algorithm_main_god, row.ticker);
+    }
+  }
+});
+
 test("publishes an auditable V2-alpha rolling magnitude backtest in an isolated data namespace", async () => {
   const [summaryText, indexText, schemaText, v0SummaryText, v0IndexText, source] = await Promise.all([
     readFile(new URL("../public/data/v2-magnitude/summary.json", import.meta.url), "utf8"),

@@ -15,6 +15,7 @@ export default defineConfig({
         main: resolve(__dirname, "github-pages/index.html"),
         v2Magnitude: resolve(__dirname, "github-pages/v2-magnitude/index.html"),
         tenbaggerM0: resolve(__dirname, "github-pages/tenbagger-m0/index.html"),
+        tenbaggerMainGod: resolve(__dirname, "github-pages/tenbagger-main-god/index.html"),
       },
     },
   },
