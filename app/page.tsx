@@ -796,6 +796,7 @@ export default function Home() {
           <button className={section === "overview" ? "active" : ""} onClick={() => navigate("overview")}>市场总览</button>
           <button className={section === "universe" ? "active" : ""} onClick={() => navigate("universe")}>股票全表</button>
           <button className={section === "methodology" ? "active" : ""} onClick={() => navigate("methodology")}>方法与质量</button>
+          <a className="v2-nav-link" href="tenbagger-m0/">十倍股 191</a>
           <a className="v2-nav-link" href="v2-magnitude/">V2 幅度回测</a>
         </nav>
         <div className="data-pill"><i className={demo ? "amber" : "green"} /><span>{demo ? "演示预览" : "本地复权行情"}</span></div>

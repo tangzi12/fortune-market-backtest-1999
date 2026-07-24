@@ -565,7 +565,7 @@ export default function V2MagnitudePage() {
     <main className={styles.page}>
       <header className={styles.topbar}>
         <a href="../" aria-label="返回V0年运回测"><span>运</span><div><strong>年运回测</strong><small>返回 V0 原计算</small></div></a>
-        <nav><a href="#overview">总览</a><a href="#neutral">中性选择</a><a href="#magnitude">幅度排序</a><a href="#stocks">逐股结果</a><a href="#method">方法</a></nav>
+        <nav><a href="#overview">总览</a><a href="#neutral">中性选择</a><a href="#magnitude">幅度排序</a><a href="#stocks">逐股结果</a><a href="#method">方法</a><a href="../tenbagger-m0/">十倍股191</a></nav>
         <div className={styles.status}><i className={status === "completed" ? styles.live : styles.pending} />{alpha}</div>
       </header>
 

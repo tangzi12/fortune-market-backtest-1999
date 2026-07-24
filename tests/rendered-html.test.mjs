@@ -52,6 +52,45 @@ test("serves an independent V2 magnitude route without replacing V0", async () =
   await access(new URL("../github-pages/v2-magnitude/main.tsx", import.meta.url));
 });
 
+test("serves the complete frozen 191-event M0 prediction ledger", async () => {
+  const [response, rootResponse, dataText, pageSource, staticHtml] = await Promise.all([
+    render("/tenbagger-m0"),
+    render("/"),
+    readFile(new URL("../public/data/tenbagger-m0/index.json", import.meta.url), "utf8"),
+    readFile(new URL("../app/tenbagger-m0/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../github-pages/tenbagger-m0/index.html", import.meta.url), "utf8"),
+  ]);
+  assert.equal(response.status, 200);
+  assert.equal(rootResponse.status, 200);
+  const [html, rootHtml] = await Promise.all([response.text(), rootResponse.text()]);
+  assert.match(html, /正在装载191只十倍股预测/);
+  assert.match(rootHtml, /十倍股 191/);
+  assert.match(staticHtml, /191只一年十倍股 · M0年度预测全表/);
+  assert.match(pageSource, /缺少股票年运数据/);
+  assert.match(pageSource, /完整历史不足 8 年/);
+  assert.match(pageSource, /new URL\(relativePath, document\.baseURI\)/);
+  await access(new URL("../github-pages/tenbagger-m0/main.tsx", import.meta.url));
+
+  const data = JSON.parse(dataText);
+  assert.equal(data.schema_version, "tenbagger-m0-web-1.0.0");
+  assert.equal(data.events.length, 191);
+  assert.equal(new Set(data.events.map((row) => row.symbol)).size, 191);
+  assert.equal(data.scope.payload_matched_events, 127);
+  assert.equal(data.scope.m0_eligible_events, 47);
+  assert.equal(data.results.prediction_up, 12);
+  assert.equal(data.results.prediction_neutral, 21);
+  assert.equal(data.results.prediction_down, 14);
+  assert.equal(data.events.filter((row) => row.m0_eligible).length, 47);
+  assert.equal(data.events.filter((row) => row.m0_eligible && row.m0_prediction_label === "up").length, 12);
+  assert.equal(data.events.filter((row) => row.m0_eligible && row.m0_prediction_label === "neutral").length, 21);
+  assert.equal(data.events.filter((row) => row.m0_eligible && row.m0_prediction_label === "down").length, 14);
+  assert.equal(data.events.filter((row) => !row.m0_eligible && row.m0_prediction_label !== null).length, 0);
+  assert.equal(data.events.filter((row) => row.history_status === "missing_stock_annual_payload").length, 64);
+  assert.equal(data.events.filter((row) => row.annual_actual_complete === true).length, 122);
+  assert.ok(data.events.every((row) => row.market_category && row.industry_element));
+  assert.ok(!data.source_freeze.source_path);
+});
+
 test("publishes an auditable V2-alpha rolling magnitude backtest in an isolated data namespace", async () => {
   const [summaryText, indexText, schemaText, v0SummaryText, v0IndexText, source] = await Promise.all([
     readFile(new URL("../public/data/v2-magnitude/summary.json", import.meta.url), "utf8"),
