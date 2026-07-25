@@ -273,6 +273,14 @@ function statusLabel(value: RowStatus): string {
   return "历史样本不足";
 }
 
+function statusChipClass(value: RowStatus): string {
+  if (value === "up") return styles.statusUp;
+  if (value === "down") return styles.statusDown;
+  if (value === "neutral") return styles.statusNeutral;
+  if (value === "missing") return styles.statusMissing;
+  return styles.statusInsufficient;
+}
+
 function historyLabel(row: EventRow): string {
   if (!row.cycleAttributed && row.payloadMatched) return "无法归属立春年运";
   return HISTORY_LABELS[row.historyStatus] ?? row.historyStatus.replaceAll("_", " ") ?? "历史样本不足";
@@ -423,7 +431,7 @@ export default function TenbaggerM0Page() {
   if (error || !data) {
     return (
       <main className={styles.page}>
-        <section className={styles.missing} role="alert">
+        <section className={styles.errorState} role="alert">
           <span>TENBAGGER M0 DATA</span>
           <h1>十倍股结果暂时无法读取</h1>
           <p>
@@ -452,7 +460,7 @@ export default function TenbaggerM0Page() {
           <a href="#summary">结果总览</a>
           <a href="#events">191 只明细</a>
           <a href="#method">口径说明</a>
-          <a href="../tenbagger-main-god/">主神重跑版</a>
+          <a href="../tenbagger-main-god/">统一总表（含 M0）</a>
         </nav>
         <div className={styles.dataStatus} aria-label={`已载入 ${summary.total} 条事件`}>
           <i aria-hidden="true" />
@@ -647,7 +655,7 @@ export default function TenbaggerM0Page() {
                     </td>
                     <td>
                       <span className={styles.stack}>
-                        <span className={`${styles.statusChip} ${styles[row.status]}`}>{statusLabel(row.status)}</span>
+                        <span className={`${styles.statusChip} ${statusChipClass(row.status)}`}>{statusLabel(row.status)}</span>
                         <small>{historyLabel(row)}</small>
                         {row.payloadMatched && (
                           <small>

@@ -53,6 +53,25 @@ type HistoryRow = {
   selected_prediction: Direction;
 };
 
+type M0Result = {
+  event_key: string;
+  payload_matched: boolean;
+  history_status: string;
+  prior_complete_years: number | null;
+  prior_up_years: number | null;
+  prior_down_years: number | null;
+  eligible: boolean;
+  selected_main_god: string | null;
+  score: number | null;
+  prediction_label: Direction | string | null;
+  captured: boolean;
+  rank_desc: number | null;
+  years_compared: number | null;
+  percentile: number | null;
+  legacy_cycle_attributed: boolean;
+  legacy_cycle_complete: boolean | null;
+};
+
 type StockRow = {
   ticker: string;
   name: string;
@@ -65,6 +84,8 @@ type StockRow = {
   strict_high_multiple: number | null;
   event_cycle_year: number;
   event_cycle_pillar: string;
+  event_cycle_start: string;
+  event_cycle_end: string;
   event_actual_complete: boolean;
   event_actual_direction: Direction | null;
   event_actual_return_pct: number | null;
@@ -85,6 +106,7 @@ type StockRow = {
   algorithm_event: Projection;
   full_history_event: Projection;
   causal_event: Projection;
+  m0?: M0Result;
   history: HistoryRow[];
 };
 
@@ -164,6 +186,7 @@ type SortKey = "event-desc" | "ticker" | "multiple-desc" | "causal-score" | "upl
 
 const PAGE_SIZES = [15, 25, 50];
 const EMPTY_ROWS: StockRow[] = [];
+const MAIN_TABLE_COLUMN_COUNT = 12;
 
 function asPayload(value: unknown): PagePayload {
   if (!value || typeof value !== "object" || !Array.isArray((value as PagePayload).rows)) {
@@ -217,6 +240,27 @@ function directionClass(direction: Direction | null | undefined): string {
   if (direction === "up") return styles.up;
   if (direction === "down") return styles.down;
   return styles.neutral;
+}
+
+function normalizedDirection(value: string | null | undefined): Direction | null {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (["up", "bullish", "看涨", "涨"].includes(normalized)) return "up";
+  if (["down", "bearish", "看跌", "跌"].includes(normalized)) return "down";
+  if (["neutral", "中性"].includes(normalized)) return "neutral";
+  return null;
+}
+
+function m0HistoryStatusLabel(value: string | null | undefined): string {
+  const normalized = String(value || "").trim();
+  if (normalized === "eligible") return "历史门槛满足";
+  if (["missing_stock_annual_payload", "missing_payload"].includes(normalized)) return "缺少股票年运数据";
+  if (normalized === "insufficient_history") return "事件前历史不足";
+  return normalized ? normalized.replaceAll("_", " ") : "状态未知";
+}
+
+function rowRegionId(row: StockRow): string {
+  const identity = `${row.ticker}-${row.event_date}`.replace(/[^a-z0-9_-]/gi, "-");
+  return `stock-ledger-${identity}`;
 }
 
 function fitStatusLabel(fit: MainGodFit): string {
@@ -332,10 +376,102 @@ function FitOverview({
   );
 }
 
-function HistoryLedger({ row }: { row: StockRow }) {
+function HistoryLedger({ row, regionId }: { row: StockRow; regionId: string }) {
   const fullGod = row.full_history_fit.selected_main_god;
+  const m0 = row.m0;
+  const m0Direction = normalizedDirection(m0?.prediction_label);
   return (
-    <div className={styles.expandedPanel}>
+    <div
+      className={styles.expandedPanel}
+      id={regionId}
+      role="region"
+      aria-label={`${row.ticker} 事件事实、M0前瞻结果和逐年历史账本`}
+    >
+      <section className={styles.eventM0Audit} aria-label="事件事实和M0前瞻结果">
+        <header>
+          <div>
+            <span className={styles.eyebrow}>EVENT FACTS + M0 FORWARD RESULT</span>
+            <h3>事件事实 + M0 前瞻结果</h3>
+          </div>
+          <p>
+            M0 事件前冻结结果与本页主用神因果回放是两条独立审计链；
+            这里只做并列核对，不用其中一个结果覆盖另一个。
+          </p>
+        </header>
+
+        <div className={styles.eventFactsGrid}>
+          <div>
+            <span>完整事件窗口</span>
+            <strong>{row.event_date || "—"} → {row.window_end || "—"}</strong>
+            <small>M0 冻结的事件观察窗口</small>
+          </div>
+          <div>
+            <span>首次达到十倍</span>
+            <strong>{row.first_10x_date || "—"}</strong>
+            <small>{row.days_to_10x === null ? "达到天数未知" : `事件起点后 ${integer(row.days_to_10x)} 天`}</small>
+          </div>
+          <div>
+            <span>实际最高倍数</span>
+            <strong className={styles.multipleValue}>
+              {row.strict_high_multiple === null ? "—" : `${row.strict_high_multiple.toFixed(2)}×`}
+            </strong>
+            <small>严格事件窗口口径</small>
+          </div>
+          <div>
+            <span>归属立春年运</span>
+            <strong>{row.event_cycle_year} · {row.event_cycle_pillar || "—"}</strong>
+            <small>
+              {row.event_cycle_start || "—"} → {row.event_cycle_end || "—"} ·
+              {row.event_actual_complete ? " 完整年K" : " 年K未完整"}
+            </small>
+          </div>
+        </div>
+
+        <div className={styles.auditSeparationNote}>
+          <span><b>M0</b> 冻结事件前年份，从历史资格、历史选神到事件年分数一次性输出。</span>
+          <i aria-hidden="true">≠</i>
+          <span><b>主用神因果回放</b> 按本页三门槛重新判断是否替换，用于另一套年度方向审计。</span>
+        </div>
+
+        <div className={styles.m0Grid}>
+          <div>
+            <span>M0 数据 / 历史资格</span>
+            <strong>{m0?.payload_matched ? "股票年运已匹配" : "股票年运未匹配"}</strong>
+            <small>{m0HistoryStatusLabel(m0?.history_status)}</small>
+            <small>
+              旧 M0 归属 {m0?.legacy_cycle_attributed ? "已归属" : "未归属"} ·
+              {m0?.legacy_cycle_complete ? " 完整周期" : " 非完整周期"}
+            </small>
+          </div>
+          <div>
+            <span>M0 事件前年样本</span>
+            <strong>{integer(m0?.prior_complete_years)} 年</strong>
+            <small>涨 {integer(m0?.prior_up_years)} · 跌 {integer(m0?.prior_down_years)}</small>
+          </div>
+          <div>
+            <span>M0 主用神 / 分数</span>
+            <strong>
+              <b className={styles.m0God}>{m0?.selected_main_god || "—"}</b>
+              {scoreText(m0?.score)}
+            </strong>
+            <small className={directionClass(m0Direction)}>
+              {m0?.eligible ? directionLabel(m0Direction) : "不参与预测"}
+            </small>
+          </div>
+          <div>
+            <span>M0 抓中 / 同股排名</span>
+            <strong className={m0?.captured ? styles.up : m0?.eligible ? styles.down : styles.muted}>
+              {!m0?.eligible ? "不参与预测" : m0.captured ? "抓中看涨" : "未抓中"}
+            </strong>
+            <small>
+              {m0?.rank_desc === null || m0?.rank_desc === undefined
+                ? "同股排名 —"
+                : `第 ${integer(m0.rank_desc)} / ${integer(m0.years_compared)} · 百分位 ${pct(m0.percentile)}`}
+            </small>
+          </div>
+        </div>
+      </section>
+
       <div className={styles.expandedTop}>
         <div>
           <span>事件前选神截止</span>
@@ -569,13 +705,13 @@ export default function TenbaggerMainGodPage() {
       <header className={styles.topbar}>
         <a href="../" aria-label="返回年运历史回测首页">
           <span>运</span>
-          <div><strong>十倍股主用神回放</strong><small>MAIN-GOD AUDIT · 191 STOCKS</small></div>
+          <div><strong>十倍股统一回放</strong><small>EVENTS · M0 · MAIN-GOD · 191 STOCKS</small></div>
         </a>
         <nav aria-label="本页导航">
           <a href="#comparison">选神对照</a>
           <a href="#ledger">191只总表</a>
           <a href="#method">计算口径</a>
-          <a href="../tenbagger-m0/">M0 前瞻页</a>
+          <a href="../tenbagger-m0/">旧 M0 独立页</a>
         </nav>
         <div className={styles.dataStatus}><i aria-hidden="true" />{integer(summary.stock_count)} STOCKS</div>
       </header>
@@ -583,11 +719,11 @@ export default function TenbaggerMainGodPage() {
       <div className={styles.shell}>
         <section className={styles.hero} id="overview">
           <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>ALGORITHM GOD → HISTORICAL FIT → CAUSAL REPLAY</span>
-            <h1>191 只十倍股，<br /><em>三套主用神结果同表核对。</em></h1>
+            <span className={styles.eyebrow}>EVENT FACTS → M0 → MAIN-GOD → CAUSAL REPLAY</span>
+            <h1>191 只十倍股，<br /><em>事件事实与主用神结果同页核对。</em></h1>
             <p>
-              每只股票先用日干×月令算出的主用神预测；再展示全历史样本内逆推；
-              正式事件年回放只允许使用事件所属立春年以前的K线选神。
+              每只股票先保留 M0 冻结事件和事件前预测，再展示日干×月令主神、
+              全历史样本内逆推与事件前因果回放；不同口径并列审计，不相互覆盖。
             </p>
             <div className={styles.heroTags}>
               <span>年运 60% 行运 + 40% 流年</span>
@@ -685,8 +821,8 @@ export default function TenbaggerMainGodPage() {
 
         <section className={styles.ledgerPanel} id="ledger">
           <div className={styles.panelHead}>
-            <div><span className={styles.eyebrow}>STOCK-LEVEL AUDIT LEDGER</span><h2>191 只股票逐只对照</h2></div>
-            <p>展开任一股票可查看算法主神与全历史样本内主神的逐年账本。</p>
+            <div><span className={styles.eyebrow}>STOCK-LEVEL UNIFIED AUDIT LEDGER</span><h2>191 只股票统一总表</h2></div>
+            <p>展开任一股票可同时查看十倍事件事实、M0 结果、三套主神预测与逐年涨跌账本。</p>
           </div>
 
           <div className={styles.toolbar} role="search" aria-label="筛选191只股票">
@@ -757,13 +893,13 @@ export default function TenbaggerMainGodPage() {
               <thead>
                 <tr>
                   <th rowSpan={2}><span className={styles.srOnly}>展开</span></th>
-                  <th rowSpan={2}>股票 / 十倍事件</th>
+                  <th rowSpan={2}>股票 / 完整事件窗口</th>
                   <th rowSpan={2}>上市 ET / 起运 ET</th>
                   <th rowSpan={2}>上市八字</th>
                   <th colSpan={3} className={styles.groupHead}>主用神选择</th>
                   <th colSpan={3} className={styles.groupHead}>事件所属立春年预测</th>
                   <th rowSpan={2}>实际立春年K</th>
-                  <th rowSpan={2}>十倍事实</th>
+                  <th rowSpan={2}>十倍事实 / M0</th>
                 </tr>
                 <tr>
                   <th>算法主神<br /><small>全历史普通命中 / 覆盖</small></th>
@@ -779,6 +915,8 @@ export default function TenbaggerMainGodPage() {
                   const isExpanded = expanded.has(row.ticker);
                   const luckStart = splitEt(row.first_luck_start_et);
                   const causalHit = predictionHit(row.causal_event, row.event_actual_direction, row.event_actual_complete);
+                  const regionId = rowRegionId(row);
+                  const m0Direction = normalizedDirection(row.m0?.prediction_label);
                   return (
                     <React.Fragment key={row.ticker}>
                       <tr className={isExpanded ? styles.openRow : ""}>
@@ -788,18 +926,28 @@ export default function TenbaggerMainGodPage() {
                             className={styles.expandButton}
                             onClick={() => toggleExpanded(row.ticker)}
                             aria-expanded={isExpanded}
+                            aria-controls={regionId}
                             aria-label={`${isExpanded ? "收起" : "展开"} ${row.ticker} 逐年账本`}
                           >
                             {isExpanded ? "−" : "+"}
                           </button>
                         </td>
                         <th scope="row">
-                          <div className={styles.stockCell}>
-                            <div><strong>{row.ticker}</strong><span>{row.name}</span></div>
-                            <small>{row.market_category} · 行业五行 {row.industry_element || "—"}</small>
-                            <time dateTime={row.event_date}>{row.event_date}</time>
-                            <em>事件归属 {row.event_cycle_year} · {row.event_cycle_pillar}</em>
-                          </div>
+                          <button
+                            type="button"
+                            className={styles.stockToggle}
+                            onClick={() => toggleExpanded(row.ticker)}
+                            aria-expanded={isExpanded}
+                            aria-controls={regionId}
+                            aria-label={`${row.ticker} ${row.name}，${isExpanded ? "收起" : "展开"}事件事实与逐年涨跌`}
+                          >
+                            <span className={styles.stockCell}>
+                              <span className={styles.stockTitle}><strong>{row.ticker}</strong><span>{row.name}</span></span>
+                              <small>{row.market_category} · 行业五行 {row.industry_element || "—"}</small>
+                              <time dateTime={row.event_date}>{row.event_date} → {row.window_end || "—"}</time>
+                              <em>{isExpanded ? "收起事件事实与逐年涨跌 ↑" : "查看事件事实与逐年涨跌 ↓"}</em>
+                            </span>
+                          </button>
                         </th>
                         <td>
                           <div className={styles.timeCell}>
@@ -861,17 +1009,26 @@ export default function TenbaggerMainGodPage() {
                         <td>
                           <div className={styles.tenXCell}>
                             <strong>{row.strict_high_multiple === null ? "—" : `${row.strict_high_multiple.toFixed(2)}×`}</strong>
-                            <span>{row.days_to_10x === null ? "达到天数未知" : `${integer(row.days_to_10x)} 天达到`}</span>
-                            <small>{row.first_10x_date || "—"}</small>
-                            <em className={row.causal_event.direction === "up" ? styles.captured : styles.notCaptured}>
-                              {row.causal_event.direction === "up" ? "十倍样本看涨覆盖" : "未给出明确看涨"}
+                            <span>
+                              首次十倍 {row.first_10x_date || "—"}
+                              {row.days_to_10x === null ? "" : ` · ${integer(row.days_to_10x)} 天`}
+                            </span>
+                            <small>
+                              归属 {row.event_cycle_year} · {row.event_cycle_pillar || "—"}<br />
+                              {row.event_cycle_start || "—"} → {row.event_cycle_end || "—"} ·
+                              {row.event_actual_complete ? " 完整" : " 未完整"}
+                            </small>
+                            <em className={row.m0?.captured ? styles.captured : styles.notCaptured}>
+                              M0 {row.m0?.eligible
+                                ? `${directionLabel(m0Direction)} ${scoreText(row.m0.score)} · ${row.m0.captured ? "抓中" : "未抓中"}`
+                                : "历史资格不足"}
                             </em>
                           </div>
                         </td>
                       </tr>
                       {isExpanded && (
                         <tr className={styles.expandedRow}>
-                          <td colSpan={12}><HistoryLedger row={row} /></td>
+                          <td colSpan={MAIN_TABLE_COLUMN_COUNT}><HistoryLedger row={row} regionId={regionId} /></td>
                         </tr>
                       )}
                     </React.Fragment>

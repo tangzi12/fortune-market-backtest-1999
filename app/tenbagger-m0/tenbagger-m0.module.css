@@ -663,30 +663,30 @@
   white-space: nowrap;
 }
 
-.statusChip.up,
+.statusChip.statusUp,
 .predictionChip.up {
   background: #e9f8f4;
   color: var(--green);
 }
 
-.statusChip.down,
+.statusChip.statusDown,
 .predictionChip.down {
   background: #fff0f1;
   color: var(--red);
 }
 
-.statusChip.neutral,
+.statusChip.statusNeutral,
 .predictionChip.neutral {
   background: #fff7e6;
   color: #a66300;
 }
 
-.statusChip.missing {
+.statusChip.statusMissing {
   background: #f1efff;
   color: #684ed4;
 }
 
-.statusChip.insufficient,
+.statusChip.statusInsufficient,
 .unavailable {
   background: #f0f2f6;
   color: #60636d;
@@ -797,7 +797,7 @@
 }
 
 .loading,
-.missing {
+.errorState {
   min-height: 78vh;
   display: grid;
   place-content: center;
@@ -821,37 +821,37 @@
 }
 
 .loading span,
-.missing p {
+.errorState p {
   max-width: 680px;
   color: var(--muted);
   font-size: 11px;
   line-height: 1.6;
 }
 
-.missing > span {
+.errorState > span {
   color: var(--blue);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: .14em;
 }
 
-.missing h1 {
+.errorState h1 {
   margin: 0;
   font-size: 38px;
   letter-spacing: -.04em;
 }
 
-.missing code {
+.errorState code {
   color: var(--blue);
 }
 
-.missing > div {
+.errorState > div {
   display: flex;
   gap: 8px;
 }
 
-.missing button,
-.missing a {
+.errorState button,
+.errorState a {
   padding: 10px 14px;
   border: 1px solid var(--blue);
   border-radius: 8px;
@@ -861,7 +861,7 @@
   cursor: pointer;
 }
 
-.missing a {
+.errorState a {
   border-color: var(--line);
   background: #fff;
   color: var(--soft);

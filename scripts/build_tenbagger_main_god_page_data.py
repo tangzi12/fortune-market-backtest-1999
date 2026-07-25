@@ -287,18 +287,103 @@ def compact_fit(fit: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def event_cycle_year(
+def validate_event_keys(
+    events: list[dict[str, Any]],
+    expected_count: int,
+) -> None:
+    event_keys: list[str] = []
+    composite_keys: list[tuple[str, str, str]] = []
+    for event in events:
+        event_key = str(event["event_key"])
+        composite_key = (
+            str(event["group_id"]),
+            str(event["symbol"]),
+            str(event["window_start"]),
+        )
+        expected_event_key = "|".join(composite_key)
+        if event_key != expected_event_key:
+            raise ValueError(
+                f"M0 event key mismatch: {event_key!r} != {expected_event_key!r}"
+            )
+        event_keys.append(event_key)
+        composite_keys.append(composite_key)
+
+    if len(event_keys) != expected_count:
+        raise ValueError(
+            f"expected {expected_count} M0 events, got {len(event_keys)}"
+        )
+    if len(set(event_keys)) != len(event_keys):
+        duplicates = [
+            key for key, count in Counter(event_keys).items() if count > 1
+        ]
+        raise ValueError(f"duplicate M0 event_key values: {duplicates}")
+    if len(set(composite_keys)) != len(composite_keys):
+        duplicates = [
+            key
+            for key, count in Counter(composite_keys).items()
+            if count > 1
+        ]
+        raise ValueError(f"duplicate M0 composite event keys: {duplicates}")
+
+
+def event_cycle(
     event: dict[str, Any],
     calendar: list[dict[str, Any]],
-) -> int:
-    stored = event.get("attribution_cycle_year")
-    if stored is not None:
-        return int(stored)
+) -> dict[str, Any]:
     event_date = str(event["window_start"])
-    for cycle in calendar:
-        if str(cycle["start_et"])[:10] <= event_date < str(cycle["end_et"])[:10]:
-            return int(cycle["year"])
-    raise ValueError(f"cannot attribute event cycle for {event['symbol']} {event_date}")
+    matches = [
+        cycle
+        for cycle in calendar
+        if str(cycle["start_et"])[:10] <= event_date < str(cycle["end_et"])[:10]
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"expected one current-calendar cycle for "
+            f"{event['event_key']} on {event_date}, got {len(matches)}"
+        )
+    return matches[0]
+
+
+def m0_audit(event: dict[str, Any]) -> dict[str, Any]:
+    """Preserve the complete frozen M0 event and expose stable audit aliases."""
+    audit = dict(event)
+    score_rank = (
+        (event.get("same_stock_rank") or {})
+        .get("m0_selected_score_past_only", {})
+        or {}
+    )
+    audit.update(
+        {
+            "selected_main_god": event.get("m0_selected_main_god"),
+            "score": event.get("m0_score"),
+            "prediction_label": event.get("m0_prediction_label"),
+            "eligible": event.get("m0_eligible"),
+            "rank_desc": score_rank.get("rank_desc"),
+            "years_compared": score_rank.get("years_compared"),
+            "percentile": score_rank.get("percentile"),
+            "legacy_cycle_attributed": event.get("cycle_attributed"),
+            "legacy_cycle_complete": event.get("cycle_complete"),
+            "same_stock_score_rank": {
+                "value": score_rank.get("value"),
+                "rank_desc": score_rank.get("rank_desc"),
+                "years_compared": score_rank.get("years_compared"),
+                "percentile": score_rank.get("percentile"),
+                "top1": score_rank.get("top1"),
+                "top3": score_rank.get("top3"),
+            },
+        }
+    )
+    return audit
+
+
+def values_differ(field: str, frozen: Any, current: Any) -> bool:
+    if field == "annual_actual_return_pct":
+        if (frozen is None) != (current is None):
+            return True
+        if frozen is None:
+            return False
+        return abs(float(frozen) - float(current)) > 1e-6
+    return frozen != current
 
 
 def compact_history_row(
@@ -393,23 +478,57 @@ def main() -> None:
     summary = json.loads((args.backtest / "summary.json").read_text(encoding="utf-8"))
     event_payload = json.loads(args.events.read_text(encoding="utf-8"))
     events = event_payload["events"]
-    identities = {row["symbol"]: row for row in read_csv(args.identity)}
-    index_by_ticker = {row["ticker"]: row for row in index["stocks"]}
-    if len(events) != 191 or len(index_by_ticker) != 191 or len(identities) != 191:
+    identity_rows = read_csv(args.identity)
+    identities = {row["symbol"]: row for row in identity_rows}
+    index_rows = index["stocks"]
+    index_by_ticker = {row["ticker"]: row for row in index_rows}
+    validate_event_keys(events, expected_count=191)
+    if (
+        len(events) != 191
+        or len(index_rows) != 191
+        or len(index_by_ticker) != 191
+        or len(identity_rows) != 191
+        or len(identities) != 191
+    ):
         raise ValueError(
             f"expected 191/191/191, got "
             f"{len(events)}/{len(index_by_ticker)}/{len(identities)}"
+        )
+    event_symbols = [str(event["symbol"]) for event in events]
+    if len(set(event_symbols)) != len(event_symbols):
+        duplicates = [
+            symbol
+            for symbol, count in Counter(event_symbols).items()
+            if count > 1
+        ]
+        raise ValueError(
+            f"main-god page requires one event per symbol; duplicates: {duplicates}"
+        )
+    event_symbol_set = set(event_symbols)
+    if event_symbol_set != set(index_by_ticker):
+        raise ValueError(
+            "M0 event symbols and main-god payload index differ: "
+            f"events_only={sorted(event_symbol_set - set(index_by_ticker))}, "
+            f"index_only={sorted(set(index_by_ticker) - event_symbol_set)}"
+        )
+    if event_symbol_set != set(identities):
+        raise ValueError(
+            "M0 event symbols and identity audit differ: "
+            f"events_only={sorted(event_symbol_set - set(identities))}, "
+            f"identity_only={sorted(set(identities) - event_symbol_set)}"
         )
 
     rows: list[dict[str, Any]] = []
     full_fits: list[dict[str, Any]] = []
     prefix_fits: list[dict[str, Any]] = []
+    data_conflicts: list[dict[str, Any]] = []
     for event in events:
         ticker = str(event["symbol"])
         payload = load_gzip_json(args.backtest / "stocks" / f"{ticker}.json.gz")
         stock = payload["stock"]
         annual_rows = payload["annual"]
-        cycle_year = event_cycle_year(event, summary["calendar"])
+        current_cycle = event_cycle(event, summary["calendar"])
+        cycle_year = int(current_cycle["year"])
         cycle_row = next(
             (row for row in annual_rows if int(row["year"]) == cycle_year),
             None,
@@ -435,6 +554,29 @@ def main() -> None:
         full_event = project(full_fit["selected_main_god"], cycle_row)
         causal_event = project(prefix_fit["selected_main_god"], cycle_row)
         kline = cycle_row.get("period_kline")
+        current_actual = {
+            "attribution_cycle_year": cycle_year,
+            "annual_actual_direction": str(kline[5]) if kline else None,
+            "annual_actual_return_pct": float(kline[4]) if kline else None,
+            "annual_actual_complete": cycle_row.get("complete") is True,
+        }
+        if event.get("payload_matched") is True:
+            for field, current_value in current_actual.items():
+                frozen_value = event.get(field)
+                if values_differ(field, frozen_value, current_value):
+                    data_conflicts.append(
+                        {
+                            "event_key": event["event_key"],
+                            "ticker": ticker,
+                            "field": field,
+                            "m0_frozen_value": frozen_value,
+                            "current_rerun_value": current_value,
+                            "resolution": (
+                                "current rerun retained in the main-god fields; "
+                                "the frozen M0 value remains under row.m0"
+                            ),
+                        }
+                    )
         identity = identities[ticker]
         audited_candidate_used = bool(identity["candidate_primary_date"]) and (
             identity["candidate_primary_date"] <= str(event["window_start"])
@@ -449,6 +591,8 @@ def main() -> None:
                 )
             )
         row = {
+            "event_key": event["event_key"],
+            "event_group_id": event["group_id"],
             "ticker": ticker,
             "name": stock["name"],
             "market_category": event.get("market_category") or stock["sector"],
@@ -460,6 +604,9 @@ def main() -> None:
             "strict_high_multiple": event.get("strict_high_multiple"),
             "event_cycle_year": cycle_year,
             "event_cycle_pillar": cycle_row["pillar"],
+            "event_cycle_start": current_cycle["start_et"],
+            "event_cycle_end": current_cycle["end_et"],
+            "event_cycle_source": "current_rerun_summary_calendar",
             "event_actual_complete": cycle_row.get("complete") is True,
             "event_actual_direction": str(kline[5]) if kline else None,
             "event_actual_return_pct": float(kline[4]) if kline else None,
@@ -484,6 +631,7 @@ def main() -> None:
             "algorithm_event": algorithm_event,
             "full_history_event": full_event,
             "causal_event": causal_event,
+            "m0": m0_audit(event),
             "history": history,
         }
         rows.append(row)
@@ -493,6 +641,26 @@ def main() -> None:
             prefix_fits.append(prefix_fit)
 
     rows.sort(key=lambda row: (row["event_date"], row["ticker"]), reverse=True)
+    row_event_keys = [str(row["event_key"]) for row in rows]
+    if len(rows) != 191 or len(set(row_event_keys)) != 191:
+        raise ValueError(
+            f"generated row/event_key cardinality mismatch: "
+            f"rows={len(rows)}, unique_event_keys={len(set(row_event_keys))}"
+        )
+    if set(row_event_keys) != {str(event["event_key"]) for event in events}:
+        raise ValueError("generated rows do not preserve the complete M0 event-key set")
+    for row in rows:
+        expected_event_key = (
+            f"{row['event_group_id']}|{row['ticker']}|{row['event_date']}"
+        )
+        if row["event_key"] != expected_event_key:
+            raise ValueError(
+                f"generated composite event key mismatch: "
+                f"{row['event_key']} != {expected_event_key}"
+            )
+        if row["m0"]["event_key"] != row["event_key"]:
+            raise ValueError(f"nested M0 event-key mismatch for {row['event_key']}")
+
     full_algorithm_metrics = [fit["algorithm"] for fit in full_fits]
     full_selected_metrics = [fit["selected"] for fit in full_fits]
     prefix_algorithm_metrics = [fit["algorithm"] for fit in prefix_fits]
@@ -545,9 +713,27 @@ def main() -> None:
                 row["identity_method"] == "stored_or_panel_proxy" for row in rows
             ),
         },
+        "m0_audit": {
+            "source_schema_version": event_payload.get("schema_version"),
+            "event_count": len(events),
+            "unique_event_key_count": len(set(row_event_keys)),
+            "payload_matched_count": sum(
+                event.get("payload_matched") is True for event in events
+            ),
+            "payload_unmatched_count": sum(
+                event.get("payload_matched") is not True for event in events
+            ),
+            "eligible_count": sum(
+                event.get("m0_eligible") is True for event in events
+            ),
+        },
+        "data_conflicts": {
+            "count": len(data_conflicts),
+            "items": data_conflicts,
+        },
     }
     output = {
-        "schema_version": "tenbagger-main-god-191-v1.0.0",
+        "schema_version": "tenbagger-main-god-191-v1.1.0",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "data_cutoff": index["data_cutoff"],
         "source_event_freeze": event_payload["source_freeze"],
@@ -570,6 +756,10 @@ def main() -> None:
             "event_prefix_rule": (
                 "事件年预测只使用事件所属立春年之前的完整年K选择主用神；"
                 "历史不足时保留算法主用神。"
+            ),
+            "event_cycle_authority": (
+                "event_cycle_year/start/end 均由本次主神回测 summary.calendar "
+                "重新归属；旧 M0 attribution/cycle_complete 仅保存在 row.m0 审计对象。"
             ),
         },
         "summary": public_summary,

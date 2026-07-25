@@ -53,11 +53,12 @@ test("serves an independent V2 magnitude route without replacing V0", async () =
 });
 
 test("serves the complete frozen 191-event M0 prediction ledger", async () => {
-  const [response, rootResponse, dataText, pageSource, staticHtml] = await Promise.all([
+  const [response, rootResponse, dataText, pageSource, pageStyles, staticHtml] = await Promise.all([
     render("/tenbagger-m0"),
     render("/"),
     readFile(new URL("../public/data/tenbagger-m0/index.json", import.meta.url), "utf8"),
     readFile(new URL("../app/tenbagger-m0/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/tenbagger-m0/tenbagger-m0.module.css", import.meta.url), "utf8"),
     readFile(new URL("../github-pages/tenbagger-m0/index.html", import.meta.url), "utf8"),
   ]);
   assert.equal(response.status, 200);
@@ -68,6 +69,10 @@ test("serves the complete frozen 191-event M0 prediction ledger", async () => {
   assert.match(staticHtml, /191只一年十倍股 · M0年度预测全表/);
   assert.match(pageSource, /缺少股票年运数据/);
   assert.match(pageSource, /完整历史不足 8 年/);
+  assert.match(pageSource, /statusChipClass/);
+  assert.match(pageStyles, /\.statusChip\.statusMissing/);
+  assert.match(pageStyles, /\.errorState/);
+  assert.doesNotMatch(pageStyles, /\.loading,\s*\.missing\b/);
   assert.match(pageSource, /new URL\(relativePath, document\.baseURI\)/);
   await access(new URL("../github-pages/tenbagger-m0/main.tsx", import.meta.url));
 
@@ -92,24 +97,40 @@ test("serves the complete frozen 191-event M0 prediction ledger", async () => {
 });
 
 test("reruns all 191 tenbagger stocks with gated full-history and causal main-god selection", async () => {
-  const [response, dataText, pageSource, staticHtml] = await Promise.all([
+  const [response, dataText, m0Text, pageSource, staticHtml] = await Promise.all([
     render("/tenbagger-main-god"),
     readFile(new URL("../public/data/tenbagger-main-god/index.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/data/tenbagger-m0/index.json", import.meta.url), "utf8"),
     readFile(new URL("../app/tenbagger-main-god/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../github-pages/tenbagger-main-god/index.html", import.meta.url), "utf8"),
   ]);
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /正在装载191只股票主用神重跑/);
-  assert.match(staticHtml, /191只一年十倍股 · 主用神独立重跑/);
+  assert.match(staticHtml, /191只一年十倍股 · 事件与主用神统一总表/);
   assert.match(pageSource, /全历史样本内/);
   assert.match(pageSource, /事件前因果/);
+  assert.match(pageSource, /事件事实 \+ M0 前瞻结果/);
+  assert.match(pageSource, /完整事件窗口/);
+  assert.match(pageSource, /aria-controls/);
 
   const data = JSON.parse(dataText);
-  assert.equal(data.schema_version, "tenbagger-main-god-191-v1.0.0");
+  const m0 = JSON.parse(m0Text);
+  assert.equal(data.schema_version, "tenbagger-main-god-191-v1.1.0");
   assert.equal(data.rows.length, 191);
   assert.equal(new Set(data.rows.map((row) => row.ticker)).size, 191);
   assert.equal(data.summary.price_payload_count, 191);
+  assert.deepEqual(data.summary.m0_audit, {
+    source_schema_version: "tenbagger-m0-web-1.0.0",
+    event_count: 191,
+    unique_event_key_count: 191,
+    payload_matched_count: 127,
+    payload_unmatched_count: 64,
+    eligible_count: 47,
+  });
+  assert.equal(data.summary.data_conflicts.count, 1);
+  assert.equal(data.summary.data_conflicts.items[0].event_key, "PVLA|PVLA|2024-12-30");
+  assert.equal(data.summary.data_conflicts.items[0].field, "annual_actual_complete");
   assert.equal(data.summary.full_history.eligible_stocks, 113);
   assert.equal(data.summary.full_history.replacement_count, 75);
   assert.equal(data.summary.event_prefix.eligible_stocks, 49);
@@ -136,7 +157,22 @@ test("reruns all 191 tenbagger stocks with gated full-history and causal main-go
       data.summary.full_history.algorithm.direction_coverage,
   );
 
+  const frozenByKey = new Map(m0.events.map((row) => [row.event_key, row]));
   for (const row of data.rows) {
+    const frozen = frozenByKey.get(row.event_key);
+    assert.ok(frozen, row.event_key);
+    assert.equal(row.m0.event_key, row.event_key);
+    assert.equal(row.m0.window_start, row.event_date);
+    assert.equal(row.m0.window_end, row.window_end);
+    assert.equal(row.m0.first_10x_date_derived, row.first_10x_date);
+    assert.equal(row.m0.strict_high_multiple, row.strict_high_multiple);
+    assert.equal(row.m0.payload_matched, frozen.payload_matched);
+    assert.equal(row.m0.eligible, frozen.m0_eligible);
+    assert.equal(row.m0.selected_main_god, frozen.m0_selected_main_god);
+    assert.equal(row.m0.score, frozen.m0_score);
+    assert.equal(row.m0.prediction_label, frozen.m0_prediction_label);
+    assert.match(row.event_cycle_start, /^\d{4}-\d{2}-\d{2} /);
+    assert.match(row.event_cycle_end, /^\d{4}-\d{2}-\d{2} /);
     assert.match(row.algorithm_main_god, /^[甲乙丙丁戊己庚辛壬癸]$/);
     assert.match(row.full_history_fit.selected_main_god, /^[甲乙丙丁戊己庚辛壬癸]$/);
     assert.match(row.event_prefix_fit.selected_main_god, /^[甲乙丙丁戊己庚辛壬癸]$/);
