@@ -179,9 +179,7 @@ tbody tr:hover { background: rgba(255,255,255,.032); }
 .stacked span { color: var(--soft); }
 .stacked small { color: var(--muted); font-size: 9px; }
 .stacked small em { margin-left: 5px; font-style: normal; }
-.stacked .kline-date-range { display: grid; gap: 3px; font-size: 13px; line-height: 1.4; }
-.stacked .kline-date-range > span:first-child { color: var(--muted); font-size: 12px; }
-.kline-date-range time { white-space: nowrap; }
+.kline-period-note { margin-left: 6px; color: var(--muted); font-size: 12px; font-weight: 400; white-space: nowrap; }
 .mono { font-family: var(--font-geist-mono), monospace; }
 .verified-text { color: var(--green) !important; }
 .proxy-text { color: var(--red) !important; }
