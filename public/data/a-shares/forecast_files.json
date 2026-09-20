@@ -1,0 +1,144 @@
+{
+  "status": "passed",
+  "checked_at": "2026-09-20T05:31:05.123040+00:00",
+  "stock_count": 5221,
+  "year_file_count": 10,
+  "checks": 1399272,
+  "annual_forecasts": 52210,
+  "monthly_forecasts": 589973,
+  "comparison": "Canonical SHA256 of complete ticker/name/board/main_god/annual/monthly object; dictionary key order ignored, all values and monthly order preserved.",
+  "yearly_files": [
+    {
+      "year": 2026,
+      "stock_rows": 5221,
+      "unique_tickers": 5221,
+      "matching_stock_forecasts": 5221,
+      "monthly_rows": 26105,
+      "directions": {
+        "up": 1852,
+        "down": 1397,
+        "neutral": 1972
+      },
+      "sha256": "b1d8b75cbfce1e50e54424c151e6208adf27d91a901a7304dcae4c606a2dd7dc"
+    },
+    {
+      "year": 2027,
+      "stock_rows": 5221,
+      "unique_tickers": 5221,
+      "matching_stock_forecasts": 5221,
+      "monthly_rows": 62652,
+      "directions": {
+        "up": 1263,
+        "down": 1575,
+        "neutral": 2383
+      },
+      "sha256": "85a354030c9957a21063ce9bdb39358ef03a731552b8ecc4fac63eaf287d3736"
+    },
+    {
+      "year": 2028,
+      "stock_rows": 5221,
+      "unique_tickers": 5221,
+      "matching_stock_forecasts": 5221,
+      "monthly_rows": 62652,
+      "directions": {
+        "up": 1138,
+        "down": 1941,
+        "neutral": 2142
+      },
+      "sha256": "4d2710d4478abd8bef009e75e82679c82d5b5f43edc28343b7e1229f6ddd2352"
+    },
+    {
+      "year": 2029,
+      "stock_rows": 5221,
+      "unique_tickers": 5221,
+      "matching_stock_forecasts": 5221,
+      "monthly_rows": 62652,
+      "directions": {
+        "up": 1199,
+        "down": 1901,
+        "neutral": 2121
+      },
+      "sha256": "8dfbb1e246e680a03fabe9346514655e45f3eeac087ac8b46c26443cf0ca88fb"
+    },
+    {
+      "year": 2030,
+      "stock_rows": 5221,
+      "unique_tickers": 5221,
+      "matching_stock_forecasts": 5221,
+      "monthly_rows": 62652,
+      "directions": {
+        "up": 1811,
+        "down": 1249,
+        "neutral": 2161
+      },
+      "sha256": "a77e2ba5662482fb62c97b747c175d6ec6e6f43a55d1a32df4c836c77242746f"
+    },
+    {
+      "year": 2031,
+      "stock_rows": 5221,
+      "unique_tickers": 5221,
+      "matching_stock_forecasts": 5221,
+      "monthly_rows": 62652,
+      "directions": {
+        "up": 1957,
+        "down": 1306,
+        "neutral": 1958
+      },
+      "sha256": "5afe0aa463b421ddf8af0bb3aab9a519fa3186e7540be56100e5fa02f99e6631"
+    },
+    {
+      "year": 2032,
+      "stock_rows": 5221,
+      "unique_tickers": 5221,
+      "matching_stock_forecasts": 5221,
+      "monthly_rows": 62652,
+      "directions": {
+        "up": 1989,
+        "down": 1129,
+        "neutral": 2103
+      },
+      "sha256": "a79af5e781601c49ed33c104ed611f064b4a0ed9b1606bf53865b1a295ee065c"
+    },
+    {
+      "year": 2033,
+      "stock_rows": 5221,
+      "unique_tickers": 5221,
+      "matching_stock_forecasts": 5221,
+      "monthly_rows": 62652,
+      "directions": {
+        "up": 1726,
+        "down": 1202,
+        "neutral": 2293
+      },
+      "sha256": "6ab1435a50ba40fe4ea4170cbc48b4f40dc674eddf8be919652625eff1f09e4f"
+    },
+    {
+      "year": 2034,
+      "stock_rows": 5221,
+      "unique_tickers": 5221,
+      "matching_stock_forecasts": 5221,
+      "monthly_rows": 62652,
+      "directions": {
+        "up": 1903,
+        "down": 1278,
+        "neutral": 2040
+      },
+      "sha256": "04400e6e6d152407d628aee1d759718c0235df49e5ac091d3017fd52b65b7727"
+    },
+    {
+      "year": 2035,
+      "stock_rows": 5221,
+      "unique_tickers": 5221,
+      "matching_stock_forecasts": 5221,
+      "monthly_rows": 62652,
+      "directions": {
+        "up": 1789,
+        "down": 1238,
+        "neutral": 2194
+      },
+      "sha256": "09b600000ddc7e2714f807cec6ee00bcf2f2ee1cc3ac21c478bd8667a4fefa5c"
+    }
+  ],
+  "mismatch_count": 0,
+  "mismatches": []
+}

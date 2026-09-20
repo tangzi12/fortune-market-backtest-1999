@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "stocks": 5221,
+  "charts": 5221,
+  "price_files": 5221,
+  "raw_rows": 16650035,
+  "effective_rows": 16648536,
+  "excluded_pre_origin_rows": 1499,
+  "invalid_ohlc_rows": 0,
+  "adjustment_fallback_rows": 0,
+  "duplicate_trading_dates": 0,
+  "chart_civil_epoch_pairs_checked": 214856,
+  "nonexistent_or_mismatched_civil_timestamps": 0,
+  "price_unrounded_parity_samples": [
+    "SH600000",
+    "SH600018",
+    "SZ000009",
+    "SH688981",
+    "SZ300750"
+  ],
+  "calendar_month_utc_epoch_parity_checks": 552,
+  "historical_dst_listing_sample": "SZ000009 1991-06-25T09:30:00+09:00",
+  "us_function_regression": "AAPL BaZi and 1988-11-18 11:16:00 first luck start match original US functions and saved input"
+}

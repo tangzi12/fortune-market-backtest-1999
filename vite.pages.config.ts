@@ -12,6 +12,7 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
+        ashare: resolve(__dirname, "github-pages/a-shares/index.html"),
         main: resolve(__dirname, "github-pages/index.html"),
         v2Magnitude: resolve(__dirname, "github-pages/v2-magnitude/index.html"),
         tenbaggerM0: resolve(__dirname, "github-pages/tenbagger-m0/index.html"),

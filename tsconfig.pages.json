@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["github-pages/**/*.tsx", "app/page.tsx", "app/a-shares/**/*.tsx", "app/tenbagger-main-god/**/*.tsx", "app/tenbagger-m0/**/*.tsx", "app/v2-magnitude/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "dist-pages"]
+}
