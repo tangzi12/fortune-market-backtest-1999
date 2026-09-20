@@ -98,3 +98,12 @@ python3 scripts/build_tenbagger_main_god_page_data.py
 ## 研究边界
 
 页面中的“历史 K 线改进主用神”在同一批历史年 K 上选择并报告结果，属于样本内拟合，存在数据泄漏与多重比较偏差。它不是独立预测成绩，也不构成投资建议或收益承诺。
+
+
+## A 股全量回测（2026-09-18 数据截点）
+
+[打开 A 股页面](https://tangzi12.github.io/fortune-market-backtest-1999/a-shares/)
+
+5,221 只当前上市沪深 A 股，含主板、创业板和科创板。沿用美股主页面固定模型，提供逐股历史年运/月运、行情核对、原主用神与历史拟合对照，以及 2026—2035 年冻结模型信号。当前股票池存在存活者偏差，全部上市时刻采用常规开盘代理；未来信号尚未验证。
+
+计算与复核说明见 [scripts/a-shares/README.md](scripts/a-shares/README.md)。

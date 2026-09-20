@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "generated_at": "2026-09-20T13:30:31+08:00",
+  "data_directory": "public/data/a-shares",
+  "timezone": "Asia/Shanghai",
+  "data_cutoff": "2026-09-18",
+  "check_count": 39980098,
+  "counts": {
+    "history_annual": 75129,
+    "history_monthly": 851490,
+    "reverse_replacements": 2131,
+    "reverse_candidates_checked": 52210,
+    "forecast_annual": 52210,
+    "forecast_monthly": 589973,
+    "stocks": 5221
+  },
+  "error_count": 0,
+  "errors_first_100": [],
+  "coverage": [
+    "universe and gzip completeness",
+    "Shanghai calendar and epoch consistency",
+    "frozen input and scoring formula",
+    "no prelisting or postcutoff prices",
+    "complete-period and sync rules",
+    "independent reverse candidate gates and selection",
+    "original-model forecast horizon and no realized-price leakage",
+    "index/global/year/sector/basis metrics and always-up baselines"
+  ]
+}
