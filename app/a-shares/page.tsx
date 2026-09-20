@@ -11,6 +11,8 @@ type Kline = {
   close?: number;
   return?: number;
   direction?: string;
+  first_date?: string;
+  last_date?: string;
 };
 
 type StockIndexItem = {
@@ -178,6 +180,7 @@ function normalizeKline(value: unknown, row?: PeriodRow, prefix = "") : Kline {
     return {
       open: asNumber(value[0]), high: asNumber(value[1]), low: asNumber(value[2]), close: asNumber(value[3]),
       return: asNumber(value[4]), direction: String(value[5] ?? ""),
+      first_date: String(value[7] ?? ""), last_date: String(value[8] ?? ""),
     };
   }
   const source = asObject(value);
@@ -187,7 +190,13 @@ function normalizeKline(value: unknown, row?: PeriodRow, prefix = "") : Kline {
     open: read("open"), high: read("high"), low: read("low"), close: read("close"),
     return: asNumber(source.return ?? source.return_pct ?? holder[`${prefix}return`] ?? holder[`${prefix}return_pct`] ?? holder.return_pct ?? holder.return),
     direction: String(source.direction ?? holder[`${prefix}direction`] ?? holder.actual_direction ?? ""),
+    first_date: String(source.first_date ?? holder[`${prefix}first_date`] ?? ""),
+    last_date: String(source.last_date ?? holder[`${prefix}last_date`] ?? ""),
   };
+}
+
+function KlineDateRange({ kline }: { kline: Kline }) {
+  return <small className="kline-date-range" title="实际参与涨跌幅计算的首个至最后一个交易日，含首尾两日"><span>计算区间</span>{kline.first_date && kline.last_date ? <span><time dateTime={kline.first_date}>{kline.first_date}</time> → <time dateTime={kline.last_date}>{kline.last_date}</time></span> : <span>—</span>}</small>;
 }
 
 function periodKline(row: PeriodRow): Kline {
@@ -947,8 +956,8 @@ function CalculationTable({ rows, period }: { rows: PeriodRow[]; period: "annual
               {period === "monthly" && <td><div className="score-triplet"><span>运 {score(row.big_luck_score)}</span><span>年 {score(row.annual_score ?? row.year_baseline)}</span><span>月 {score(row.month_period_score)}</span></div></td>}
               <td><div className="stacked"><span>{score(row.total_score)} · {row.status || "—"}</span><small>{period === "annual" ? "60%行运 + 40%流年" : "36%行运 + 24%流年 + 40%流月"}</small></div></td>
               <td><span className={`direction-chip ${direction(row.predicted_direction)}`}>{directionLabel(row.predicted_direction)}</span></td>
-              <td><div className="stacked mono"><span className={actual}>{signedPercent(k.return)}</span><small>O {score(k.open)} · C {score(k.close)}</small></div></td>
-              <td><div className="stacked mono"><span className={calendarActual}>{signedPercent(calendar.return)}</span><small>O {score(calendar.open)} · C {score(calendar.close)}</small></div></td>
+              <td><div className="stacked mono"><KlineDateRange kline={k} /><span className={actual}>{signedPercent(k.return)}</span><small>O {score(k.open)} · C {score(k.close)}</small></div></td>
+              <td><div className="stacked mono"><KlineDateRange kline={calendar} /><span className={calendarActual}>{signedPercent(calendar.return)}</span><small>O {score(calendar.open)} · C {score(calendar.close)}</small></div></td>
               <td>{typeof row.sync === "boolean" ? <span className={`sync-dot ${row.sync ? "yes" : "no"}`}>{row.sync ? "同步" : "背离"}</span> : "—"}</td>
               <td className="detail-cell">{calculationText(row, period)}</td>
             </tr>
